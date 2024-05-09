@@ -1,24 +1,38 @@
-import './style.css'
-import javascriptLogo from './javascript.svg'
-import viteLogo from '/vite.svg'
-import { setupCounter } from './counter.js'
+/* eslint-disable import/no-named-as-default-member */
+/* eslint-disable import/no-named-as-default */
+import Project from './src/Project';
+import TodoList from './src/TodoList';
+import Task from './src/Task';
 
-document.querySelector('#app').innerHTML = `
-  <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="${viteLogo}" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank">
-      <img src="${javascriptLogo}" class="logo vanilla" alt="JavaScript logo" />
-    </a>
-    <h1>Hello Vite!</h1>
-    <div class="card">
-      <button id="counter" type="button"></button>
-    </div>
-    <p class="read-the-docs">
-      Click on the Vite logo to learn more
-    </p>
-  </div>
-`
+import './style.css';
 
-setupCounter(document.querySelector('#counter'))
+const data = new TodoList();
+
+// BUG Test code for working on moveTask
+data.addProject(new Project({ name: 'test' }));
+const proj = data.getProject('test');
+proj.addTask(new Task({name: 'Task 1'}));
+proj.addTask(new Task({name: 'Task 2'}));
+proj.addTask(new Task({name: 'Task 3'}));
+
+const projects = data.getAllProjects;
+projects.forEach((proj) => console.log(proj.getAllTasks));
+
+projects.forEach((proj) => {
+  proj.getAllTasks
+    .forEach((task) => {
+      console.log(task);
+      console.log(task.name === 'Task 2');
+    });
+});
+
+const targetTask = projects
+  .map((proj) => proj.getAllTasks.find((task) => task.name === 'Task 2'))
+  .filter((x) => {
+    if (x) return x;
+  });
+
+data.moveTask('Task 3', 'Inbox');
+
+console.log('this');
+console.log(data);

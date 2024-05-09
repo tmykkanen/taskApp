@@ -5,7 +5,7 @@ import Project from './Project';
 export default class TodoList {
   constructor() {
     this.projects = [];
-    this.projects.push(new Project('Inbox'));
+    this.projects.push(new Project({ name: 'Inbox' }));
   }
 
   addProject(newProject) {
@@ -22,5 +22,31 @@ export default class TodoList {
 
   deleteProject(name) {
     this.projects = this.projects.filter((proj) => proj.name !== name);
+  }
+
+  getTaskParentProject(taskName) {
+    // const task = this.getTaskFromAllProjects(taskName);
+    const project = this.getAllProjects
+      .filter((proj) => proj.getAllTasks
+        .some((task) => task.name === taskName))
+      .pop();
+
+    return project;
+  }
+
+  getTaskFromAllProjects(taskName) {
+    const parentProject = this.getTaskParentProject(taskName);
+    const task = parentProject.getAllTasks.find((x) => x.name === taskName);
+
+    return { task, parentProject };
+  }
+
+  moveTask(taskName, targetProjectName) {
+    // Find Task + Parent project
+    const { task, parentProject } = this.getTaskFromAllProjects(taskName);
+    const targetProject = this.getProject(targetProjectName);
+
+    targetProject.addTask(task);
+    parentProject.deleteTask(taskName);
   }
 }

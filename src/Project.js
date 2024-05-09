@@ -8,6 +8,7 @@ export default class Project {
     this.description = description;
     this.dueDate = dueDate;
     this.tasks = [];
+    this.taskArchive = [];
   }
 
   get getName() {
@@ -34,19 +35,33 @@ export default class Project {
     this.dueDate = dueDate;
   }
 
-  addTask(newTask) {
-    this.tasks.push(newTask);
-  }
-
-  getTask(name) {
-    return this.tasks.find((task) => task.name === name);
-  }
-
   get getAllTasks() {
     return this.tasks;
   }
 
+  set setAllTasks(taskArray) {
+    this.tasks = taskArray;
+  }
+
+  get getTaskArchive() {
+    return this.taskArchive;
+  }
+
+  addTask(newTask) {
+    this.tasks.push(newTask);
+  }
+
+// [ ] Change Task/Project interactions to use uuid rather than name?
+  getTask(name) {
+    return this.tasks.find((task) => task.getName === name);
+  }
+
   deleteTask(name) {
-    this.tasks = this.tasks.filter((task) => task.name !== name);
+    this.setAllTasks = this.tasks.filter((task) => task.getName !== name);
+  }
+
+  archiveTask(name) {
+    this.taskArchive.push(this.getTask(name));
+    this.deleteTask(name);
   }
 }

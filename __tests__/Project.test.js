@@ -17,6 +17,7 @@ describe('Basic Functionality', () => {
       dueDate: Date.now(),
     };
     const proj = new Task(params);
+
     expect(proj.name).toBe(params.name);
     expect(proj.description).toBe(params.description);
     expect(proj.dueDate).toBe(params.dueDate);
@@ -29,6 +30,7 @@ describe('Basic Functionality', () => {
       dueDate: Date.now(),
     };
     const proj = new Task(params);
+
     expect(proj.getName).toBe(params.name);
     expect(proj.getDescription).toBe(params.description);
     expect(proj.getDueDate).toBe(params.dueDate);
@@ -110,5 +112,31 @@ describe('Basic Functionality', () => {
 
     const allTasks = proj.getAllTasks;
     assert.lengthOf(allTasks, 1, 'One task in array');
+  });
+});
+
+describe('Advanced Functionailty', () => {
+  test('move completed task to project archive + read from archive', () => {
+    const ProjectParams = {
+      name: 'Inbox',
+      description: 'First proj desc',
+      dueDate: Date.now(),
+    };
+    const proj = new Project(ProjectParams);
+
+    const TaskParams = {
+      name: 'First Todo',
+      description: 'First todo desc',
+      dueDate: Date.now(),
+    };
+
+    proj.addTask(new Task(TaskParams));
+
+    proj.archiveTask(TaskParams.name);
+
+    assert.lengthOf(proj.getAllTasks, 0, 'No task in array');
+    assert.lengthOf(proj.taskArchive, 1, 'One task in archive');
+
+    expect(proj.getTaskArchive[0].name).toBe(TaskParams.name);
   });
 });
