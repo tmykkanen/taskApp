@@ -83,4 +83,32 @@ describe('Basic Functionality', () => {
     expect(task.getName).toBe(TaskParams.name);
     assert.lengthOf(allTasks, 2, 'Two tasks in array');
   });
+
+  test('delete task', () => {
+    const ProjectParams = {
+      name: 'Inbox',
+      description: 'First proj desc',
+      dueDate: Date.now(),
+    };
+    const proj = new Project(ProjectParams);
+
+    const TaskParams = {
+      name: 'First Todo',
+      description: 'First todo desc',
+      dueDate: Date.now(),
+    };
+
+    const TaskParams2 = {
+      name: 'Second Todo',
+      description: 'Second todo desc',
+      dueDate: Date.now(),
+    };
+    proj.addTask(new Task(TaskParams));
+    proj.addTask(new Task(TaskParams2));
+
+    proj.deleteTask(TaskParams.name);
+
+    const allTasks = proj.getAllTasks;
+    assert.lengthOf(allTasks, 1, 'One task in array');
+  });
 });

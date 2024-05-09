@@ -1,5 +1,9 @@
 export default class Project {
-  constructor(name, description = false, dueDate = false) {
+  constructor({
+    name,
+    description = false,
+    dueDate = false,
+  }) {
     this.name = name;
     this.description = description;
     this.dueDate = dueDate;
@@ -40,5 +44,9 @@ export default class Project {
 
   get getAllTasks() {
     return this.tasks;
+  }
+
+  deleteTask(name) {
+    this.tasks = this.tasks.filter((task) => task.name !== name);
   }
 }
