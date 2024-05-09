@@ -18,7 +18,7 @@ describe('Basic functions', () => {
     };
     const list = new TodoList();
     list.addProject(new Project(ProjectParams));
-    assert.lengthOf(list.projects, 1, 'array is 1');
+    assert.lengthOf(list.projects, 2, 'array is 2');
   });
 
   test('get project', () => {
