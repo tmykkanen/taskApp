@@ -1,9 +1,9 @@
 export default class Project {
-  constructor({
+  constructor(
     name,
     description = false,
     dueDate = false,
-  }) {
+  ) {
     this.name = name;
     this.description = description;
     this.dueDate = dueDate;
@@ -51,7 +51,7 @@ export default class Project {
     this.tasks.push(newTask);
   }
 
-// [ ] Change Task/Project interactions to use uuid rather than name?
+  // [ ] Change Task/Project interactions to use uuid rather than name?
   getTask(name) {
     return this.tasks.find((task) => task.getName === name);
   }

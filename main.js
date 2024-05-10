@@ -3,36 +3,31 @@
 import Project from './src/Project';
 import TodoList from './src/TodoList';
 import Task from './src/Task';
+import Storage from './src/Storage';
 
 import './style.css';
 
-const data = new TodoList();
+// BUG Test Data
+// const todoList = new TodoList();
 
-// BUG Test code for working on moveTask
-data.addProject(new Project({ name: 'test' }));
-const proj = data.getProject('test');
-proj.addTask(new Task({name: 'Task 1'}));
-proj.addTask(new Task({name: 'Task 2'}));
-proj.addTask(new Task({name: 'Task 3'}));
+// const ProjParams1 = { name: 'Proj 1' };
+// const ProjParams2 = { name: 'Proj 2' };
+// const TaskParams1 = { name: 'Task 1' };
+// const TaskParams2 = { name: 'Task 2' };
 
-const projects = data.getAllProjects;
-projects.forEach((proj) => console.log(proj.getAllTasks));
+// todoList.addProject(new Project('Proj 1'));
+// todoList.addProject(new Project('Proj 2'));
 
-projects.forEach((proj) => {
-  proj.getAllTasks
-    .forEach((task) => {
-      console.log(task);
-      console.log(task.name === 'Task 2');
-    });
-});
 
-const targetTask = projects
-  .map((proj) => proj.getAllTasks.find((task) => task.name === 'Task 2'))
-  .filter((x) => {
-    if (x) return x;
-  });
+// const proj1 = todoList.getProject(ProjParams1.name);
 
-data.moveTask('Task 3', 'Inbox');
+// // proj1.addTask(new Task(TaskParams1));
+// // proj1.addTask(new Task(TaskParams2));
 
-console.log('this');
-console.log(data);
+// console.log(todoList);
+
+// Storage.saveTodoList(todoList);
+
+// const x = Storage.getTodoList();
+
+// console.log(x);

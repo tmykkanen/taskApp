@@ -16,16 +16,33 @@
           </ul>
         </div>
         <div class="custom-projects">
+          <li class="project-list-item">Custom Project</li>
           <button class="add-project" type="button">+ New Project</button>
         </div>
       </div>
       <div class="main-container">
-        <h2 class="project-title">{Project Title}</h2>
+        <h2 class="project-title">Inbox</h2>
         <ul>
-          <li class="task-list-item">Task 1</li>
-          <li class="task-list-item">Task 2</li>
-          <li class="task-list-item">Task 3</li>
-          <li class="task-list-item">Task 4</li>
+          <li class="task-list-item collapsed">
+              <input type="checkbox" name="" id="Task 1">
+              <h3>Task 1</h3>
+          </li>
+          <li class="task-list-item collapsed">
+            <input type="checkbox" name="" id="Task 2">
+            <h3>Task 2</h3>
+          </li>   
+          <li class="task-list-item expanded">
+            <input type="checkbox" name="" id="Task3">
+            <h3>Task 3</h3>
+            <!-- USE contenteditable = true to lock todo item; activate text field on double click-->
+            <p class="description" contenteditable="true">Excepteur minim nulla ad adipisicing et Lorem quis adipisicing anim.</p>
+            <p class="due-date">5/9/24</p>
+            <button type="button">Set Due Date</button>
+          </li>
+          <li class="task-list-item collapsed">
+            <input type="checkbox" name="" id="Task 4">
+            <h3>Task 4</h3>
+          </li>   
         </ul>
       </div>
     </div>

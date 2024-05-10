@@ -5,7 +5,15 @@ import Project from './Project';
 export default class TodoList {
   constructor() {
     this.projects = [];
-    this.projects.push(new Project({ name: 'Inbox' }));
+    // this.projects.push(new Project({ name: 'Inbox' }));
+  }
+
+  get getAllProjects() {
+    return this.projects;
+  }
+
+  set setAllProjects(projectsArray) {
+    this.projects = projectsArray;
   }
 
   addProject(newProject) {
@@ -14,10 +22,6 @@ export default class TodoList {
 
   getProject(name) {
     return this.projects.find((proj) => proj.name === name);
-  }
-
-  get getAllProjects() {
-    return this.projects;
   }
 
   deleteProject(name) {

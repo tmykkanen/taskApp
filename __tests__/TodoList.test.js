@@ -11,28 +11,32 @@ import Project from '../src/Project';
 import Task from '../src/Task';
 
 describe('Basic functions', () => {
-  const ProjectParams = {
-    name: 'Inbox',
-    description: 'First proj desc',
+  const ProjParams1 = {
+    name: 'Proj 1',
+    description: 'Proj 1 description',
     dueDate: Date.now(),
   };
 
   test('add project', () => {
     const list = new TodoList();
-    list.addProject(new Project(ProjectParams));
-    assert.lengthOf(list.projects, 2, 'array is 2');
+    list.addProject(new Project(ProjParams1.name));
+    assert.lengthOf(list.projects, 1, 'array is 1');
   });
 
   test('get project', () => {
     const list = new TodoList();
-    list.addProject(new Project(ProjectParams));
+    list.addProject(new Project(ProjParams1.name));
 
-    expect(list.getProject(ProjectParams.name).name).toBe(ProjectParams.name);
+    expect(list.getProject(ProjParams1.name).name).toBe(ProjParams1.name);
   });
 });
 
 describe('Advanced Function', () => {
-  const ProjParams1 = { name: 'Proj 1' };
+  const ProjParams1 = {
+    name: 'Proj 1',
+    description: 'Proj 1 description',
+    dueDate: Date.now(),
+  };
   const ProjParams2 = { name: 'Proj 2' };
   const TaskParams1 = { name: 'Task 1' };
   const TaskParams2 = { name: 'Task 2' };
@@ -40,12 +44,12 @@ describe('Advanced Function', () => {
   test('Get Task From All Projects', () => {
     const data = new TodoList();
 
-    data.addProject(new Project(ProjParams1));
-    data.addProject(new Project(ProjParams2));
+    data.addProject(new Project(ProjParams1.name));
+    data.addProject(new Project(ProjParams2.name));
     const proj1 = data.getProject(ProjParams1.name);
 
-    proj1.addTask(new Task(TaskParams1));
-    proj1.addTask(new Task(TaskParams2));
+    proj1.addTask(new Task(TaskParams1.name));
+    proj1.addTask(new Task(TaskParams2.name));
 
     expect(data.getTaskFromAllProjects(TaskParams1.name).task.name).toBe(TaskParams1.name);
   });
@@ -53,13 +57,13 @@ describe('Advanced Function', () => {
   test('GetTaskParentProject', () => {
     const data = new TodoList();
 
-    data.addProject(new Project(ProjParams1));
-    data.addProject(new Project(ProjParams2));
+    data.addProject(new Project(ProjParams1.name));
+    data.addProject(new Project(ProjParams2.name));
     const proj1 = data.getProject(ProjParams1.name);
     const proj2 = data.getProject(ProjParams2.name);
 
-    proj1.addTask(new Task(TaskParams1));
-    proj2.addTask(new Task(TaskParams2));
+    proj1.addTask(new Task(TaskParams1.name));
+    proj2.addTask(new Task(TaskParams2.name));
 
     expect(data.getTaskParentProject(TaskParams2.name)).toBe(proj2);
   });
@@ -67,14 +71,14 @@ describe('Advanced Function', () => {
   test('Move Task from one project to another', () => {
     const data = new TodoList();
 
-    data.addProject(new Project(ProjParams1));
-    data.addProject(new Project(ProjParams2));
+    data.addProject(new Project(ProjParams1.name));
+    data.addProject(new Project(ProjParams2.name));
 
     const proj1 = data.getProject(ProjParams1.name);
     const proj2 = data.getProject(ProjParams2.name);
 
-    proj1.addTask(new Task(TaskParams1));
-    proj1.addTask(new Task(TaskParams2));
+    proj1.addTask(new Task(TaskParams1.name));
+    proj1.addTask(new Task(TaskParams2.name));
 
     data.moveTask(TaskParams1.name, ProjParams2.name);
 

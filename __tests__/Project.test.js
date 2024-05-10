@@ -10,105 +10,76 @@ import Task from '../src/Task';
 import Project from '../src/Project';
 
 describe('Basic Functionality', () => {
-  test('create Project', () => {
-    const params = {
-      name: 'Inbox',
-      description: 'First proj desc',
-      dueDate: Date.now(),
-    };
-    const proj = new Task(params);
+  const projParams = {
+    name: 'Proj 1',
+    description: 'Proj 1 description',
+    dueDate: Date.now(),
+  };
 
-    expect(proj.name).toBe(params.name);
-    expect(proj.description).toBe(params.description);
-    expect(proj.dueDate).toBe(params.dueDate);
+  const newProjParams = {
+    name: 'Renamed',
+    description: 'Redescribed',
+    dueDate: 'New Date',
+  };
+
+  const taskParams1 = {
+    name: 'Todo 1',
+    description: 'Todo 1 Desc',
+    dueDate: Date.now(),
+  };
+  const taskParams2 = {
+    name: 'Todo 2',
+    description: 'Todo 2 Desc',
+    dueDate: Date.now(),
+  };
+
+  test('create Project', () => {
+    const proj = new Project(projParams.name, projParams.description, projParams.dueDate);
+
+    expect(proj.name).toBe(projParams.name);
+    expect(proj.description).toBe(projParams.description);
+    expect(proj.dueDate).toBe(projParams.dueDate);
   });
 
-  test('Project getters', () => {
-    const params = {
-      name: 'Inbox',
-      description: 'First proj desc',
-      dueDate: Date.now(),
-    };
-    const proj = new Task(params);
+  test('Project getters + defaults', () => {
+    const proj = new Project(projParams.name);
 
-    expect(proj.getName).toBe(params.name);
-    expect(proj.getDescription).toBe(params.description);
-    expect(proj.getDueDate).toBe(params.dueDate);
+    expect(proj.getName).toBe(projParams.name);
+    expect(proj.getDescription).toBe(false);
+    expect(proj.getDueDate).toBe(false);
   });
 
   test('Project setters', () => {
-    const params = {
-      name: 'Inbox',
-      description: 'First proj desc',
-      dueDate: Date.now(),
-    };
-    const proj = new Task(params);
+    const proj = new Project(projParams.name);
 
-    const newParams = {
-      name: 'Renamed',
-      description: 'Redescribed',
-      dueDate: 'New Date',
-    };
-    proj.setName = newParams.name;
-    proj.setDescription = newParams.description;
-    proj.setDueDate = newParams.dueDate;
+    proj.setName = newProjParams.name;
+    proj.setDescription = newProjParams.description;
+    proj.setDueDate = newProjParams.dueDate;
 
-    expect(proj.getName).toBe(newParams.name);
-    expect(proj.getDescription).toBe(newParams.description);
-    expect(proj.getDueDate).toBe(newParams.dueDate);
+    expect(proj.getName).toBe(newProjParams.name);
+    expect(proj.getDescription).toBe(newProjParams.description);
+    expect(proj.getDueDate).toBe(newProjParams.dueDate);
   });
 
   test('create Task in Project + getTask + getAllTasks', () => {
-    const ProjectParams = {
-      name: 'Inbox',
-      description: 'First proj desc',
-      dueDate: Date.now(),
-    };
-    const proj = new Project(ProjectParams);
+    const proj = new Project(projParams.name);
 
-    const TaskParams = {
-      name: 'First Todo',
-      description: 'First todo desc',
-      dueDate: Date.now(),
-    };
+    proj.addTask(new Task(taskParams1.name));
+    proj.addTask(new Task(taskParams2.name));
 
-    const TaskParams2 = {
-      name: 'Second Todo',
-      description: 'Second todo desc',
-      dueDate: Date.now(),
-    };
-
-    proj.addTask(new Task(TaskParams));
-    proj.addTask(new Task(TaskParams2));
     const allTasks = proj.getAllTasks;
-    const task = proj.getTask(TaskParams.name);
-    expect(task.getName).toBe(TaskParams.name);
+    const targetTask = proj.getTask(taskParams1.name);
+    expect(targetTask.getName).toBe(taskParams1.name);
     assert.lengthOf(allTasks, 2, 'Two tasks in array');
   });
 
   test('delete task', () => {
-    const ProjectParams = {
-      name: 'Inbox',
-      description: 'First proj desc',
-      dueDate: Date.now(),
-    };
-    const proj = new Project(ProjectParams);
+    const proj = new Project(projParams.name);
 
-    const TaskParams = {
-      name: 'First Todo',
-      description: 'First todo desc',
-      dueDate: Date.now(),
-    };
+    proj.addTask(new Task(taskParams1.name));
+    proj.addTask(new Task(taskParams2.name));
 
-    const TaskParams2 = {
-      name: 'Second Todo',
-      description: 'Second todo desc',
-      dueDate: Date.now(),
-    };
-    proj.addTask(new Task(TaskParams));
-    proj.addTask(new Task(TaskParams2));
-
-    proj.deleteTask(TaskParams.name);
+    proj.deleteTask(taskParams1.name);
 
     const allTasks = proj.getAllTasks;
     assert.lengthOf(allTasks, 1, 'One task in array');
@@ -116,27 +87,28 @@ describe('Basic Functionality', () => {
 });
 
 describe('Advanced Functionailty', () => {
+  const projParams = {
+    name: 'Proj 1',
+    description: 'Proj 1 description',
+    dueDate: Date.now(),
+  };
+
+  const taskParams1 = {
+    name: 'Todo 1',
+    description: 'Todo 1 Desc',
+    dueDate: Date.now(),
+  };
+
   test('move completed task to project archive + read from archive', () => {
-    const ProjectParams = {
-      name: 'Inbox',
-      description: 'First proj desc',
-      dueDate: Date.now(),
-    };
-    const proj = new Project(ProjectParams);
+    const proj = new Project(projParams.name);
 
-    const TaskParams = {
-      name: 'First Todo',
-      description: 'First todo desc',
-      dueDate: Date.now(),
-    };
+    proj.addTask(new Task(taskParams1.name));
 
-    proj.addTask(new Task(TaskParams));
-
-    proj.archiveTask(TaskParams.name);
+    proj.archiveTask(taskParams1.name);
 
     assert.lengthOf(proj.getAllTasks, 0, 'No task in array');
     assert.lengthOf(proj.taskArchive, 1, 'One task in archive');
 
-    expect(proj.getTaskArchive[0].name).toBe(TaskParams.name);
+    expect(proj.getTaskArchive[0].name).toBe(taskParams1.name);
   });
 });
