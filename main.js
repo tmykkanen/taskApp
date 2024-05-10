@@ -15,19 +15,24 @@ import './style.css';
 // const TaskParams1 = { name: 'Task 1' };
 // const TaskParams2 = { name: 'Task 2' };
 
-// todoList.addProject(new Project('Proj 1'));
-// todoList.addProject(new Project('Proj 2'));
-
+// todoList.addProject(new Project(ProjParams1.name));
+// todoList.addProject(new Project(ProjParams2.name));
 
 // const proj1 = todoList.getProject(ProjParams1.name);
 
-// // proj1.addTask(new Task(TaskParams1));
-// // proj1.addTask(new Task(TaskParams2));
+// proj1.addTask(new Task(TaskParams1.name));
+// proj1.addTask(new Task(TaskParams2.name));
 
-// console.log(todoList);
+// console.log(
+//   'TodoList Sent to Storage:\n',
+//   todoList,
+// );
 
 // Storage.saveTodoList(todoList);
 
-// const x = Storage.getTodoList();
+// const reconstructedTodoList = Storage.getTodoList();
 
-// console.log(x);
+// console.log(
+//   'Reconstructed TodoList:\n',
+//   reconstructedTodoList,
+// );

@@ -1,3 +1,4 @@
+/* eslint-disable max-classes-per-file */
 /* eslint-disable import/no-named-as-default-member */
 /* eslint-disable import/no-named-as-default */
 import TodoList from './TodoList';
@@ -16,20 +17,14 @@ export default class Storage {
       JSON.parse(localStorage.getItem('todoList')),
     );
 
-    // console.log('in func');
-    // console.log(todoList.getAllProjects);
-    // todoList.getAllProjects.map((proj) => console.log(proj));
-    // console.log(todoList.setAllProjects = []);
     todoList.setAllProjects = todoList.getAllProjects
-      .map((project) => {
-        console.log(project);
-        return todoList.addProject(Object.assign(new Project(), project));
-        // return todoList.addProject(new Project({ project }));
-      });
+      .map((proj) => Object.assign(new Project(), proj));
 
-    // return new array with all projects as Project classes
-    // set new array as projects array on todolist
-
+    todoList.getAllProjects.forEach((proj) => {
+      // eslint-disable-next-line no-param-reassign
+      proj.setAllTasks = proj.getAllTasks
+        .map((task) => Object.assign(new Task(), task));
+    });
     return todoList;
   }
 }
