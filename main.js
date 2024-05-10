@@ -50,6 +50,21 @@ console.log(
 const container = document.querySelector('.main-container ul');
 
 const taskList = UI.assembleTaskList(proj1);
+
+function completeTaskHandler(task, status) {
+  console.log(task);
+  console.log(status);
+  // [ ] Write handler for checking task off
+}
+
+taskList.forEach((li) => {
+  console.log(li.children[0]);
+  li.children[0].addEventListener('change', (e) => {
+    li.classList.toggle('completed');
+    completeTaskHandler(li.children[1].textContent, li.children[0].checked);
+  });
+});
+
 UI.bindTaskEventListeners(taskList);
 UI.renderTaskList(taskList, container);
 

@@ -44,37 +44,38 @@ export default class UI {
 
       li.append(checkbox, h3, pDesc, pDue, btnSetDue);
 
-      // taskContainer.append(li);
-
-      // li.addEventListener('dblclick', () => {
-      //   li.classList.add('expanded');
-      //   h3.contentEditable = true;
-      //   pDesc.contentEditable = true;
-      //   this.addSelfDestEventListener(document, li, 'click', () => {
-      //     h3.contentEditable = false;
-      //     pDesc.contentEditable = false;
-      //     li.classList.remove('expanded');
-      //   });
-      // });
-
       return li;
     });
     return taskList;
   }
 
+  // [ ] Refector to better organize event listeners
   static bindTaskEventListeners(taskList) {
-    taskList.forEach((li) => {
-      // console.log(li.children[1]);
-      li.addEventListener('dblclick', () => {
-        li.classList.add('expanded');
-        li.children[1].contentEditable = true;
-        li.children[2].contentEditable = true;
-        this.addSelfDestEventListener(document, li, 'click', () => {
-          li.children[1].contentEditable = false;
-          li.children[2].contentEditable = false;
-          li.classList.remove('expanded');
+    const addSelfDestEventListener = (element, currentEl, eventType, callback) => {
+      const handler = (e) => {
+        if (!currentEl.contains(e.target)) {
+          callback();
+          element.removeEventListener(eventType, handler);
+        }
+      };
+      element.addEventListener(eventType, handler);
+    };
+
+    const dblclickMakesEditable = (el) => {
+      el.addEventListener('dblclick', () => {
+        el.classList.add('expanded');
+        el.children[1].contentEditable = true;
+        el.children[2].contentEditable = true;
+        addSelfDestEventListener(document, el, 'click', () => {
+          el.children[1].contentEditable = false;
+          el.children[2].contentEditable = false;
+          el.classList.remove('expanded');
         });
       });
+    };
+
+    taskList.forEach((li) => {
+      dblclickMakesEditable(li);
     });
   }
 
