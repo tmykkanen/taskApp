@@ -6,6 +6,7 @@ import Task from './src/Task';
 import Storage from './src/Storage';
 
 import './style.css';
+import UI from './src/UI';
 
 // BUG Test Data
 const todoList = new TodoList();
@@ -46,30 +47,31 @@ function createHTML(el, cls, txt) {
   return html;
 }
 
-function assembleTaskList(currentProject, taskContainer) {
-  console.log(currentProject);
-  const taskList = currentProject.getAllTasks;
-  console.log(taskList);
-  taskList.forEach((task) => {
-    const taskHTML = document.createElement('li');
-    taskHTML.classList.add('task-list-item', 'collapsed');
+// function assembleTaskList(currentProject, taskContainer) {
+//   console.log(currentProject);
+//   const taskList = currentProject.getAllTasks;
+//   console.log(taskList);
+//   taskList.forEach((task) => {
+//     const taskHTML = document.createElement('li');
+//     taskHTML.classList.add('task-list-item', 'collapsed');
 
-    const checkbox = document.createElement('input');
-    checkbox.type = 'checkbox';
-    checkbox.id = task.name;
+//     const checkbox = document.createElement('input');
+//     checkbox.type = 'checkbox';
+//     checkbox.id = task.name;
 
-    const h3 = document.createElement('h3');
-    h3.textContent = task.name;
+//     const h3 = document.createElement('h3');
+//     h3.textContent = task.name;
 
-    // [ ] Add rendering for description
+//     // [ ] Add rendering for description
 
-    taskHTML.append(checkbox, h3);
+//     taskHTML.append(checkbox, h3);
 
-    taskContainer.append(taskHTML);
-  });
-}
+//     taskContainer.append(taskHTML);
+//   });
+// }
 const container = document.querySelector('.main-container ul');
-assembleTaskList(proj1, container);
+
+UI.assembleTaskList(proj1, container);
 
 // document.querySelector('.main-container ul')
 //   .appendChild(assembledTaskList);
