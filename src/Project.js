@@ -51,7 +51,6 @@ export default class Project {
     this.tasks.push(newTask);
   }
 
-  // [ ] Change Task/Project interactions to use uuid rather than name?
   getTask(name) {
     return this.tasks.find((task) => task.getName === name);
   }
