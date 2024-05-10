@@ -40,38 +40,18 @@ console.log(
 );
 
 // Utility function
-function createHTML(el, cls, txt) {
-  const html = document.createElement(el);
-  if (cls) html.classList.add(cls);
-  html.textContent = txt;
-  return html;
-}
-
-// function assembleTaskList(currentProject, taskContainer) {
-//   console.log(currentProject);
-//   const taskList = currentProject.getAllTasks;
-//   console.log(taskList);
-//   taskList.forEach((task) => {
-//     const taskHTML = document.createElement('li');
-//     taskHTML.classList.add('task-list-item', 'collapsed');
-
-//     const checkbox = document.createElement('input');
-//     checkbox.type = 'checkbox';
-//     checkbox.id = task.name;
-
-//     const h3 = document.createElement('h3');
-//     h3.textContent = task.name;
-
-//     // [ ] Add rendering for description
-
-//     taskHTML.append(checkbox, h3);
-
-//     taskContainer.append(taskHTML);
-//   });
+// function createHTML(el, cls, txt) {
+//   const html = document.createElement(el);
+//   if (cls) html.classList.add(cls);
+//   html.textContent = txt;
+//   return html;
 // }
+
 const container = document.querySelector('.main-container ul');
 
-UI.assembleTaskList(proj1, container);
+const taskList = UI.assembleTaskList(proj1);
+UI.bindTaskEventListeners(taskList);
+UI.renderTaskList(taskList, container);
 
 // document.querySelector('.main-container ul')
 //   .appendChild(assembledTaskList);

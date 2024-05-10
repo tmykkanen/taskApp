@@ -16,9 +16,9 @@ export default class UI {
     element.addEventListener(eventType, handler);
   }
 
-  static assembleTaskList(currentProject, taskContainer) {
+  static assembleTaskList(currentProject) {
     const currentProjectTaskList = currentProject.getAllTasks;
-    currentProjectTaskList.forEach((task) => {
+    const taskList = currentProjectTaskList.map((task) => {
       const li = document.createElement('li');
       li.classList.add('task-list-item', 'collapsed');
 
@@ -43,18 +43,44 @@ export default class UI {
       btnSetDue.textContent = 'Set Due Date';
 
       li.append(checkbox, h3, pDesc, pDue, btnSetDue);
-      taskContainer.append(li);
 
+      // taskContainer.append(li);
+
+      // li.addEventListener('dblclick', () => {
+      //   li.classList.add('expanded');
+      //   h3.contentEditable = true;
+      //   pDesc.contentEditable = true;
+      //   this.addSelfDestEventListener(document, li, 'click', () => {
+      //     h3.contentEditable = false;
+      //     pDesc.contentEditable = false;
+      //     li.classList.remove('expanded');
+      //   });
+      // });
+
+      return li;
+    });
+    return taskList;
+  }
+
+  static bindTaskEventListeners(taskList) {
+    taskList.forEach((li) => {
+      // console.log(li.children[1]);
       li.addEventListener('dblclick', () => {
         li.classList.add('expanded');
-        h3.contentEditable = true;
-        pDesc.contentEditable = true;
+        li.children[1].contentEditable = true;
+        li.children[2].contentEditable = true;
         this.addSelfDestEventListener(document, li, 'click', () => {
-          h3.contentEditable = false;
-          pDesc.contentEditable = false;
+          li.children[1].contentEditable = false;
+          li.children[2].contentEditable = false;
           li.classList.remove('expanded');
         });
       });
+    });
+  }
+
+  static renderTaskList(taskList, taskContainer) {
+    taskList.forEach((li) => {
+      taskContainer.append(li);
     });
   }
 }
