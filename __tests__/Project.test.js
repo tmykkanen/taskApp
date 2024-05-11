@@ -44,21 +44,21 @@ describe('Basic Functionality', () => {
   test('Project getters + defaults', () => {
     const proj = new Project(projParams.name);
 
-    expect(proj.getName).toBe(projParams.name);
-    expect(proj.getDescription).toBe(false);
-    expect(proj.getDueDate).toBe(false);
+    expect(proj.name).toBe(projParams.name);
+    expect(proj.description).toBe(false);
+    expect(proj.dueDate).toBe(false);
   });
 
   test('Project setters', () => {
     const proj = new Project(projParams.name);
 
-    proj.setName = newProjParams.name;
-    proj.setDescription = newProjParams.description;
-    proj.setDueDate = newProjParams.dueDate;
+    proj.name = newProjParams.name;
+    proj.description = newProjParams.description;
+    proj.dueDate = newProjParams.dueDate;
 
-    expect(proj.getName).toBe(newProjParams.name);
-    expect(proj.getDescription).toBe(newProjParams.description);
-    expect(proj.getDueDate).toBe(newProjParams.dueDate);
+    expect(proj.name).toBe(newProjParams.name);
+    expect(proj.description).toBe(newProjParams.description);
+    expect(proj.dueDate).toBe(newProjParams.dueDate);
   });
 
   test('create Task in Project + getTask + getAllTasks', () => {
@@ -67,9 +67,9 @@ describe('Basic Functionality', () => {
     proj.addTask(new Task(taskParams1.name));
     proj.addTask(new Task(taskParams2.name));
 
-    const allTasks = proj.getAllTasks;
+    const allTasks = proj.tasks;
     const targetTask = proj.getTask(taskParams1.name);
-    expect(targetTask.getName).toBe(taskParams1.name);
+    expect(targetTask.name).toBe(taskParams1.name);
     assert.lengthOf(allTasks, 2, 'Two tasks in array');
   });
 
@@ -81,7 +81,7 @@ describe('Basic Functionality', () => {
 
     proj.deleteTask(taskParams1.name);
 
-    const allTasks = proj.getAllTasks;
+    const allTasks = proj.tasks;
     assert.lengthOf(allTasks, 1, 'One task in array');
   });
 });
@@ -106,9 +106,9 @@ describe('Advanced Functionailty', () => {
 
     proj.archiveTask(taskParams1.name);
 
-    assert.lengthOf(proj.getAllTasks, 0, 'No task in array');
+    assert.lengthOf(proj.tasks, 0, 'No task in array');
     assert.lengthOf(proj.taskArchive, 1, 'One task in archive');
 
-    expect(proj.getTaskArchive[0].name).toBe(taskParams1.name);
+    expect(proj.taskArchive[0].name).toBe(taskParams1.name);
   });
 });

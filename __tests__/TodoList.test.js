@@ -20,7 +20,7 @@ describe('Basic functions', () => {
   test('add project', () => {
     const list = new TodoList();
     list.addProject(new Project(ProjParams1.name));
-    assert.lengthOf(list.projects, 1, 'array is 1');
+    assert.lengthOf(list.projects, 2, 'array is 2');
   });
 
   test('get project', () => {

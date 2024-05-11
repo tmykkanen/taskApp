@@ -8,65 +8,71 @@ import Storage from './src/Storage';
 import './style.css';
 import UI from './src/UI';
 
-// BUG Test Data
-const todoList = new TodoList();
+// const DATA = Storage.init();
 
-const ProjParams1 = { name: 'Proj 1' };
-const ProjParams2 = { name: 'Proj 2' };
-const TaskParams1 = { name: 'Task 1' };
-const TaskParams2 = { name: 'Task 2' };
+// NOTE TEST DATA
+// const todoList = new TodoList();
 
-todoList.addProject(new Project(ProjParams1.name));
-todoList.addProject(new Project(ProjParams2.name));
+// const ProjParams1 = { name: 'Proj 1' };
+// const ProjParams2 = { name: 'Proj 2' };
+// const TaskParams1 = { name: 'Task 1' };
+// const TaskParams2 = { name: 'Task 2' };
 
-const proj1 = todoList.getProject(ProjParams1.name);
+// todoList.addProject(new Project(ProjParams1.name));
+// todoList.addProject(new Project(ProjParams2.name));
 
-proj1.addTask(new Task(TaskParams1.name));
-proj1.addTask(new Task(TaskParams2.name));
-proj1.addTask(new Task('Third Task', 'This is a description'));
+// const proj1 = todoList.getProject(ProjParams1.name);
 
-console.log(
-  'TodoList Sent to Storage:\n',
-  todoList,
-);
+// proj1.addTask(new Task(TaskParams1.name));
+// proj1.addTask(new Task(TaskParams2.name));
+// proj1.addTask(new Task('Third Task', 'This is a description'));
 
-Storage.saveTodoList(todoList);
+// console.log(
+//   'TodoList Sent to Storage:\n',
+//   todoList,
+// );
 
-const reconstructedTodoList = Storage.getTodoList();
+// Storage.saveTodoList(todoList);
 
-console.log(
-  'Reconstructed TodoList:\n',
-  reconstructedTodoList,
-);
+// const reconstructedTodoList = Storage.getTodoList();
 
-// Utility function
-// function createHTML(el, cls, txt) {
-//   const html = document.createElement(el);
-//   if (cls) html.classList.add(cls);
-//   html.textContent = txt;
-//   return html;
+// console.log(
+//   'Reconstructed TodoList:\n',
+//   reconstructedTodoList,
+// );
+
+// // Utility function
+// // function createHTML(el, cls, txt) {
+// //   const html = document.createElement(el);
+// //   if (cls) html.classList.add(cls);
+// //   html.textContent = txt;
+// //   return html;
+// // }
+
+// const container = document.querySelector('.main-container ul');
+
+// const taskList = UI.assembleTaskList(proj1);
+
+// function completeTaskHandler(task, status) {
+//   console.log(task);
+//   console.log(status);
+//   // [ ] Write handler for checking task off
+//   const taskObj = todoList.getTaskFromAllProjects(task).task;
+//   console.log(taskObj);
+
+//   console.log(taskObj.getStatus);
+//   taskObj.setStatus = status;
+//   console.log(taskObj.getStatus);
+//   Storage.saveTodoList(todoList)
 // }
 
-const container = document.querySelector('.main-container ul');
+// taskList.forEach((li) => {
+//   console.log(li.children[0]);
+//   li.children[0].addEventListener('change', (e) => {
+//     li.classList.toggle('completed');
+//     completeTaskHandler(li.children[1].textContent, li.children[0].checked);
+//   });
+// });
 
-const taskList = UI.assembleTaskList(proj1);
-
-function completeTaskHandler(task, status) {
-  console.log(task);
-  console.log(status);
-  // [ ] Write handler for checking task off
-}
-
-taskList.forEach((li) => {
-  console.log(li.children[0]);
-  li.children[0].addEventListener('change', (e) => {
-    li.classList.toggle('completed');
-    completeTaskHandler(li.children[1].textContent, li.children[0].checked);
-  });
-});
-
-UI.bindTaskEventListeners(taskList);
-UI.renderTaskList(taskList, container);
-
-// document.querySelector('.main-container ul')
-//   .appendChild(assembledTaskList);
+// UI.bindTaskEventListeners(taskList);
+// UI.renderTaskList(taskList, container);

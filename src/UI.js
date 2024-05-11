@@ -25,6 +25,7 @@ export default class UI {
       const checkbox = document.createElement('input');
       checkbox.type = 'checkbox';
       checkbox.id = task.name;
+      checkbox.checked = task.getStatus;
 
       const h3 = document.createElement('h3');
       h3.textContent = task.name;

@@ -1,31 +1,43 @@
+import Storage from "./Storage";
+
 export default class Task {
   constructor(name, description = false, dueDate = false) {
-    this.name = name;
-    this.description = description;
-    this.dueDate = dueDate;
+    this.taskName = name;
+    this.taskDescription = description;
+    this.taskDueDate = dueDate;
+    this.taskComplete = false;
   }
 
-  get getName() {
-    return this.name;
+  // [ ] Rename getters and setters
+  get name() {
+    return this.taskName;
   }
 
-  set setName(name) {
-    this.name = name;
+  set name(name) {
+    this.taskName = name;
   }
 
-  get getDescription() {
-    return this.description;
+  get description() {
+    return this.taskDescription;
   }
 
-  set setDescription(description) {
-    this.description = description;
+  set description(description) {
+    this.taskDescription = description;
   }
 
-  get getDueDate() {
-    return this.dueDate;
+  get dueDate() {
+    return this.taskDueDate;
   }
 
-  set setDueDate(dueDate) {
-    this.dueDate = dueDate;
+  set dueDate(dueDate) {
+    this.taskDueDate = dueDate;
+  }
+
+  get status() {
+    return this.taskComplete;
+  }
+
+  set status(status) {
+    this.taskComplete = status;
   }
 }

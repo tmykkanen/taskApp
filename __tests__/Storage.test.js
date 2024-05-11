@@ -42,10 +42,6 @@ describe('Basic Functions', () => {
     localStorage.clear();
   });
 
-  // test('Local Storage Working', () => {
-  //   console.log(localStorage);
-  // });
-
   test('saveTodoList', () => {
     Storage.saveTodoList(todoList);
     expect(setItemSpy).toHaveBeenCalledWith('todoList', JSON.stringify(todoList));

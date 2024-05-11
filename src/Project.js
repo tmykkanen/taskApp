@@ -4,47 +4,47 @@ export default class Project {
     description = false,
     dueDate = false,
   ) {
-    this.name = name;
-    this.description = description;
-    this.dueDate = dueDate;
-    this.tasks = [];
-    this.taskArchive = [];
+    this.projectName = name;
+    this.projectDescription = description;
+    this.projectDueDate = dueDate;
+    this.projectTasks = [];
+    this.projectTaskArchive = [];
   }
 
-  get getName() {
-    return this.name;
+  get name() {
+    return this.projectName;
   }
 
-  set setName(name) {
-    this.name = name;
+  set name(name) {
+    this.projectName = name;
   }
 
-  get getDescription() {
-    return this.description;
+  get description() {
+    return this.projectDescription;
   }
 
-  set setDescription(description) {
-    this.description = description;
+  set description(description) {
+    this.projectDescription = description;
   }
 
-  get getDueDate() {
-    return this.dueDate;
+  get dueDate() {
+    return this.projectDueDate;
   }
 
-  set setDueDate(dueDate) {
-    this.dueDate = dueDate;
+  set dueDate(dueDate) {
+    this.projectDueDate = dueDate;
   }
 
-  get getAllTasks() {
-    return this.tasks;
+  get tasks() {
+    return this.projectTasks;
   }
 
-  set setAllTasks(taskArray) {
-    this.tasks = taskArray;
+  set tasks(taskArray) {
+    this.projectTasks = taskArray;
   }
 
-  get getTaskArchive() {
-    return this.taskArchive;
+  get taskArchive() {
+    return this.projectTaskArchive;
   }
 
   addTask(newTask) {
@@ -52,11 +52,11 @@ export default class Project {
   }
 
   getTask(name) {
-    return this.tasks.find((task) => task.getName === name);
+    return this.tasks.find((task) => task.name === name);
   }
 
   deleteTask(name) {
-    this.setAllTasks = this.tasks.filter((task) => task.getName !== name);
+    this.tasks = this.tasks.filter((task) => task.name !== name);
   }
 
   archiveTask(name) {

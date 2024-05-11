@@ -9,6 +9,13 @@ describe('Basic Functionality', () => {
     description: 'Task 1 description',
     dueDate: Date.now(),
   };
+
+  const newParams = {
+    name: 'Task 1 Renamed',
+    description: 'Task 1 Redescribed',
+    dueDate: 'New Date',
+  };
+
   test('create Task', () => {
     const task = new Task(params.name, params.description, params.dueDate);
     expect(task.name).toBe(params.name);
@@ -16,28 +23,22 @@ describe('Basic Functionality', () => {
     expect(task.dueDate).toBe(params.dueDate);
   });
 
-  test('check getters + defaults', () => {
+  test('check defaults', () => {
     const task = new Task(params.name);
-    expect(task.getName).toBe(params.name);
-    expect(task.getDescription).toBe(false);
-    expect(task.getDueDate).toBe(false);
+    expect(task.name).toBe(params.name);
+    expect(task.description).toBe(false);
+    expect(task.dueDate).toBe(false);
   });
 
   test('check setters', () => {
     const task = new Task(params.name);
 
-    const newParams = {
-      name: 'Task 1 Renamed',
-      description: 'Task 1 Redescribed',
-      dueDate: 'New Date',
-    };
+    task.name = newParams.name;
+    task.description = newParams.description;
+    task.dueDate = newParams.dueDate;
 
-    task.setName = newParams.name;
-    task.setDescription = newParams.description;
-    task.setDueDate = newParams.dueDate;
-
-    expect(task.getName).toBe(newParams.name);
-    expect(task.getDescription).toBe(newParams.description);
-    expect(task.getDueDate).toBe(newParams.dueDate);
+    expect(task.name).toBe(newParams.name);
+    expect(task.description).toBe(newParams.description);
+    expect(task.dueDate).toBe(newParams.dueDate);
   });
 });

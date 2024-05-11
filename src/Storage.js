@@ -17,14 +17,25 @@ export default class Storage {
       JSON.parse(localStorage.getItem('todoList')),
     );
 
-    todoList.setAllProjects = todoList.getAllProjects
+    todoList.projects = todoList.projects
       .map((proj) => Object.assign(new Project(), proj));
 
-    todoList.getAllProjects.forEach((proj) => {
+    todoList.projects.forEach((proj) => {
       // eslint-disable-next-line no-param-reassign
-      proj.setAllTasks = proj.getAllTasks
+      proj.tasks = proj.tasks
         .map((task) => Object.assign(new Task(), task));
     });
+    return todoList;
+  }
+
+  static init() {
+    if (localStorage.length !== 0) {
+      return this.getTodoList();
+    }
+
+    const todoList = new TodoList();
+    todoList.addProject(new Project('Inbox'));
+    this.saveTodoList(todoList);
     return todoList;
   }
 }

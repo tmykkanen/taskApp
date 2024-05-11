@@ -4,16 +4,16 @@ import Project from './Project';
 
 export default class TodoList {
   constructor() {
-    this.projects = [];
-    // this.projects.push(new Project({ name: 'Inbox' }));
+    this.projectsList = [];
+    this.projectsList.push(new Project({ name: 'Inbox' }));
   }
 
-  get getAllProjects() {
-    return this.projects;
+  get projects() {
+    return this.projectsList;
   }
 
-  set setAllProjects(projectsArray) {
-    this.projects = projectsArray;
+  set projects(projectsArray) {
+    this.projectsList = projectsArray;
   }
 
   addProject(newProject) {
@@ -30,8 +30,8 @@ export default class TodoList {
 
   getTaskParentProject(taskName) {
     // const task = this.getTaskFromAllProjects(taskName);
-    const project = this.getAllProjects
-      .filter((proj) => proj.getAllTasks
+    const project = this.projects
+      .filter((proj) => proj.tasks
         .some((task) => task.name === taskName))
       .pop();
 
@@ -40,7 +40,7 @@ export default class TodoList {
 
   getTaskFromAllProjects(taskName) {
     const parentProject = this.getTaskParentProject(taskName);
-    const task = parentProject.getAllTasks.find((x) => x.name === taskName);
+    const task = parentProject.tasks.find((x) => x.name === taskName);
 
     return { task, parentProject };
   }
