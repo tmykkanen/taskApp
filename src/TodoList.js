@@ -1,6 +1,13 @@
+/* eslint-disable no-console */
 export default class TodoList {
   constructor() {
     this.projects = [];
+  }
+
+  // BUG TEMP
+  // eslint-disable-next-line class-methods-use-this
+  receiveNotification(data) {
+    console.log(`TodoList Notified: ${data}`);
   }
 
   addProject(newProject) {

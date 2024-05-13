@@ -1,4 +1,30 @@
-export default class UIControl {
+/* eslint-disable no-param-reassign */
+/* eslint-disable import/no-named-as-default-member */
+/* eslint-disable import/no-named-as-default */
+import Observable from './Observable';
+
+// [ ] Move consts to static property of class?
+const input = document.querySelector('form.add-task input');
+const btn = document.querySelector('form.add-task button');
+export const observeNewTodos = new Observable();
+
+export class UIControl {
+  // BUG Spaghetti Code
+
+  static run() {
+    this.bindEvents();
+  }
+
+  static bindEvents() {
+    btn.addEventListener('click', (e) => {
+      this.addTaskClickHandler(e);
+    });
+  }
+
+  static addTaskClickHandler() {
+    observeNewTodos.notify(input.value);
+  }
+
   // =================//
   // [ ] Move to UIControl?
   // [ ] event listener to complete todo

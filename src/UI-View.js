@@ -1,79 +1,13 @@
+/* eslint-disable no-console */
 /* eslint-disable import/no-named-as-default-member */
 /* eslint-disable import/no-named-as-default */
-
-const todoListMock = {
-  projects: [
-    {
-      projectName: 'Inbox',
-      projectDescription: 'Inbox Description',
-      projectDueDate: false,
-      projectTasks: [
-        {
-          taskName: 'Task 1 - Inbox',
-          taskDescription: 'Task 1 - Inbox description',
-          taskDueDate: '4/1/23',
-          taskComplete: false,
-        },
-        {
-          taskName: 'Task 2 - Inbox',
-          taskDescription: 'Task 2 - Inbox description',
-          taskDueDate: '3/1/23',
-          taskComplete: false,
-        },
-      ],
-      projectTaskArchive: [],
-    },
-    {
-      projectName: 'Project 1',
-      projectDescription: 'Project 1 Description',
-      projectDueDate: '5/12/24',
-      projectTasks: [
-        {
-          taskName: 'Task 1 - Proj',
-          taskDescription: 'Task 1 description',
-          taskDueDate: '5/1/23',
-          taskComplete: false,
-        },
-        {
-          taskName: 'Task 2 - Proj',
-          taskDescription: 'Task 2 description',
-          taskDueDate: '6/1/23',
-          taskComplete: false,
-        },
-        {
-          taskName: 'Task 4 - Proj',
-          taskDescription: 'Task 4 description',
-          taskDueDate: '7/1/23',
-          taskComplete: true,
-        },
-      ],
-      projectTaskArchive: [
-        {
-          taskName: 'Task 3 - Proj',
-          taskDescription: 'Task 3 description',
-          taskDueDate: '4/1/23',
-          taskComplete: true,
-        },
-      ],
-    },
-  ],
-};
-
 export default class UIView {
-  // DEV HELPER FUNCTION
-  static run() {
-    // console.log('===RUNNING UI===');
-    // console.log(todoListMock.projects[0].projectTasks);
-    const taskListHTML = this.createTaskList(todoListMock.projects[0].projectTasks);
-    const taskContainer = document.querySelector('.main-container ul');
-    this.renderList(taskListHTML, taskContainer);
-    const projectListHTML = this.createProjectList(todoListMock.projects);
-    const projectContainer = document.querySelector('.default-projects-container');
-    this.renderList(projectListHTML, projectContainer);
+  static receiveNotification(data) {
+    console.log(`UIView Notified: ${data}`);
   }
 
-  static createTaskList(taskList) {
-    return taskList.map((task) => {
+  static createTaskList(projectGetAllTasks) {
+    return projectGetAllTasks.map((task) => {
       const {
         taskName,
         taskDescription,
@@ -111,8 +45,8 @@ export default class UIView {
     });
   }
 
-  static createProjectList(projectList) {
-    return projectList.map((project) => {
+  static createProjectList(todoListGetAllProjects) {
+    return todoListGetAllProjects.map((project) => {
       const { projectName } = project;
 
       const li = document.createElement('li');
