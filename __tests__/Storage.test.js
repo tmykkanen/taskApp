@@ -12,7 +12,7 @@ import {
 } from 'vitest';
 import Project from '../src/Project';
 import Task from '../src/Task';
-import TodoList from '../src/TodoList';
+import { TodoList } from '../src/TodoList';
 import Storage from '../src/Storage';
 
 // SETUP

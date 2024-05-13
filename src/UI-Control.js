@@ -20,6 +20,16 @@ export default class UIControl {
     });
   }
 
+  static bindOnCheck() {
+    const checkboxes = document.querySelectorAll('.task-list-item .checkbox');
+    checkboxes.forEach((el) => {
+      el.addEventListener('change', () => {
+        // [ ] left off here
+        console.log('check - modify to notify TodoList of change');
+      });
+    });
+  }
+
   static addTaskClickHandler() {
     const data = [{ taskName: input.value }, 'Project 1'];
     observeNewTodos.notify(data);

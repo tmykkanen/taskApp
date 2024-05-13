@@ -2,10 +2,6 @@
 /* eslint-disable import/no-named-as-default-member */
 /* eslint-disable import/no-named-as-default */
 export default class UIView {
-  static receiveNotification(data) {
-    console.log(`UIView Notified: ${data}`);
-  }
-
   static createTaskList(projectGetAllTasks) {
     return projectGetAllTasks.map((task) => {
       const {
@@ -20,6 +16,7 @@ export default class UIView {
 
       const checkbox = document.createElement('input');
       checkbox.type = 'checkbox';
+      checkbox.classList.add('checkbox');
       checkbox.id = taskName;
       checkbox.checked = taskComplete;
 
@@ -58,8 +55,25 @@ export default class UIView {
   }
 
   static renderList(list, container) {
+    // Empty container
+    let child = container.lastElementChild;
+    while (child) {
+      container.removeChild(child);
+      child = container.lastElementChild;
+    }
+
+    // Populate container
     list.forEach((li) => {
       container.append(li);
     });
   }
 }
+
+// let e = document.querySelector("ul");
+
+//         //e.firstElementChild can be used.
+//         let child = e.lastElementChild;
+//         while (child) {
+//             e.removeChild(child);
+//             child = e.lastElementChild;
+//         }

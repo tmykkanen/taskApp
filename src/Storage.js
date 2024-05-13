@@ -2,7 +2,7 @@
 /* eslint-disable import/no-named-as-default */
 import Project from './Project';
 import Task from './Task';
-import TodoList from './TodoList';
+import { TodoList } from './TodoList';
 
 export default class Storage {
   static saveTodoList(data) {

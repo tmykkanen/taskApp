@@ -1,7 +1,14 @@
+import { observeTodoListUpdate } from './Observers';
+
 /* eslint-disable no-console */
-export default class TodoList {
+export class TodoList {
   constructor() {
     this.projects = [];
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  notify() {
+    observeTodoListUpdate.notify('TodoList Updated');
   }
 
   addProject(newProject) {
@@ -48,3 +55,5 @@ export default class TodoList {
   //   parentProject.deleteTask(taskName);
   // }
 }
+
+export const todoList = new TodoList();

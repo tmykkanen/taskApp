@@ -2,7 +2,7 @@
 /* eslint-disable import/no-named-as-default */
 import { describe, expect, test } from 'vitest';
 import Project from '../src/Project';
-import TodoList from '../src/TodoList';
+import { TodoList } from '../src/TodoList';
 
 // SETUP
 const projParams1 = {
