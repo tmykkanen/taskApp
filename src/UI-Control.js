@@ -1,14 +1,13 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable import/no-named-as-default-member */
 /* eslint-disable import/no-named-as-default */
-import Observable from './Observable';
+import { observeNewTodos } from './Observers';
 
 // [ ] Move consts to static property of class?
 const input = document.querySelector('form.add-task input');
 const btn = document.querySelector('form.add-task button');
-export const observeNewTodos = new Observable();
 
-export class UIControl {
+export default class UIControl {
   // BUG Spaghetti Code
 
   static run() {
@@ -22,7 +21,8 @@ export class UIControl {
   }
 
   static addTaskClickHandler() {
-    observeNewTodos.notify(input.value);
+    const data = [{ taskName: input.value }, 'Project 1'];
+    observeNewTodos.notify(data);
   }
 
   // =================//

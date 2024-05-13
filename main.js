@@ -7,7 +7,8 @@ import Project from './src/Project';
 import Task from './src/Task';
 import UIView from './src/UI-View';
 // import Observable from './src/Observable';
-import { observeNewTodos, UIControl } from './src/UI-Control';
+import UIControl from './src/UI-Control';
+import { observeNewTodos } from './src/Observers';
 
 // NOTE TEST DATA
 const todoList = new TodoList();
@@ -36,7 +37,19 @@ const projectContainer = document.querySelector('.default-projects-container');
 UIView.renderList(projectListHTML, projectContainer);
 
 // BUG UIControl Helper
-observeNewTodos.subcribe(todoList.receiveNotification);
+function handleAddTodo(data) {
+  console.log(`Handler Notified: ${data}`);
+  const task = data[0];
+  console.log(task);
+  const proj = data[1];
+  const targetProject = todoList.getProject(proj);
+  targetProject.addTask(new Task(task));
+  console.log(todoList);
+}
+
+observeNewTodos.subcribe(handleAddTodo);
 observeNewTodos.subcribe(UIView.receiveNotification);
 
 UIControl.run();
+
+console.log(todoList.getProject('Project 1'));

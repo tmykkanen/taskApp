@@ -1,4 +1,4 @@
-export default class Observable {
+export class Observable {
   constructor() {
     this.observers = [];
   }
@@ -15,3 +15,5 @@ export default class Observable {
     this.observers.forEach((observer) => observer(data));
   }
 }
+
+export const observeNewTodos = new Observable();

@@ -4,12 +4,6 @@ export default class TodoList {
     this.projects = [];
   }
 
-  // BUG TEMP
-  // eslint-disable-next-line class-methods-use-this
-  receiveNotification(data) {
-    console.log(`TodoList Notified: ${data}`);
-  }
-
   addProject(newProject) {
     this.projects.push(newProject);
   }
