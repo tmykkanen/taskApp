@@ -1,8 +1,14 @@
 export default class Project {
-  constructor({ projectName, projectDescription = false, projectDueDate = false }) {
+  constructor({
+    projectName,
+    projectDescription = false,
+    projectDueDate = false,
+    projectActive = false,
+  }) {
     this.projectName = projectName;
     this.projectDescription = projectDescription;
     this.projectDueDate = projectDueDate;
+    this.projectActive = projectActive;
     this.projectTasks = [];
     this.projectTaskArchive = [];
   }
@@ -29,6 +35,14 @@ export default class Project {
 
   set dueDate(dueDate) {
     this.projectDueDate = dueDate;
+  }
+
+  get active() {
+    return this.projectActive;
+  }
+
+  set active(bol) {
+    this.projectActive = bol;
   }
 
   addTask(newTask) {

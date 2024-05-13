@@ -1,60 +1,107 @@
 /* eslint-disable no-console */
 /* eslint-disable import/no-named-as-default-member */
 /* eslint-disable import/no-named-as-default */
-export default class UIView {
-  static createTaskList(projectGetAllTasks) {
-    return projectGetAllTasks.map((task) => {
-      const {
-        taskName,
-        taskDescription,
-        taskDueDate,
-        taskComplete,
-      } = task;
+import { DATA } from './TodoList';
 
-      const li = document.createElement('li');
-      li.classList.add('task-list-item', 'collapsed');
-
-      const checkbox = document.createElement('input');
-      checkbox.type = 'checkbox';
-      checkbox.classList.add('checkbox');
-      checkbox.id = taskName;
-      checkbox.checked = taskComplete;
-
-      const h3 = document.createElement('h3');
-      h3.textContent = taskName;
-
-      const pDesc = document.createElement('p');
-      pDesc.classList.add('description');
-      // pDesc.contentEditable = false
-      pDesc.textContent = taskDescription;
-
-      const pDue = document.createElement('p');
-      pDue.classList.add('due-date');
-      pDue.textContent = taskDueDate;
-
-      const btnSetDue = document.createElement('button');
-      btnSetDue.type = 'button';
-      btnSetDue.textContent = 'Set Due Date';
-
-      li.append(checkbox, h3, pDesc, pDue, btnSetDue);
-
-      return li;
-    });
+export default class UI {
+  // ===== LOAD PAGE ===== //
+  // ===================== //
+  static loadHomepage() {
+    const projects = DATA.getAllProjects();
+    const activeProject = DATA.getActiveProject();
+    UI.loadProjects(projects);
+    UI.loadActiveProject(activeProject);
   }
 
-  static createProjectList(todoListGetAllProjects) {
-    return todoListGetAllProjects.map((project) => {
-      const { projectName } = project;
-
-      const li = document.createElement('li');
-      li.classList.add('project-list-item');
-      li.textContent = projectName;
-
-      return li;
-    });
+  static loadProjects(projects) {
+    const projectHTML = projects.map((project) => UI.createProjectItem(project));
+    const projectContainer = document.querySelector('.default-projects-container')
+    UI.renderElements(projectHTML, projectContainer);
   }
 
-  static renderList(list, container) {
+  static loadActiveProject(project) {
+    const headerHTML = UI.createActiveProjectHeader(project);
+    const headerContainer = document.querySelector('.task-list-header');
+    UI.renderElements(headerHTML, headerContainer);
+
+    UI.loadTasks(project);
+  }
+
+  static loadTasks(project) {
+    const tasks = project.getAllTasks();
+    const taskHTML = tasks.map((task) => UI.createTaskItem(task));
+    const tasksContainer = document.querySelector('.main-container ul');
+    UI.renderElements(taskHTML, tasksContainer);
+  }
+  // ===== LOAD END ====== //
+
+  // ===== CREATE ======== //
+  // ===================== //
+  static createProjectItem(project) {
+    const { projectName, projectDescription, projectDueDate } = project;
+
+    const li = document.createElement('li');
+    li.classList.add('project-list-item');
+    li.textContent = projectName;
+
+    return li;
+  }
+
+  static createActiveProjectHeader(project) {
+    const { projectName } = project;
+
+    const h2 = document.createElement('h2');
+    h2.textContent = projectName;
+
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.classList.add('add-project');
+    btn.textContent = '+ New Project';
+
+    return [h2, btn];
+  }
+
+  static createTaskItem(task) {
+    const {
+      taskName,
+      taskDescription,
+      taskDueDate,
+      taskComplete,
+    } = task;
+    const li = document.createElement('li');
+    li.classList.add('task-list-item', 'collapsed');
+
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.classList.add('checkbox');
+    checkbox.id = taskName;
+    checkbox.checked = taskComplete;
+
+    const h3 = document.createElement('h3');
+    h3.textContent = taskName;
+
+    const pDesc = document.createElement('p');
+    pDesc.classList.add('description');
+    // pDesc.contentEditable = false
+    pDesc.textContent = taskDescription;
+
+    const pDue = document.createElement('p');
+    pDue.classList.add('due-date');
+    pDue.textContent = taskDueDate;
+
+    const btnSetDue = document.createElement('button');
+    btnSetDue.type = 'button';
+    btnSetDue.textContent = 'Set Due Date';
+
+    li.append(checkbox, h3, pDesc, pDue, btnSetDue);
+
+    return li;
+  }
+  // ===== CREATE END ==== //
+
+  // ===== RENDER ======== //
+  // ===================== //
+  static renderElements(elements, container) {
     // Empty container
     let child = container.lastElementChild;
     while (child) {
@@ -63,17 +110,9 @@ export default class UIView {
     }
 
     // Populate container
-    list.forEach((li) => {
-      container.append(li);
+    elements.forEach((el) => {
+      container.append(el);
     });
   }
 }
-
-// let e = document.querySelector("ul");
-
-//         //e.firstElementChild can be used.
-//         let child = e.lastElementChild;
-//         while (child) {
-//             e.removeChild(child);
-//             child = e.lastElementChild;
-//         }
+// ===== RENDER END ==== //
