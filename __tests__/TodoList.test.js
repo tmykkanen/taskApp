@@ -1,88 +1,28 @@
 /* eslint-disable import/no-named-as-default-member */
 /* eslint-disable import/no-named-as-default */
-import {
-  assert,
-  describe,
-  expect,
-  test,
-} from 'vitest';
-import TodoList from '../src/TodoList';
+import { describe, expect, test } from 'vitest';
 import Project from '../src/Project';
-import Task from '../src/Task';
+import TodoList from '../src/TodoList';
 
-describe('Basic functions', () => {
-  const ProjParams1 = {
-    name: 'Proj 1',
-    description: 'Proj 1 description',
-    dueDate: Date.now(),
-  };
+// SETUP
+const projParams1 = {
+  projectName: 'Project 1',
+  description: 'Project 1 Desc',
+  dueDate: '5/12/24',
+};
 
-  test('add project', () => {
-    const list = new TodoList();
-    list.addProject(new Project(ProjParams1.name));
-    assert.lengthOf(list.projects, 2, 'array is 2');
-  });
+describe('Basic Functions', () => {
+  test('addProject + getProject + getAllProjects + deleteProject', () => {
+    const todoList = new TodoList();
 
-  test('get project', () => {
-    const list = new TodoList();
-    list.addProject(new Project(ProjParams1.name));
+    expect(todoList.getAllProjects().length).toBe(0);
 
-    expect(list.getProject(ProjParams1.name).name).toBe(ProjParams1.name);
-  });
-});
+    todoList.addProject(new Project(projParams1));
+    expect(todoList.getAllProjects().length).toBe(1);
 
-describe('Advanced Function', () => {
-  const ProjParams1 = {
-    name: 'Proj 1',
-    description: 'Proj 1 description',
-    dueDate: Date.now(),
-  };
-  const ProjParams2 = { name: 'Proj 2' };
-  const TaskParams1 = { name: 'Task 1' };
-  const TaskParams2 = { name: 'Task 2' };
+    expect(todoList.getProject(projParams1.projectName).name).toBe(projParams1.projectName);
 
-  test('Get Task From All Projects', () => {
-    const data = new TodoList();
-
-    data.addProject(new Project(ProjParams1.name));
-    data.addProject(new Project(ProjParams2.name));
-    const proj1 = data.getProject(ProjParams1.name);
-
-    proj1.addTask(new Task(TaskParams1.name));
-    proj1.addTask(new Task(TaskParams2.name));
-
-    expect(data.getTaskFromAllProjects(TaskParams1.name).task.name).toBe(TaskParams1.name);
-  });
-
-  test('GetTaskParentProject', () => {
-    const data = new TodoList();
-
-    data.addProject(new Project(ProjParams1.name));
-    data.addProject(new Project(ProjParams2.name));
-    const proj1 = data.getProject(ProjParams1.name);
-    const proj2 = data.getProject(ProjParams2.name);
-
-    proj1.addTask(new Task(TaskParams1.name));
-    proj2.addTask(new Task(TaskParams2.name));
-
-    expect(data.getTaskParentProject(TaskParams2.name)).toBe(proj2);
-  });
-
-  test('Move Task from one project to another', () => {
-    const data = new TodoList();
-
-    data.addProject(new Project(ProjParams1.name));
-    data.addProject(new Project(ProjParams2.name));
-
-    const proj1 = data.getProject(ProjParams1.name);
-    const proj2 = data.getProject(ProjParams2.name);
-
-    proj1.addTask(new Task(TaskParams1.name));
-    proj1.addTask(new Task(TaskParams2.name));
-
-    data.moveTask(TaskParams1.name, ProjParams2.name);
-
-    expect(proj2.getTask(TaskParams1.name).name).toBe(TaskParams1.name);
-    expect(proj1.getTask(TaskParams1.name)).toBe(undefined);
+    todoList.deleteProject(projParams1.projectName);
+    expect(todoList.getAllProjects().length).toBe(0);
   });
 });

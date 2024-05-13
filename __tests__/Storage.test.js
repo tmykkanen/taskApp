@@ -10,32 +10,33 @@ import {
   vi,
   afterEach,
 } from 'vitest';
-import TodoList from '../src/TodoList';
 import Project from '../src/Project';
 import Task from '../src/Task';
+import TodoList from '../src/TodoList';
 import Storage from '../src/Storage';
 
-// Guide for testing local storage
-// https://runthatline.com/vitest-mock-localstorage/
+// SETUP
+const todoList = new TodoList();
+
+const projParams1 = {
+  projectName: 'Project 1',
+  projectDescription: 'Project 1 Desc',
+  projectDueDate: '5/12/24',
+};
+todoList.addProject(new Project(projParams1));
+const proj1 = todoList.getProject(projParams1.projectName);
+
+const taskParams1 = {
+  taskName: 'Task 1',
+  taskDescription: 'Task 1 Desc',
+  taskDueDate: '5/12/24',
+};
+proj1.addTask(new Task(taskParams1));
+
+const getItemSpy = vi.spyOn(localStorage, 'getItem');
+const setItemSpy = vi.spyOn(localStorage, 'setItem');
 
 describe('Basic Functions', () => {
-  // SETUP
-  const todoList = new TodoList();
-  const ProjParams1 = { name: 'Proj 1' };
-  const ProjParams2 = { name: 'Proj 2' };
-  const TaskParams1 = { name: 'Task 1' };
-  const TaskParams2 = { name: 'Task 2' };
-
-  todoList.addProject(new Project(ProjParams1.name));
-  todoList.addProject(new Project(ProjParams2.name));
-  const proj1 = todoList.getProject(ProjParams1.name);
-
-  proj1.addTask(new Task(TaskParams1.name));
-  proj1.addTask(new Task(TaskParams2.name));
-
-  const getItemSpy = vi.spyOn(localStorage, 'getItem');
-  const setItemSpy = vi.spyOn(localStorage, 'setItem');
-
   afterEach(() => {
     getItemSpy.mockClear();
     setItemSpy.mockClear();
@@ -44,12 +45,14 @@ describe('Basic Functions', () => {
 
   test('saveTodoList', () => {
     Storage.saveTodoList(todoList);
+    expect(localStorage.getItem('todoList')).toBe(JSON.stringify(todoList));
     expect(setItemSpy).toHaveBeenCalledWith('todoList', JSON.stringify(todoList));
   });
 
-  test('Test saveTodoList + getTodoList', () => {
+  test('getTodoList', () => {
     Storage.saveTodoList(todoList);
-    expect(Storage.getTodoList()).toStrictEqual(todoList);
+    const todoList2 = Storage.getTodoList();
+    expect(todoList2).toStrictEqual(todoList);
     expect(getItemSpy).toHaveBeenCalledWith('todoList');
   });
 });

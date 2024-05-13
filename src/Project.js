@@ -1,12 +1,8 @@
 export default class Project {
-  constructor(
-    name,
-    description = false,
-    dueDate = false,
-  ) {
-    this.projectName = name;
-    this.projectDescription = description;
-    this.projectDueDate = dueDate;
+  constructor({ projectName, projectDescription = false, projectDueDate = false }) {
+    this.projectName = projectName;
+    this.projectDescription = projectDescription;
+    this.projectDueDate = projectDueDate;
     this.projectTasks = [];
     this.projectTaskArchive = [];
   }
@@ -35,32 +31,38 @@ export default class Project {
     this.projectDueDate = dueDate;
   }
 
-  get tasks() {
-    return this.projectTasks;
-  }
-
-  set tasks(taskArray) {
-    this.projectTasks = taskArray;
-  }
-
-  get taskArchive() {
-    return this.projectTaskArchive;
-  }
-
   addTask(newTask) {
-    this.tasks.push(newTask);
+    this.projectTasks.push(newTask);
   }
 
   getTask(name) {
-    return this.tasks.find((task) => task.name === name);
+    return this.projectTasks.find((task) => task.name === name);
   }
 
   deleteTask(name) {
-    this.tasks = this.tasks.filter((task) => task.name !== name);
+    this.projectTasks = this.projectTasks.filter((task) => task.name !== name);
+  }
+
+  getAllTasks() {
+    return this.projectTasks;
+  }
+
+  setAllTasks(tasks) {
+    this.projectTasks = tasks;
   }
 
   archiveTask(name) {
-    this.taskArchive.push(this.getTask(name));
+    this.projectTaskArchive.push(
+      this.getTask(name),
+    );
     this.deleteTask(name);
+  }
+
+  getProjectTaskArchive() {
+    return this.projectTaskArchive;
+  }
+
+  setProjectTaskArchive(archive) {
+    this.projectTaskArchive = archive;
   }
 }

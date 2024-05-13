@@ -1,14 +1,11 @@
-import Storage from "./Storage";
-
 export default class Task {
-  constructor(name, description = false, dueDate = false) {
-    this.taskName = name;
-    this.taskDescription = description;
-    this.taskDueDate = dueDate;
+  constructor({ taskName = '', taskDescription = false, taskDueDate = false }) {
+    this.taskName = taskName;
+    this.taskDescription = taskDescription;
+    this.taskDueDate = taskDueDate;
     this.taskComplete = false;
   }
 
-  // [ ] Rename getters and setters
   get name() {
     return this.taskName;
   }

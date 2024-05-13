@@ -1,19 +1,6 @@
-/* eslint-disable import/no-named-as-default-member */
-/* eslint-disable import/no-named-as-default */
-import Project from './Project';
-
 export default class TodoList {
   constructor() {
-    this.projectsList = [];
-    this.projectsList.push(new Project({ name: 'Inbox' }));
-  }
-
-  get projects() {
-    return this.projectsList;
-  }
-
-  set projects(projectsArray) {
-    this.projectsList = projectsArray;
+    this.projects = [];
   }
 
   addProject(newProject) {
@@ -21,36 +8,42 @@ export default class TodoList {
   }
 
   getProject(name) {
-    return this.projects.find((proj) => proj.name === name);
+    return this.projects.find((project) => project.name === name);
   }
 
   deleteProject(name) {
-    this.projects = this.projects.filter((proj) => proj.name !== name);
+    this.projects = this.projects.filter((project) => project.name !== name);
   }
 
-  getTaskParentProject(taskName) {
-    // const task = this.getTaskFromAllProjects(taskName);
-    const project = this.projects
-      .filter((proj) => proj.tasks
-        .some((task) => task.name === taskName))
-      .pop();
-
-    return project;
+  getAllProjects() {
+    return this.projects;
   }
 
-  getTaskFromAllProjects(taskName) {
-    const parentProject = this.getTaskParentProject(taskName);
-    const task = parentProject.tasks.find((x) => x.name === taskName);
-
-    return { task, parentProject };
+  setAllProjects(projects) {
+    this.projects = projects;
   }
 
-  moveTask(taskName, targetProjectName) {
-    // Find Task + Parent project
-    const { task, parentProject } = this.getTaskFromAllProjects(taskName);
-    const targetProject = this.getProject(targetProjectName);
+  // [ ] Do I need these functions, or should TodoList not interact with project tasks?
+  // Consider using https://www.patterns.dev/vanilla/mediator-pattern
+  // getTaskParentProject(taskName) {
+  //   return this.projects
+  //     .filter((project) => project.getAllTasks()
+  //       .some((task) => task.name === taskName));
+  //   // add .pop() to filter out empty projs?
+  // }
 
-    targetProject.addTask(task);
-    parentProject.deleteTask(taskName);
-  }
+  // getTaskFromAllProjects(taskName) {
+  //   const parentProject = this.getTaskParentProject(taskName);
+  //   const targetTask = parentProject.getAllTasks()
+  //     .find((task) => task.name === taskName);
+  //   return { targetTask, parentProject };
+  // }
+
+  // moveTask(taskName, targetProjectName) {
+  //   const { task, parentProject } = this.getTaskFromAllProjects(taskName);
+  //   const targetProject = this.getProject(targetProjectName);
+
+  //   targetProject.addTask(task);
+  //   parentProject.deleteTask(taskName);
+  // }
 }

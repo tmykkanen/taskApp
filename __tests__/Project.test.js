@@ -1,114 +1,92 @@
 /* eslint-disable import/no-named-as-default-member */
 /* eslint-disable import/no-named-as-default */
-import {
-  describe,
-  expect,
-  test,
-  assert,
-} from 'vitest';
-import Task from '../src/Task';
+import { describe, expect, test } from 'vitest';
 import Project from '../src/Project';
+import Task from '../src/Task';
 
-describe('Basic Functionality', () => {
-  const projParams = {
-    name: 'Proj 1',
-    description: 'Proj 1 description',
-    dueDate: Date.now(),
-  };
+// SETUP
+const projParams1 = {
+  projectName: 'Project 1',
+  projectDescription: 'Project 1 Desc',
+  projectDueDate: '5/12/24',
+};
 
-  const newProjParams = {
-    name: 'Renamed',
-    description: 'Redescribed',
-    dueDate: 'New Date',
-  };
+const projParams2 = {
+  projectName: 'Project 2',
+  projectDescription: 'Project 2 Desc',
+  projectDueDate: '5/11/24',
+};
 
-  const taskParams1 = {
-    name: 'Todo 1',
-    description: 'Todo 1 Desc',
-    dueDate: Date.now(),
-  };
-  const taskParams2 = {
-    name: 'Todo 2',
-    description: 'Todo 2 Desc',
-    dueDate: Date.now(),
-  };
+const projParamsDefaults = {
+  projectName: 'Project 2',
+};
 
-  test('create Project', () => {
-    const proj = new Project(projParams.name, projParams.description, projParams.dueDate);
+const taskParams1 = {
+  taskName: 'Task 1',
+  taskDescription: 'Task 1 Desc',
+  taskDueDate: '5/12/24',
+};
 
-    expect(proj.name).toBe(projParams.name);
-    expect(proj.description).toBe(projParams.description);
-    expect(proj.dueDate).toBe(projParams.dueDate);
+const taskParams2 = {
+  taskName: 'Task 2',
+  taskDescription: 'Task 2 Desc',
+  taskDueDate: '5/11/24',
+};
+
+describe('Basic Functions', () => {
+  test('getter + setter', () => {
+    const proj = new Project(projParams1);
+
+    expect(proj.name).toBe(projParams1.projectName);
+    expect(proj.description).toBe(projParams1.projectDescription);
+    expect(proj.dueDate).toBe(projParams1.projectDueDate);
+
+    proj.name = projParams2.projectName;
+    proj.description = projParams2.projectDescription;
+    proj.dueDate = projParams2.projectDueDate;
+
+    expect(proj.name).toBe(projParams2.projectName);
+    expect(proj.description).toBe(projParams2.projectDescription);
+    expect(proj.dueDate).toBe(projParams2.projectDueDate);
   });
 
-  test('Project getters + defaults', () => {
-    const proj = new Project(projParams.name);
+  test('defaults', () => {
+    const proj = new Project(projParamsDefaults);
 
-    expect(proj.name).toBe(projParams.name);
+    expect(proj.name).toBe(projParamsDefaults.projectName);
     expect(proj.description).toBe(false);
     expect(proj.dueDate).toBe(false);
   });
-
-  test('Project setters', () => {
-    const proj = new Project(projParams.name);
-
-    proj.name = newProjParams.name;
-    proj.description = newProjParams.description;
-    proj.dueDate = newProjParams.dueDate;
-
-    expect(proj.name).toBe(newProjParams.name);
-    expect(proj.description).toBe(newProjParams.description);
-    expect(proj.dueDate).toBe(newProjParams.dueDate);
-  });
-
-  test('create Task in Project + getTask + getAllTasks', () => {
-    const proj = new Project(projParams.name);
-
-    proj.addTask(new Task(taskParams1.name));
-    proj.addTask(new Task(taskParams2.name));
-
-    const allTasks = proj.tasks;
-    const targetTask = proj.getTask(taskParams1.name);
-    expect(targetTask.name).toBe(taskParams1.name);
-    assert.lengthOf(allTasks, 2, 'Two tasks in array');
-  });
-
-  test('delete task', () => {
-    const proj = new Project(projParams.name);
-
-    proj.addTask(new Task(taskParams1.name));
-    proj.addTask(new Task(taskParams2.name));
-
-    proj.deleteTask(taskParams1.name);
-
-    const allTasks = proj.tasks;
-    assert.lengthOf(allTasks, 1, 'One task in array');
-  });
 });
 
-describe('Advanced Functionailty', () => {
-  const projParams = {
-    name: 'Proj 1',
-    description: 'Proj 1 description',
-    dueDate: Date.now(),
-  };
+describe('Task Manipulation', () => {
+  test('addTask + getTask + getAllTasks + deleteTask', () => {
+    const proj = new Project(projParams1);
+    proj.addTask(new Task(taskParams1));
+    proj.addTask(new Task(taskParams2));
 
-  const taskParams1 = {
-    name: 'Todo 1',
-    description: 'Todo 1 Desc',
-    dueDate: Date.now(),
-  };
+    expect(proj.getAllTasks().length).toBe(2);
+    expect(proj.getTask(taskParams1.taskName).name).toBe(taskParams1.taskName);
 
-  test('move completed task to project archive + read from archive', () => {
-    const proj = new Project(projParams.name);
+    proj.deleteTask(taskParams1.taskName);
+    expect(proj.getAllTasks().length).toBe(1);
+  });
 
-    proj.addTask(new Task(taskParams1.name));
+  test('archiveTask + get/set ProjectTaskArchive', () => {
+    const proj = new Project(projParams1);
+    proj.addTask(new Task(taskParams1));
+    proj.addTask(new Task(taskParams2));
 
-    proj.archiveTask(taskParams1.name);
+    proj.archiveTask(taskParams1.taskName);
 
-    assert.lengthOf(proj.tasks, 0, 'No task in array');
-    assert.lengthOf(proj.taskArchive, 1, 'One task in archive');
+    expect(proj.getAllTasks().length).toBe(1);
+    expect(proj.getAllTasks()[0].name).toBe(taskParams2.taskName);
+    expect(proj.getProjectTaskArchive().length).toBe(1);
+    expect(proj.getProjectTaskArchive()[0].name).toBe(taskParams1.taskName);
 
-    expect(proj.taskArchive[0].name).toBe(taskParams1.name);
+    const archive = new Project(projParams2);
+    archive.setProjectTaskArchive(proj.getAllTasks());
+    expect(archive.getProjectTaskArchive().length).toBe(1);
+    expect(archive.getProjectTaskArchive()[0].taskName).toBe(taskParams2.taskName);
   });
 });
