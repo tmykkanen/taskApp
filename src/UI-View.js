@@ -1,7 +1,16 @@
 /* eslint-disable no-console */
 /* eslint-disable import/no-named-as-default-member */
 /* eslint-disable import/no-named-as-default */
+import { obsAddProjectBtn } from './Observers';
 import { DATA } from './TodoList';
+import Control from './UI-Control';
+
+const projectContainer = document.querySelector('.default-projects-container ul');
+const taskListHeaderContainer = document.querySelector('.task-list-header');
+const tasksContainer = document.querySelector('.main-container ul');
+const addProjectModal = document.querySelector('.add-project-modal');
+const addProjectSubmit = document.querySelector('.add-project-modal .submit');
+const addProjectCancel = document.querySelector('.add-project-modal .cancel');
 
 export default class UI {
   // ===== LOAD PAGE ===== //
@@ -15,14 +24,13 @@ export default class UI {
 
   static loadProjects(projects) {
     const projectHTML = projects.map((project) => UI.createProjectItem(project));
-    const projectContainer = document.querySelector('.default-projects-container')
     UI.renderElements(projectHTML, projectContainer);
+    UI.initButtonAddProject();
   }
 
   static loadActiveProject(project) {
     const headerHTML = UI.createActiveProjectHeader(project);
-    const headerContainer = document.querySelector('.task-list-header');
-    UI.renderElements(headerHTML, headerContainer);
+    UI.renderElements(headerHTML, taskListHeaderContainer);
 
     UI.loadTasks(project);
   }
@@ -30,7 +38,6 @@ export default class UI {
   static loadTasks(project) {
     const tasks = project.getAllTasks();
     const taskHTML = tasks.map((task) => UI.createTaskItem(task));
-    const tasksContainer = document.querySelector('.main-container ul');
     UI.renderElements(taskHTML, tasksContainer);
   }
   // ===== LOAD END ====== //
@@ -38,7 +45,7 @@ export default class UI {
   // ===== CREATE ======== //
   // ===================== //
   static createProjectItem(project) {
-    const { projectName, projectDescription, projectDueDate } = project;
+    const { projectName } = project;
 
     const li = document.createElement('li');
     li.classList.add('project-list-item');
@@ -82,7 +89,6 @@ export default class UI {
 
     const pDesc = document.createElement('p');
     pDesc.classList.add('description');
-    // pDesc.contentEditable = false
     pDesc.textContent = taskDescription;
 
     const pDue = document.createElement('p');
@@ -99,6 +105,26 @@ export default class UI {
   }
   // ===== CREATE END ==== //
 
+  // ===== LISTENERS ===== //
+  // ===================== //
+  static initButtonAddProject() {
+    const btn = document.createElement('button');
+    btn.classList.add('add-project');
+    btn.type = 'button';
+    btn.textContent = '+ New Project';
+
+    projectContainer.append(btn);
+
+    btn.addEventListener('click', () => addProjectModal.showModal());
+
+    addProjectCancel.addEventListener('click', () => addProjectModal.close());
+
+    addProjectSubmit.addEventListener('click', (e) => {
+      Control.handleAddProject(e);
+    });
+  }
+  // ===== LISTENER END == //
+
   // ===== RENDER ======== //
   // ===================== //
   static renderElements(elements, container) {
@@ -114,5 +140,5 @@ export default class UI {
       container.append(el);
     });
   }
+  // ===== RENDER END ==== //
 }
-// ===== RENDER END ==== //

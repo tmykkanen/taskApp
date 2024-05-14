@@ -14,9 +14,19 @@
             <li class="project-list-item">Inbox</li>
             <li class="project-list-item">Today</li>
             <li class="project-list-item">Upcoming</li>
-            -->
             <button class="add-project" type="button">+ New Project</button>
+            -->
           </ul>
+          <dialog class="add-project-modal">
+            <form action="" method="get">
+              <h3>Add Project</h3>
+              <input type="text" class="input" id="name" placeholder="Project Name">
+              <input type="text" class="input" id="description" placeholder="Description">
+              <input type="text" class="input" id="dueDate" placeholder="Due Date">
+              <button type="submit" class="submit button">Submit</button>
+              <button type="button" autofocus class="cancel button">Cancel</button>
+            </form>
+          </dialog>
         </div>
         <!--
         <div class="custom-projects-container">
@@ -49,6 +59,16 @@
           </li>   
           -->
         </ul>
+        <dialog class="add-task-modal">
+          <form action="" method="get">
+            <h3>Add Task</h3>
+            <input type="text" id="name" placeholder="Task Name">
+            <input type="text" id="description" placeholder="Description">
+            <input type="text" id="dueDate" placeholder="Due Date">
+            <button type="submit" class="submit button">Submit</button>
+            <button type="button" autofocus class="cancel button">Cancel</button>
+          </form>
+        </dialog>
       </div>
     </div>
     <script type="module" src="/main.js"></script>

@@ -18,3 +18,4 @@ export class Observable {
 
 export const observeNewTodos = new Observable();
 export const observeTodoListUpdate = new Observable();
+export const obsAddProjectBtn = new Observable();
