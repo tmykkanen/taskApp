@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 /* eslint-disable import/no-named-as-default-member */
 /* eslint-disable import/no-named-as-default */
-import { obsAddProjectBtn } from './Observers';
+import { obsAddProjectBtn, observeTodoListUpdate } from './Observers';
 import { DATA } from './TodoList';
 import Control from './UI-Control';
 
@@ -142,3 +142,5 @@ export default class UI {
   }
   // ===== RENDER END ==== //
 }
+
+observeTodoListUpdate.subcribe(UI.loadHomepage);

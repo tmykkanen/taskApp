@@ -2,15 +2,22 @@
 /* eslint-disable import/no-named-as-default-member */
 /* eslint-disable import/no-named-as-default */
 
+import { obsAddProjectBtn, observeTodoListUpdate } from "./Observers";
+import { DATA } from "./TodoList";
+import Project from "./Project";
+
 export default class Control {
   static handleAddProject(e) {
     e.preventDefault();
-    const modalForm = document.querySelector('.add-project-modal form');
-    const formData = modalForm.getElementsByClassName('input');
-    console.log(modalForm.getElementsByClassName('input'));
     console.log('handleAddProject');
-    console.log('submit new proj');
-    console.log(e);
+    const modalForm = document.querySelector('.add-project-modal form');
+    let formData = Array.from(modalForm.getElementsByClassName('input'));
+    let formDataParsed = formData.reduce((obj, item) => ({ ...obj, [item.name]: item.value }), {});
+    console.log(formDataParsed);
+    DATA.addProject(new Project(formDataParsed));
+    // BUG When clicked multiple times, fires exponentially more instances
+    observeTodoListUpdate.notify([]);
+    console.log(DATA);
   }
 }
 

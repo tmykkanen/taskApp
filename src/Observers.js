@@ -12,6 +12,7 @@ export class Observable {
   }
 
   notify(data) {
+    console.log('obs fired');
     this.observers.forEach((observer) => observer(data));
   }
 }

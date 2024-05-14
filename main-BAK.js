@@ -8,7 +8,6 @@ import Task from './src/Task';
 import UIView from './src/UI-View';
 // import Observable from './src/Observable';
 import UIControl from './src/UI-Control';
-import { observeNewTodos, observeTodoListUpdate } from './src/Observers';
 
 // NOTE BEGIN RENDER
 
@@ -19,8 +18,6 @@ function handleTodoUpdate(data) {
   UIViewWrapper();
   UIControl.bindOnCheck();
 }
-
-observeTodoListUpdate.subcribe(handleTodoUpdate);
 
 
 // BUG UIControl Helper

@@ -1,6 +1,6 @@
 /* eslint-disable import/no-named-as-default-member */
 /* eslint-disable import/no-named-as-default */
-import { observeTodoListUpdate } from './Observers';
+import { obsAddProjectBtn } from './Observers';
 import Project from './Project';
 import Task from './Task';
 
@@ -8,11 +8,6 @@ import Task from './Task';
 export class TodoList {
   constructor() {
     this.projects = [];
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  notify() {
-    observeTodoListUpdate.notify('TodoList Updated');
   }
 
   addProject(newProject) {
@@ -64,6 +59,7 @@ export class TodoList {
   // }
 }
 
+// DATA
 export const DATA = new TodoList();
 const projParams1 = { projectName: 'Project 1', projectDescription: 'Project 1 Desc', projectDueDate: '5/12/24' };
 const projParams2 = { projectName: 'Project 2', projectDescription: 'Project 2 Desc', projectDueDate: '5/9/24' };
@@ -80,3 +76,6 @@ const taskParams3 = { taskName: 'Task 3' };
 proj1.addTask(new Task(taskParams1));
 proj1.addTask(new Task(taskParams2));
 proj1.addTask(new Task(taskParams3));
+
+// SUBSCRIPTIONS
+obsAddProjectBtn.subcribe(console.log);
