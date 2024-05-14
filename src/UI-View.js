@@ -1,9 +1,7 @@
 /* eslint-disable no-console */
 /* eslint-disable import/no-named-as-default-member */
 /* eslint-disable import/no-named-as-default */
-import { obsAddProjectBtn, observeTodoListUpdate } from './Observers';
 import { DATA } from './TodoList';
-import Control from './UI-Control';
 
 const projectContainer = document.querySelector('.default-projects-container ul');
 const taskListHeaderContainer = document.querySelector('.task-list-header');
@@ -11,33 +9,38 @@ const tasksContainer = document.querySelector('.main-container ul');
 const addProjectModal = document.querySelector('.add-project-modal');
 const addProjectSubmit = document.querySelector('.add-project-modal .submit');
 const addProjectCancel = document.querySelector('.add-project-modal .cancel');
+const addTaskModal = document.querySelector('.add-task-modal');
+const addTaskSubmit = document.querySelector('.add-task-modal .submit');
+const addTaskCancel = document.querySelector('.add-task-modal .cancel');
 
 export default class UI {
   // ===== LOAD PAGE ===== //
   // ===================== //
   static loadHomepage() {
-    const projects = DATA.getAllProjects();
+    UI.loadProjectsSidebar();
+    UI.loadActiveProject();
+  }
+
+  static loadProjectsSidebar() {
+    const allProjects = DATA.getAllProjects();
+    const projectHTML = allProjects.map((project) => UI.createProjectItem(project));
+    const addProjectBtn = UI.initAddProjectButton();
+    UI.initAddProjectModal();
+    UI.renderElements([projectHTML, addProjectBtn], projectContainer);
+  }
+
+  static loadActiveProject() {
     const activeProject = DATA.getActiveProject();
-    UI.loadProjects(projects);
-    UI.loadActiveProject(activeProject);
+    const headerHTML = UI.createActiveProjectHeader(activeProject);
+    const addTaskBtn = UI.initAddTaskBtn();
+    UI.initAddTaskModal();
+    UI.renderElements([headerHTML, addTaskBtn], taskListHeaderContainer);
+    UI.loadTasks(activeProject);
   }
 
-  static loadProjects(projects) {
-    const projectHTML = projects.map((project) => UI.createProjectItem(project));
-    UI.renderElements(projectHTML, projectContainer);
-    UI.initButtonAddProject();
-  }
-
-  static loadActiveProject(project) {
-    const headerHTML = UI.createActiveProjectHeader(project);
-    UI.renderElements(headerHTML, taskListHeaderContainer);
-
-    UI.loadTasks(project);
-  }
-
-  static loadTasks(project) {
-    const tasks = project.getAllTasks();
-    const taskHTML = tasks.map((task) => UI.createTaskItem(task));
+  static loadTasks(activeProject) {
+    const activeProjectTasks = activeProject.getAllTasks();
+    const taskHTML = activeProjectTasks.map((task) => UI.createTaskItem(task));
     UI.renderElements(taskHTML, tasksContainer);
   }
   // ===== LOAD END ====== //
@@ -54,18 +57,13 @@ export default class UI {
     return li;
   }
 
-  static createActiveProjectHeader(project) {
-    const { projectName } = project;
+  static createActiveProjectHeader(activeProject) {
+    const { projectName } = activeProject;
 
     const h2 = document.createElement('h2');
     h2.textContent = projectName;
 
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.classList.add('add-project');
-    btn.textContent = '+ New Project';
-
-    return [h2, btn];
+    return h2;
   }
 
   static createTaskItem(task) {
@@ -99,30 +97,64 @@ export default class UI {
     btnSetDue.type = 'button';
     btnSetDue.textContent = 'Set Due Date';
 
+    UI.initSetDueDateBtn(btnSetDue);
+
     li.append(checkbox, h3, pDesc, pDue, btnSetDue);
 
     return li;
+  }
+
+  static createBtn(className, textContent) {
+    const btn = document.createElement('button');
+    btn.classList.add(className);
+    btn.type = 'button';
+    btn.textContent = textContent;
+    return btn;
   }
   // ===== CREATE END ==== //
 
   // ===== LISTENERS ===== //
   // ===================== //
-  static initButtonAddProject() {
-    const btn = document.createElement('button');
-    btn.classList.add('add-project');
-    btn.type = 'button';
-    btn.textContent = '+ New Project';
-
-    projectContainer.append(btn);
-
+  static initAddProjectButton() {
+    // [ ] Refactor into simple function with parameters to combine addTask + addProject creation
+    const btn = UI.createBtn('add-project', '+ New Project');
     btn.addEventListener('click', () => addProjectModal.showModal());
+    return btn;
+  }
 
+  static initAddProjectModal() {
     addProjectCancel.addEventListener('click', () => addProjectModal.close());
 
-    addProjectSubmit.addEventListener('click', (e) => {
-      Control.handleAddProject(e);
+    addProjectSubmit.addEventListener('click', () => {
+      // [ ] Add addProject Handler
+      // Control.handleAddProject(e);
+      console.log('handler needed');
     });
   }
+
+  static initAddTaskBtn() {
+    const btn = UI.createBtn('add-task', '+ New Task');
+    btn.addEventListener('click', () => addTaskModal.showModal());
+    return btn;
+  }
+
+  static initAddTaskModal() {
+    addTaskCancel.addEventListener('click', () => addTaskModal.close());
+
+    addTaskSubmit.addEventListener('click', () => {
+      // [ ] Add addTask Handler
+      console.log('handler needed');
+    });
+  }
+
+  static initTaskItemInteraction() {
+
+  }
+
+  static initSetDueDateBtn(btn) {
+    btn.addEventListener('click', () => console.log('set due'));
+  }
+
   // ===== LISTENER END == //
 
   // ===== RENDER ======== //
@@ -134,13 +166,14 @@ export default class UI {
       container.removeChild(child);
       child = container.lastElementChild;
     }
-
+    console.log(elements);
     // Populate container
-    elements.forEach((el) => {
-      container.append(el);
-    });
+    if (!Array.isArray(elements)) return container.append(elements);
+    elements
+      .flat()
+      .forEach((el) => {
+        container.append(el);
+      });
   }
   // ===== RENDER END ==== //
 }
-
-observeTodoListUpdate.subcribe(UI.loadHomepage);
