@@ -7,20 +7,56 @@ import { DATA } from './TodoList';
 import Project from './Project';
 import Task from './Task';
 
-export function handleCompleteTaskCheckbox(e) {
-  // [ ] Merge checkbox handler with edit task handler
-  // NOTE Accidentally wrote handler for whole task edit
-  handleEditTask(e);
+export function handleEditOnDblClick(sourceEvent, container, editableElements) {
+  const enableEditable = () => {
+    container.classList.add('expanded');
+    // eslint-disable-next-line no-return-assign, no-param-reassign
+    editableElements.forEach((element) => element.contentEditable = true);
+  };
+
+  const disableEditable = () => {
+    container.classList.remove('expanded');
+    // eslint-disable-next-line no-return-assign, no-param-reassign
+    editableElements.forEach((element) => element.contentEditable = false);
+  };
+
+  const clickAwayCallback = () => {
+    disableEditable();
+    // call handler to save task
+    // eslint-disable-next-line no-use-before-define
+    handleEditTask(sourceEvent);
+  };
+
+  enableEditable();
+  // eslint-disable-next-line no-use-before-define
+  addSelfDestructingEventListener(document, container, 'click', clickAwayCallback);
 }
 
-export function handleEditTask(e) {
-  // [ ] Hook up to handle edit on double click
+// UTIL
+function addSelfDestructingEventListener(element, currentEl, eventType, callback) {
+  const handler = (e) => {
+    if (!currentEl.contains(e.target)) {
+      callback();
+      element.removeEventListener(eventType, handler);
+    }
+  };
+  element.addEventListener(eventType, handler);
+}
+
+// SAVE TASK
+export function handleEditTask(sourceEvent) {
+  // get target task
+  console.log(sourceEvent);
+
+  // get task data / parse task data
+
+  // update task data
 
   const targetTaskToEdit = DATA.getActiveProject()
-    .getTaskByUUID(e.target.parentNode.dataset.uuid);
+    .getTaskByUUID(sourceEvent.target.parentNode.dataset.uuid);
 
   // Get task data for edit
-  const taskData = Array.from(e.target.parentNode.getElementsByClassName('task-data'));
+  const taskData = Array.from(sourceEvent.target.parentNode.getElementsByClassName('task-data'));
   const taskDataParsed = taskData
     .reduce((obj, item) => {
       const value = item.type === 'checkbox' ? item.checked : item.textContent;
@@ -36,6 +72,16 @@ export function handleEditTask(e) {
   //    [ ] Write checkbox css class toggle function in UI View
   // [ ] rerender task item
 }
+
+export function handleCompleteTaskCheckbox(e) {
+  handleEditTask(e);
+
+  // [ ] notify observer for checkbox css class
+  //    [ ] Write checkbox css class toggle function in UI View
+  // [ ] rerender task item
+}
+
+
 
 export function handleSetDueDateBtn() {
   // [ ] Write handler

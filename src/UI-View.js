@@ -7,6 +7,7 @@ import {
   handleAddProjectModal,
   handleAddTaskModal,
   handleCompleteTaskCheckbox,
+  handleEditOnDblClick,
   handleEditTask,
   handleSetDueDateBtn,
 } from './UI-Control';
@@ -194,26 +195,37 @@ export default class UI {
   }
 
   static initEditOnDblClick(container, editableElements) {
-    const enableEditable = () => {
-      container.classList.add('expanded');
-      // eslint-disable-next-line no-return-assign, no-param-reassign
-      editableElements.forEach((element) => element.contentEditable = true);
-    };
-
-    const disableEditable = (e) => {
-      container.classList.remove('expanded');
-      // eslint-disable-next-line no-return-assign, no-param-reassign
-      editableElements.forEach((element) => element.contentEditable = false);
-      // [ ] Write handler
-      // handleEditTask(e);
-    };
-
-    container.addEventListener('click', () => {
-      enableEditable();
-      // BUG Adding two of these listeners because two clicks needed to enter edit.
-      // BUG Change target or check for existing listener?
-      UI.addSelfDestructingEventListener(document, container, 'click', disableEditable);
+    container.addEventListener('dblclick', (e) => {
+      handleEditOnDblClick(e, container, editableElements);
     });
+
+    // BUG Adding two of these listeners because two clicks needed to enter edit.
+    // BUG Change target or check for existing listener?
+
+    // const enableEditable = () => {
+    //   container.classList.add('expanded');
+    //   // eslint-disable-next-line no-return-assign, no-param-reassign
+    //   editableElements.forEach((element) => element.contentEditable = true);
+    // };
+
+    // const disableEditable = (sourceEvent) => {
+    //   // [ ] Consider using async/await to handle sending source event to handler?
+    //   console.log(`sourceEvent in disableEditable: ${sourceEvent}`);
+    //   container.classList.remove('expanded');
+    //   // eslint-disable-next-line no-return-assign, no-param-reassign
+    //   editableElements.forEach((element) => element.contentEditable = false);
+    //   // [ ] Write handler
+    //   handleEditTask(sourceEvent);
+    // };
+
+    // container.addEventListener('dblclick', () => {
+    //   enableEditable();
+    //   // BUG Adding two of these listeners because two clicks needed to enter edit.
+    //   // BUG Change target or check for existing listener?
+    //   const sourceEvent = 'test';
+    //   UI.addSelfDestructingEventListener(document, container, 'click', disableEditable);
+    //   // NOTE Trigger sourceEvent Handler after promise returned?
+    // });
   }
 
   static initSetDueDateBtn() {
@@ -255,15 +267,15 @@ export default class UI {
     return btn;
   }
 
-  static addSelfDestructingEventListener(element, currentEl, eventType, callback) {
-    const handler = (e) => {
-      if (!currentEl.contains(e.target)) {
-        callback(e);
-        element.removeEventListener(eventType, handler);
-      }
-    };
-    element.addEventListener(eventType, handler);
-  }
+  // static addSelfDestructingEventListener(element, currentEl, eventType, callback) {
+  //   const handler = (e) => {
+  //     if (!currentEl.contains(e.target)) {
+  //       callback();
+  //       element.removeEventListener(eventType, handler);
+  //     }
+  //   };
+  //   element.addEventListener(eventType, handler);
+  // }
   // ===== UTIL END ====== //
 }
 
