@@ -1,6 +1,10 @@
 /* eslint-disable no-console */
 /* eslint-disable import/no-named-as-default-member */
 /* eslint-disable import/no-named-as-default */
+import AirDatepicker from 'air-datepicker';
+import 'air-datepicker/air-datepicker.css';
+import localeEn from 'air-datepicker/locale/en';
+
 import { obsAddProjectBtn, obsAddTaskBtn } from './Observers';
 import { DATA } from './TodoList';
 import {
@@ -113,18 +117,21 @@ export default class UI {
     pDesc.textContent = taskDescription;
     pDesc.dataset.name = 'taskDescription';
 
-    const pDue = document.createElement('p');
+    const pDue = document.createElement('input');
     pDue.classList.add('due-date', 'task-data');
     pDue.textContent = taskDueDate;
+    pDue.type = 'text';
+    pDue.value = taskDueDate;
     pDue.dataset.name = 'taskDueDate';
 
-    const btnSetDue = document.createElement('button');
-    btnSetDue.classList.add('set-due-date');
-    btnSetDue.type = 'button';
-    btnSetDue.textContent = 'Set Due Date';
-    btnSetDue.dataset.name = 'taskDueDate';
+    // eslint-disable-next-line no-new
+    new AirDatepicker(pDue, {
+      locale: localeEn,
+      autoClose: true,
+      dateFormat: "M/d/yy",
+    });
 
-    li.append(checkbox, h3, pDesc, pDue, btnSetDue);
+    li.append(checkbox, h3, pDesc, pDue);
 
     return li;
   }
@@ -180,7 +187,10 @@ export default class UI {
   static initCompleteTaskCheckbox() {
     const checkboxes = document.querySelectorAll('.task-list-item .checkbox');
     checkboxes.forEach((checkbox) => {
-      checkbox.addEventListener('change', (e) => handleCompleteTaskCheckbox(e));
+      checkbox.addEventListener('change', (e) => {
+        e.target.parentNode.classList.toggle('completed');
+        handleCompleteTaskCheckbox(e);
+      });
     });
   }
 
@@ -189,43 +199,16 @@ export default class UI {
     taskListItems.forEach((taskItem) => {
       const h3 = taskItem.querySelector("h3[data-name='taskName']");
       const pDesc = taskItem.querySelector("p[data-name='taskDescription']");
-      const pDue = taskItem.querySelector("p[data-name='taskDueDate']");
-      UI.initEditOnDblClick(taskItem, [h3, pDesc, pDue]);
+      // const pDue = taskItem.querySelector("p[data-name='taskDueDate']");
+      UI.initEditOnDblClick(taskItem, [h3, pDesc]);
     });
   }
 
   static initEditOnDblClick(container, editableElements) {
-    container.addEventListener('dblclick', (e) => {
+    container.addEventListener('click', (e) => {
+      if (container.dataset.editingActivated === 'true') return;
       handleEditOnDblClick(e, container, editableElements);
     });
-
-    // BUG Adding two of these listeners because two clicks needed to enter edit.
-    // BUG Change target or check for existing listener?
-
-    // const enableEditable = () => {
-    //   container.classList.add('expanded');
-    //   // eslint-disable-next-line no-return-assign, no-param-reassign
-    //   editableElements.forEach((element) => element.contentEditable = true);
-    // };
-
-    // const disableEditable = (sourceEvent) => {
-    //   // [ ] Consider using async/await to handle sending source event to handler?
-    //   console.log(`sourceEvent in disableEditable: ${sourceEvent}`);
-    //   container.classList.remove('expanded');
-    //   // eslint-disable-next-line no-return-assign, no-param-reassign
-    //   editableElements.forEach((element) => element.contentEditable = false);
-    //   // [ ] Write handler
-    //   handleEditTask(sourceEvent);
-    // };
-
-    // container.addEventListener('dblclick', () => {
-    //   enableEditable();
-    //   // BUG Adding two of these listeners because two clicks needed to enter edit.
-    //   // BUG Change target or check for existing listener?
-    //   const sourceEvent = 'test';
-    //   UI.addSelfDestructingEventListener(document, container, 'click', disableEditable);
-    //   // NOTE Trigger sourceEvent Handler after promise returned?
-    // });
   }
 
   static initSetDueDateBtn() {

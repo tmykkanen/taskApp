@@ -1,7 +1,6 @@
 /* eslint-disable no-console */
 /* eslint-disable import/no-named-as-default-member */
 /* eslint-disable import/no-named-as-default */
-
 import { obsAddProjectBtn, obsAddTaskBtn } from './Observers';
 import { DATA } from './TodoList';
 import Project from './Project';
@@ -29,6 +28,7 @@ export function handleEditOnDblClick(sourceEvent, container, editableElements) {
 
   enableEditable();
   // eslint-disable-next-line no-use-before-define
+
   addSelfDestructingEventListener(document, container, 'click', clickAwayCallback);
 }
 
@@ -38,15 +38,16 @@ function addSelfDestructingEventListener(element, currentEl, eventType, callback
     if (!currentEl.contains(e.target)) {
       callback();
       element.removeEventListener(eventType, handler);
+      currentEl.dataset.editingActivated = false;
     }
   };
+  currentEl.dataset.editingActivated = true;
   element.addEventListener(eventType, handler);
 }
 
 // SAVE TASK
 export function handleEditTask(sourceEvent) {
   // get target task
-  console.log(sourceEvent);
 
   // get task data / parse task data
 
@@ -57,9 +58,12 @@ export function handleEditTask(sourceEvent) {
 
   // Get task data for edit
   const taskData = Array.from(sourceEvent.target.parentNode.getElementsByClassName('task-data'));
+  // BUG Calendar Not updating
   const taskDataParsed = taskData
     .reduce((obj, item) => {
-      const value = item.type === 'checkbox' ? item.checked : item.textContent;
+      let value = item.textContent;
+      if (item.type === 'checkbox') value = item.checked;
+      if (item.type === 'input') value = item.value;
       return ({ ...obj, [item.dataset.name]: value });
     }, {});
 
@@ -68,20 +72,12 @@ export function handleEditTask(sourceEvent) {
 
   console.log(targetTaskToEdit);
 
-  // [ ] notify observer for checkbox css class
-  //    [ ] Write checkbox css class toggle function in UI View
   // [ ] rerender task item
 }
 
 export function handleCompleteTaskCheckbox(e) {
   handleEditTask(e);
-
-  // [ ] notify observer for checkbox css class
-  //    [ ] Write checkbox css class toggle function in UI View
-  // [ ] rerender task item
 }
-
-
 
 export function handleSetDueDateBtn() {
   // [ ] Write handler
