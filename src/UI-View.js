@@ -3,7 +3,13 @@
 /* eslint-disable import/no-named-as-default */
 import { obsAddProjectBtn, obsAddTaskBtn } from './Observers';
 import { DATA } from './TodoList';
-import { handleAddProjectModal, handleAddTaskModal } from './UI-Control';
+import {
+  handleAddProjectModal,
+  handleAddTaskModal,
+  handleCompleteTaskCheckbox,
+  handleEditTask,
+  handleSetDueDateBtn,
+} from './UI-Control';
 
 const projectContainer = document.querySelector('.default-projects-container ul');
 const taskListHeaderContainer = document.querySelector('.task-list-header');
@@ -46,6 +52,7 @@ export default class UI {
     const activeProjectTasks = activeProject.getAllTasks();
     const taskHTML = activeProjectTasks.map((task) => UI.createTaskItem(task));
     UI.renderElements(taskHTML, tasksContainer);
+    UI.initTaskItemInteraction();
   }
 
   static loadModals() {
@@ -91,42 +98,38 @@ export default class UI {
     checkbox.classList.add('checkbox');
     checkbox.id = taskName;
     checkbox.checked = taskComplete;
+    checkbox.dataset.name = 'taskComplete';
 
     const h3 = document.createElement('h3');
     h3.textContent = taskName;
+    h3.dataset.name = 'taskName';
 
     const pDesc = document.createElement('p');
     pDesc.classList.add('description');
     pDesc.textContent = taskDescription;
+    pDesc.dataset.name = 'taskDescription';
 
     const pDue = document.createElement('p');
     pDue.classList.add('due-date');
     pDue.textContent = taskDueDate;
+    pDue.dataset.name = 'taskDueDate';
 
     const btnSetDue = document.createElement('button');
+    btnSetDue.classList.add('set-due-date');
     btnSetDue.type = 'button';
     btnSetDue.textContent = 'Set Due Date';
-
-    UI.initSetDueDateBtn(btnSetDue);
+    btnSetDue.dataset.name = 'taskDueDate';
 
     li.append(checkbox, h3, pDesc, pDue, btnSetDue);
 
     return li;
   }
 
-  static createBtn(className, textContent) {
-    const btn = document.createElement('button');
-    btn.classList.add(className);
-    btn.type = 'button';
-    btn.textContent = textContent;
-    return btn;
-  }
   // ===== CREATE END ==== //
 
   // ===== LISTENERS ===== //
   // ===================== //
   static initAddProjectButton() {
-    // [ ] Refactor into simple function with parameters to combine addTask + addProject creation
     const btn = UI.createBtn('add-project', '+ New Project');
     btn.addEventListener('click', () => addProjectModal.showModal());
     return btn;
@@ -140,9 +143,7 @@ export default class UI {
 
     addProjectSubmit.addEventListener('click', (e) => {
       handleAddProjectModal(e);
-      // [X] reset form
       addProjectForm.reset();
-      // [X] close form
       addProjectModal.close();
     });
   }
@@ -167,11 +168,56 @@ export default class UI {
   }
 
   static initTaskItemInteraction() {
-
+    UI.initCompleteTaskCheckbox();
+    UI.initEditTask();
+    UI.initSetDueDateBtn();
   }
 
-  static initSetDueDateBtn(btn) {
-    btn.addEventListener('click', () => console.log('set due'));
+  static initCompleteTaskCheckbox() {
+    const checkboxes = document.querySelectorAll('.task-list-item .checkbox');
+    checkboxes.forEach((checkbox) => {
+      checkbox.addEventListener('change', (e) => handleCompleteTaskCheckbox(e));
+    });
+  }
+
+  static initEditTask() {
+    const taskListItems = document.querySelectorAll('.task-list-item');
+    taskListItems.forEach((taskItem) => {
+      const h3 = taskItem.querySelector("h3[data-name='taskName']");
+      const pDesc = taskItem.querySelector("p[data-name='taskDescription']");
+      const pDue = taskItem.querySelector("p[data-name='taskDueDate']");
+      UI.initEditOnDblClick(taskItem, [h3, pDesc, pDue]);
+    });
+  }
+
+  static initEditOnDblClick(container, editableElements) {
+    const enableEditable = () => {
+      container.classList.add('expanded');
+      // eslint-disable-next-line no-return-assign, no-param-reassign
+      editableElements.forEach((element) => element.contentEditable = true);
+    };
+
+    const disableEditable = () => {
+      container.classList.remove('expanded');
+      // eslint-disable-next-line no-return-assign, no-param-reassign
+      editableElements.forEach((element) => element.contentEditable = false);
+      // [ ] Write handler
+      handleEditTask();
+    };
+
+    container.addEventListener('click', () => {
+      enableEditable();
+      // BUG Adding two of these listeners because two clicks needed to enter edit.
+      // BUG Change target or check for existing listener?
+      UI.addSelfDestructingEventListener(document, container, 'click', disableEditable);
+    });
+  }
+
+  static initSetDueDateBtn() {
+    const buttons = document.querySelectorAll('.task-list-item .set-due-date');
+    buttons.forEach((btn) => {
+      btn.addEventListener('click', () => handleSetDueDateBtn());
+    });
   }
 
   // ===== LISTENER END == //
@@ -195,6 +241,27 @@ export default class UI {
       });
   }
   // ===== RENDER END ==== //
+
+  // ===== UTIL ========== //
+  // ===================== //
+  static createBtn(className, textContent) {
+    const btn = document.createElement('button');
+    btn.classList.add(className);
+    btn.type = 'button';
+    btn.textContent = textContent;
+    return btn;
+  }
+
+  static addSelfDestructingEventListener(element, currentEl, eventType, callback) {
+    const handler = (e) => {
+      if (!currentEl.contains(e.target)) {
+        callback();
+        element.removeEventListener(eventType, handler);
+      }
+    };
+    element.addEventListener(eventType, handler);
+  }
+  // ===== UTIL END ====== //
 }
 
 obsAddProjectBtn.subcribe(UI.loadProjectsSidebar);

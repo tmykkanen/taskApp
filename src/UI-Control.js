@@ -7,11 +7,27 @@ import { DATA } from './TodoList';
 import Project from './Project';
 import Task from './Task';
 
+export function handleCompleteTaskCheckbox() {
+  // [ ] Add checkbox handler
+  console.log('check - modify to notify TodoList of change');
+}
+
+export function handleEditTask() {
+  // [ ] Add editTask handler - update task with values of inputs
+  console.log('editTaskHandler needed');
+}
+
+export function handleSetDueDateBtn() {
+  // [ ] Write handler
+  console.log('set due date button handler needed');
+}
+
 export function handleAddProjectModal(e) {
   e.preventDefault();
   const addProjectForm = document.querySelector('.add-project-modal form');
   const formData = Array.from(addProjectForm.getElementsByClassName('input'));
-  const formDataParsed = formData.reduce((obj, item) => ({ ...obj, [item.name]: item.value }), {});
+  const formDataParsed = formData
+    .reduce((obj, item) => ({ ...obj, [item.dataset.name]: item.value }), {});
 
   DATA.addProject(new Project(formDataParsed));
 
@@ -22,7 +38,8 @@ export function handleAddTaskModal(e) {
   e.preventDefault();
   const addTaskForm = document.querySelector('.add-task-modal form');
   const formData = Array.from(addTaskForm.getElementsByClassName('input'));
-  const formDataParsed = formData.reduce((obj, item) => ({ ...obj, [item.name]: item.value }), {});
+  const formDataParsed = formData
+    .reduce((obj, item) => ({ ...obj, [item.dataset.name]: item.value }), {});
 
   DATA.getActiveProject().addTask(new Task(formDataParsed));
 
