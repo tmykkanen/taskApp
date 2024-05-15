@@ -1,15 +1,19 @@
 /* eslint-disable no-console */
 /* eslint-disable import/no-named-as-default-member */
 /* eslint-disable import/no-named-as-default */
+import { obsAddProjectBtn, obsAddTaskBtn } from './Observers';
 import { DATA } from './TodoList';
+import { handleAddProjectModal, handleAddTaskModal } from './UI-Control';
 
 const projectContainer = document.querySelector('.default-projects-container ul');
 const taskListHeaderContainer = document.querySelector('.task-list-header');
 const tasksContainer = document.querySelector('.main-container ul');
 const addProjectModal = document.querySelector('.add-project-modal');
+const addProjectForm = document.querySelector('.add-project-modal form');
 const addProjectSubmit = document.querySelector('.add-project-modal .submit');
 const addProjectCancel = document.querySelector('.add-project-modal .cancel');
 const addTaskModal = document.querySelector('.add-task-modal');
+const addTaskForm = document.querySelector('.add-task-modal form');
 const addTaskSubmit = document.querySelector('.add-task-modal .submit');
 const addTaskCancel = document.querySelector('.add-task-modal .cancel');
 
@@ -19,13 +23,14 @@ export default class UI {
   static loadHomepage() {
     UI.loadProjectsSidebar();
     UI.loadActiveProject();
+    UI.loadTasks();
+    UI.loadModals();
   }
 
   static loadProjectsSidebar() {
     const allProjects = DATA.getAllProjects();
     const projectHTML = allProjects.map((project) => UI.createProjectItem(project));
     const addProjectBtn = UI.initAddProjectButton();
-    UI.initAddProjectModal();
     UI.renderElements([projectHTML, addProjectBtn], projectContainer);
   }
 
@@ -33,16 +38,21 @@ export default class UI {
     const activeProject = DATA.getActiveProject();
     const headerHTML = UI.createActiveProjectHeader(activeProject);
     const addTaskBtn = UI.initAddTaskBtn();
-    UI.initAddTaskModal();
     UI.renderElements([headerHTML, addTaskBtn], taskListHeaderContainer);
-    UI.loadTasks(activeProject);
   }
 
-  static loadTasks(activeProject) {
+  static loadTasks() {
+    const activeProject = DATA.getActiveProject();
     const activeProjectTasks = activeProject.getAllTasks();
     const taskHTML = activeProjectTasks.map((task) => UI.createTaskItem(task));
     UI.renderElements(taskHTML, tasksContainer);
   }
+
+  static loadModals() {
+    UI.initAddProjectModal();
+    UI.initAddTaskModal();
+  }
+
   // ===== LOAD END ====== //
 
   // ===== CREATE ======== //
@@ -123,12 +133,17 @@ export default class UI {
   }
 
   static initAddProjectModal() {
-    addProjectCancel.addEventListener('click', () => addProjectModal.close());
+    addProjectCancel.addEventListener('click', () => {
+      addProjectForm.reset();
+      addProjectModal.close();
+    });
 
-    addProjectSubmit.addEventListener('click', () => {
-      // [ ] Add addProject Handler
-      // Control.handleAddProject(e);
-      console.log('handler needed');
+    addProjectSubmit.addEventListener('click', (e) => {
+      handleAddProjectModal(e);
+      // [X] reset form
+      addProjectForm.reset();
+      // [X] close form
+      addProjectModal.close();
     });
   }
 
@@ -139,11 +154,15 @@ export default class UI {
   }
 
   static initAddTaskModal() {
-    addTaskCancel.addEventListener('click', () => addTaskModal.close());
+    addTaskCancel.addEventListener('click', () => {
+      addTaskForm.reset();
+      addTaskModal.close();
+    });
 
-    addTaskSubmit.addEventListener('click', () => {
-      // [ ] Add addTask Handler
-      console.log('handler needed');
+    addTaskSubmit.addEventListener('click', (e) => {
+      handleAddTaskModal(e);
+      addTaskForm.reset();
+      addTaskModal.close();
     });
   }
 
@@ -159,6 +178,7 @@ export default class UI {
 
   // ===== RENDER ======== //
   // ===================== //
+  // eslint-disable-next-line consistent-return
   static renderElements(elements, container) {
     // Empty container
     let child = container.lastElementChild;
@@ -166,7 +186,6 @@ export default class UI {
       container.removeChild(child);
       child = container.lastElementChild;
     }
-    console.log(elements);
     // Populate container
     if (!Array.isArray(elements)) return container.append(elements);
     elements
@@ -177,3 +196,6 @@ export default class UI {
   }
   // ===== RENDER END ==== //
 }
+
+obsAddProjectBtn.subcribe(UI.loadProjectsSidebar);
+obsAddTaskBtn.subcribe(UI.loadTasks);

@@ -2,58 +2,29 @@
 /* eslint-disable import/no-named-as-default-member */
 /* eslint-disable import/no-named-as-default */
 
-import { obsAddProjectBtn, observeTodoListUpdate } from "./Observers";
-import { DATA } from "./TodoList";
-import Project from "./Project";
+import { obsAddProjectBtn, obsAddTaskBtn } from './Observers';
+import { DATA } from './TodoList';
+import Project from './Project';
+import Task from './Task';
 
-export default class Control {
-  static handleAddProject(e) {
-    e.preventDefault();
-    console.log('handleAddProject');
-    const modalForm = document.querySelector('.add-project-modal form');
-    let formData = Array.from(modalForm.getElementsByClassName('input'));
-    let formDataParsed = formData.reduce((obj, item) => ({ ...obj, [item.name]: item.value }), {});
-    console.log(formDataParsed);
-    DATA.addProject(new Project(formDataParsed));
-    // BUG When clicked multiple times, fires exponentially more instances
-    observeTodoListUpdate.notify([]);
-    console.log(DATA);
-  }
+export function handleAddProjectModal(e) {
+  e.preventDefault();
+  const addProjectForm = document.querySelector('.add-project-modal form');
+  const formData = Array.from(addProjectForm.getElementsByClassName('input'));
+  const formDataParsed = formData.reduce((obj, item) => ({ ...obj, [item.name]: item.value }), {});
+
+  DATA.addProject(new Project(formDataParsed));
+
+  obsAddProjectBtn.notify();
 }
 
-// // bindEvents
-// addBookButton.addEventListener('click', () => {
-//   formModal.showModal();
-// });
+export function handleAddTaskModal(e) {
+  e.preventDefault();
+  const addTaskForm = document.querySelector('.add-task-modal form');
+  const formData = Array.from(addTaskForm.getElementsByClassName('input'));
+  const formDataParsed = formData.reduce((obj, item) => ({ ...obj, [item.name]: item.value }), {});
 
-// submit.addEventListener('click', (e) => {
-//   // e.preventDefault();
+  DATA.getActiveProject().addTask(new Task(formDataParsed));
 
-//   if (bookshelf.find((book) => book.title === formTitle.value)) {
-//     e.preventDefault();
-//     if (warningHTML) return;
-//     warningHTML = document.createElement('p');
-//     warningHTML.textContent = 'This book is already in your library.';
-//     warningHTML.classList.add('form-warning');
-//     form.insertBefore(warningHTML, formAuthor);
-//     return;
-//   }
-
-//   if (form.checkValidity()) {
-//     e.preventDefault();
-//     const { checked } = formReadStatus;
-//     const status = checked === true ? 'read' : 'unread';
-
-//     addBookToShelf(
-//       formTitle.value,
-//       formAuthor.value,
-//       formPages.value,
-//       status,
-//     );
-//     // eslint-disable-next-line no-use-before-define
-//     render();
-//     resetForm();
-//   }
-// });
-
-// cancel.addEventListener('click', resetForm);
+  obsAddTaskBtn.notify();
+}

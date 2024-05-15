@@ -11,12 +11,19 @@ export class Observable {
     this.observers = this.observers.filter((observer) => observer !== func);
   }
 
-  notify(data) {
+  notify(data = undefined) {
     console.log('obs fired');
-    this.observers.forEach((observer) => observer(data));
+    this.observers.forEach((observer) => {
+      if (data) return observer(data);
+      return observer();
+    });
   }
 }
 
+export const obsAddProjectBtn = new Observable();
+export const obsAddTaskBtn = new Observable();
+
+
 export const observeNewTodos = new Observable();
 export const observeTodoListUpdate = new Observable();
-export const obsAddProjectBtn = new Observable();
+
