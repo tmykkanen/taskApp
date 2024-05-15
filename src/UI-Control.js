@@ -7,14 +7,34 @@ import { DATA } from './TodoList';
 import Project from './Project';
 import Task from './Task';
 
-export function handleCompleteTaskCheckbox() {
-  // [ ] Add checkbox handler
-  console.log('check - modify to notify TodoList of change');
+export function handleCompleteTaskCheckbox(e) {
+  // [ ] Merge checkbox handler with edit task handler
+  // NOTE Accidentally wrote handler for whole task edit
+  handleEditTask(e);
 }
 
-export function handleEditTask() {
-  // [ ] Add editTask handler - update task with values of inputs
-  console.log('editTaskHandler needed');
+export function handleEditTask(e) {
+  // [ ] Hook up to handle edit on double click
+
+  const targetTaskToEdit = DATA.getActiveProject()
+    .getTaskByUUID(e.target.parentNode.dataset.uuid);
+
+  // Get task data for edit
+  const taskData = Array.from(e.target.parentNode.getElementsByClassName('task-data'));
+  const taskDataParsed = taskData
+    .reduce((obj, item) => {
+      const value = item.type === 'checkbox' ? item.checked : item.textContent;
+      return ({ ...obj, [item.dataset.name]: value });
+    }, {});
+
+  // Assign edits
+  Object.assign(targetTaskToEdit, taskDataParsed);
+
+  console.log(targetTaskToEdit);
+
+  // [ ] notify observer for checkbox css class
+  //    [ ] Write checkbox css class toggle function in UI View
+  // [ ] rerender task item
 }
 
 export function handleSetDueDateBtn() {

@@ -4,6 +4,7 @@ export default class Task {
     this.taskDescription = taskDescription;
     this.taskDueDate = taskDueDate;
     this.taskComplete = false;
+    this.taskUUID = crypto.randomUUID();
   }
 
   get name() {
@@ -36,5 +37,9 @@ export default class Task {
 
   set status(status) {
     this.taskComplete = status;
+  }
+
+  get uuid() {
+    return this.taskUUID;
   }
 }

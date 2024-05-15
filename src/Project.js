@@ -53,6 +53,10 @@ export default class Project {
     return this.projectTasks.find((task) => task.name === name);
   }
 
+  getTaskByUUID(uuid) {
+    return this.projectTasks.find((task) => task.uuid === uuid);
+  }
+
   deleteTask(name) {
     this.projectTasks = this.projectTasks.filter((task) => task.name !== name);
   }

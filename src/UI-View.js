@@ -89,28 +89,31 @@ export default class UI {
       taskDescription,
       taskDueDate,
       taskComplete,
+      taskUUID,
     } = task;
     const li = document.createElement('li');
     li.classList.add('task-list-item', 'collapsed');
+    li.dataset.uuid = taskUUID;
 
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
-    checkbox.classList.add('checkbox');
+    checkbox.classList.add('checkbox', 'task-data');
     checkbox.id = taskName;
     checkbox.checked = taskComplete;
     checkbox.dataset.name = 'taskComplete';
 
     const h3 = document.createElement('h3');
+    h3.classList.add('task-data');
     h3.textContent = taskName;
     h3.dataset.name = 'taskName';
 
     const pDesc = document.createElement('p');
-    pDesc.classList.add('description');
+    pDesc.classList.add('description', 'task-data');
     pDesc.textContent = taskDescription;
     pDesc.dataset.name = 'taskDescription';
 
     const pDue = document.createElement('p');
-    pDue.classList.add('due-date');
+    pDue.classList.add('due-date', 'task-data');
     pDue.textContent = taskDueDate;
     pDue.dataset.name = 'taskDueDate';
 
@@ -197,12 +200,12 @@ export default class UI {
       editableElements.forEach((element) => element.contentEditable = true);
     };
 
-    const disableEditable = () => {
+    const disableEditable = (e) => {
       container.classList.remove('expanded');
       // eslint-disable-next-line no-return-assign, no-param-reassign
       editableElements.forEach((element) => element.contentEditable = false);
       // [ ] Write handler
-      handleEditTask();
+      // handleEditTask(e);
     };
 
     container.addEventListener('click', () => {
@@ -255,7 +258,7 @@ export default class UI {
   static addSelfDestructingEventListener(element, currentEl, eventType, callback) {
     const handler = (e) => {
       if (!currentEl.contains(e.target)) {
-        callback();
+        callback(e);
         element.removeEventListener(eventType, handler);
       }
     };
