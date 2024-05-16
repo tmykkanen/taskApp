@@ -1,10 +1,6 @@
 /* eslint-disable no-console */
 /* eslint-disable import/no-named-as-default-member */
 /* eslint-disable import/no-named-as-default */
-import AirDatepicker from 'air-datepicker';
-import 'air-datepicker/air-datepicker.css';
-import localeEn from 'air-datepicker/locale/en';
-
 import { obsAddProjectBtn, obsAddTaskBtn } from './Observers';
 import { DATA } from './TodoList';
 import {
@@ -117,19 +113,13 @@ export default class UI {
     pDesc.textContent = taskDescription;
     pDesc.dataset.name = 'taskDescription';
 
+    // [ ] Rename variable for input
     const pDue = document.createElement('input');
     pDue.classList.add('due-date', 'task-data');
     pDue.textContent = taskDueDate;
     pDue.type = 'text';
     pDue.value = taskDueDate;
     pDue.dataset.name = 'taskDueDate';
-
-    // eslint-disable-next-line no-new
-    new AirDatepicker(pDue, {
-      locale: localeEn,
-      autoClose: true,
-      dateFormat: "M/d/yy",
-    });
 
     li.append(checkbox, h3, pDesc, pDue);
 
@@ -181,7 +171,7 @@ export default class UI {
   static initTaskItemInteraction() {
     UI.initCompleteTaskCheckbox();
     UI.initEditTask();
-    UI.initSetDueDateBtn();
+    // UI.initSetDueDateBtn();
   }
 
   static initCompleteTaskCheckbox() {
@@ -211,12 +201,12 @@ export default class UI {
     });
   }
 
-  static initSetDueDateBtn() {
-    const buttons = document.querySelectorAll('.task-list-item .set-due-date');
-    buttons.forEach((btn) => {
-      btn.addEventListener('click', () => handleSetDueDateBtn());
-    });
-  }
+  // static initSetDueDateBtn() {
+  //   const buttons = document.querySelectorAll('.task-list-item .set-due-date');
+  //   buttons.forEach((btn) => {
+  //     btn.addEventListener('click', () => handleSetDueDateBtn());
+  //   });
+  // }
 
   // ===== LISTENER END == //
 

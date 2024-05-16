@@ -1,10 +1,18 @@
 /* eslint-disable no-console */
 /* eslint-disable import/no-named-as-default-member */
 /* eslint-disable import/no-named-as-default */
+import * as chrono from 'chrono-node';
 import { obsAddProjectBtn, obsAddTaskBtn } from './Observers';
 import { DATA } from './TodoList';
 import Project from './Project';
 import Task from './Task';
+
+// [ ] Test Case - Use Chrono to parse natural language input in date input.
+// [ ] hide input box with css
+const parsedText = chrono.parseDate('This Sunday');
+console.log(parsedText);
+const dateParsed = new Date(parsedText).toLocaleDateString();
+console.log(dateParsed);
 
 export function handleEditOnDblClick(sourceEvent, container, editableElements) {
   const enableEditable = () => {
@@ -58,12 +66,14 @@ export function handleEditTask(sourceEvent) {
 
   // Get task data for edit
   const taskData = Array.from(sourceEvent.target.parentNode.getElementsByClassName('task-data'));
-  // BUG Calendar Not updating
+  console.log(taskData);
+  // BUG Calendar Not updating date input - need to retreive data at separate time
   const taskDataParsed = taskData
     .reduce((obj, item) => {
       let value = item.textContent;
       if (item.type === 'checkbox') value = item.checked;
       if (item.type === 'input') value = item.value;
+      console.log(value);
       return ({ ...obj, [item.dataset.name]: value });
     }, {});
 
