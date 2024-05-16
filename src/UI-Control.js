@@ -8,8 +8,30 @@ import Project from './Project';
 import Task from './Task';
 import UI from './UI-View';
 
+export function handleEdits(sourceEvent) {
+  // get item to edit
+  console.log(sourceEvent.target.parentNode.dataset.uuid);
+  // [-] Write getItemByUUID method on TodoList
+  const uuid = sourceEvent.target.parentNode.dataset.uuid
+  const itemToEdit = DATA.getItemByUUID(uuid);
+  // const targetTaskToEdit = DATA.getActiveProject()
+  //   .getTaskByUUID(sourceEvent.target.parentNode.dataset.uuid);
+
+  // const targetProjectToEdit = DATA
+  //   .getProjectByUUID(sourceEvent.target.parentNode.dataset.uuid);
+
+  // get data from Dom
+
+  // parse data into object
+
+  // update task/project object
+  // Object.assign(itemToEdit, parsedData);
+
+  console.log(itemToEdit);
+}
+
 // SAVE TASK
-function handleEditTask(sourceEvent) {
+export function handleEditTask(sourceEvent) {
   // get target task
 
   // get task data / parse task data
@@ -108,6 +130,8 @@ export function handleDblClickEndEditing(e, priorContent) {
     e.target.textContent = parseDateInput(e.target.textContent);
   }
   e.target.contentEditable = false;
+ // [-] Almost ready
+  handleEdits(e);
   if (e.target.classList.contains('task-data')) handleEditTask(e);
   if (e.target.classList.contains('project-data')) handleEditProject(e);
 }

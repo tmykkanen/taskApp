@@ -38,6 +38,21 @@ export class TodoList {
     return this.projects.find((project) => project.active === true);
   }
 
+  // [x] Write getItemByUIID
+  getItemByUUID(uuid) {
+    // check project for name
+    const inProject = this.projects.find((project) => project.uuid === uuid);
+    if (inProject) return inProject;
+    // check in each project for name
+
+    // check each project for name
+    const parentProj = this.projects
+      .filter((project) => project.getAllTasks()
+        .some((task) => task.uuid === uuid));
+    return parentProj[0].getAllTasks()
+      .find((task) => task.uuid === uuid);
+  }
+
   // [?] Do I need these functions, or should TodoList not interact with project tasks?
   // Consider using https://www.patterns.dev/vanilla/mediator-pattern
   // getTaskParentProject(taskName) {

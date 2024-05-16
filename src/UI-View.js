@@ -10,6 +10,8 @@ import {
   handleDblClickBeginEditing,
   handleDblClickEndEditing,
   handleActiveProjectSelection,
+  handleEditTask,
+  handleEdits,
 } from './UI-Control';
 
 // [TODOS]
@@ -232,7 +234,9 @@ export default class UI {
     checkboxes.forEach((checkbox) => {
       checkbox.addEventListener('change', (e) => {
         e.target.parentNode.classList.toggle('completed');
-        handleCompleteTaskCheckbox(e);
+        handleEditTask(e);
+        // handleEdits(e);
+        // [-] Almost ready
       });
     });
   }
