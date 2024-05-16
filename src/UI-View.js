@@ -11,6 +11,15 @@ import {
   handleDblClickEndEditing,
 } from './UI-Control';
 
+// TODO LIST
+// [ ] Add ability to select active project
+// [ ] Add display of project description / due date
+// [ ] Add chronos nlp to project and task modals
+// [ ] Add error handling for modals
+// [ ] Add error handling for task editing
+// [ ] Add project editing
+// [ ] Add finalize task edit on "enter" keypress
+
 const projectContainer = document.querySelector('.default-projects-container ul');
 const taskListHeaderContainer = document.querySelector('.task-list-header');
 const tasksContainer = document.querySelector('.main-container ul');
@@ -167,7 +176,6 @@ export default class UI {
   static initTaskItemInteraction() {
     UI.initCompleteTaskCheckbox();
     UI.initEditTask();
-    // UI.initSetDueDateBtn();
     // [ ] add logic for expanding / collapsing todo list items
   }
 
@@ -191,8 +199,6 @@ export default class UI {
     });
   }
 
-  // [ ] Replace current double click logic with individual element logic
-  // [ ] add logic to expand container on first double click
   static initEditOnDblClick(editableElements) {
     editableElements.forEach((element) => {
       element.addEventListener('click', (e) => {
@@ -204,20 +210,6 @@ export default class UI {
       });
     });
   }
-
-  // static initEditOnDblClick(container, editableElements) {
-  //   container.addEventListener('click', (e) => {
-  //     if (container.dataset.editingActivated === 'true') return;
-  //     handleEditOnDblClick(e, container, editableElements);
-  //   });
-  // }
-
-  // static initSetDueDateBtn() {
-  //   const buttons = document.querySelectorAll('.task-list-item .set-due-date');
-  //   buttons.forEach((btn) => {
-  //     btn.addEventListener('click', () => handleSetDueDateBtn());
-  //   });
-  // }
 
   // ===== LISTENER END == //
 
@@ -250,18 +242,9 @@ export default class UI {
     btn.textContent = textContent;
     return btn;
   }
-
-  // static addSelfDestructingEventListener(element, currentEl, eventType, callback) {
-  //   const handler = (e) => {
-  //     if (!currentEl.contains(e.target)) {
-  //       callback();
-  //       element.removeEventListener(eventType, handler);
-  //     }
-  //   };
-  //   element.addEventListener(eventType, handler);
-  // }
   // ===== UTIL END ====== //
 }
 
+// [ ] Edit subscribers
 obsAddProjectBtn.subcribe(UI.loadProjectsSidebar);
 obsAddTaskBtn.subcribe(UI.loadTasks);
