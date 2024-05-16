@@ -65,10 +65,23 @@ function handleEditProject(sourceEvent) {
 }
 
 function parseDateInput(dateInput) {
-  if (dateInput === '') return '';
   const parsedDate = chrono.parseDate(dateInput, Date.now(), { forwardDate: true });
+  if (parsedDate === null) return 'Add a due date...';
   return new Date(parsedDate).toLocaleDateString('en', { month: 'numeric', day: 'numeric', year: '2-digit' });
 }
+
+// [x] Capture enter
+function pressEnterToFinish(targetElement) {
+  targetElement.addEventListener('keydown', (e) => {
+    if (e.code === 'Enter') targetElement.blur();
+  });
+}
+
+// input.addEventListener("keydown", logKey);
+
+// function logKey(e) {
+//   log.textContent += ` ${e.code}`;
+// }
 
 export function handleActiveProjectSelection(e) {
   const newActiveProjectName = e.target.textContent;
@@ -81,9 +94,16 @@ export function handleActiveProjectSelection(e) {
 
 export function handleDblClickBeginEditing(e) {
   e.target.contentEditable = true;
+  pressEnterToFinish(e.target);
 }
 
-export function handleDblClickEndEditing(e) {
+export function handleDblClickEndEditing(e, priorContent) {
+  console.log(`prior: ${priorContent}`);
+  // [ ] Add "add description" ect to newly blank
+  if (e.target.textContent === '') {
+    e.target.textContent = priorContent;
+    return;
+  }
   if (e.target.dataset.name === 'taskDueDate' || e.target.dataset.name === 'projectDueDate') {
     e.target.textContent = parseDateInput(e.target.textContent);
   }

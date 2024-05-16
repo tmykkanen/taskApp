@@ -23,7 +23,7 @@ import {
 // [ ] Add finalize task edit on "enter" keypress
 // [x] Add conditional rendering to project and task metadata (i.e. date: false, etc)
 // eslint-disable-next-line max-len
-// [ ] Consider refactoring to accomodate for double-click to edit code for both proj + task using conditionals
+// [-] Consider refactoring to accomodate for double-click to edit code for both proj + task using conditionals
 // [ ] implement drag-and-drop to change task project
 // [?] implement task project picker
 
@@ -247,15 +247,20 @@ export default class UI {
     });
   }
 
+  // [-] handle prior content
   static initEditOnDblClick(editableElements) {
     editableElements.forEach((element) => {
       element.addEventListener('click', (e) => {
         if (e.target.contentEditable === 'true') return;
+        const priorContent = e.target.textContent;
         handleDblClickBeginEditing(e);
+        element.addEventListener('blur', () => {
+          handleDblClickEndEditing(e, priorContent);
+        });
       });
-      element.addEventListener('blur', (e) => {
-        handleDblClickEndEditing(e);
-      });
+      // element.addEventListener('blur', (e) => {
+      //   handleDblClickEndEditing(e);
+      // });
     });
   }
 
