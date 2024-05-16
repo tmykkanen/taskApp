@@ -21,7 +21,7 @@ import {
 // [ ] Add error handling for task editing
 // [x] Add project editing
 // [ ] Add finalize task edit on "enter" keypress
-// [ ] Add conditional rendering to project and task metadata (i.e. date: false, etc)
+// [x] Add conditional rendering to project and task metadata (i.e. date: false, etc)
 // eslint-disable-next-line max-len
 // [ ] Consider refactoring to accomodate for double-click to edit code for both proj + task using conditionals
 // [ ] implement drag-and-drop to change task project
@@ -115,13 +115,13 @@ export default class UI {
 
     const pDesc = document.createElement('p');
     pDesc.classList.add('description', 'project-data');
-    pDesc.textContent = projectDescription;
     pDesc.dataset.name = 'projectDescription';
+    pDesc.textContent = projectDescription || 'Add a description...';
 
     const pDue = document.createElement('p');
     pDue.classList.add('due-date', 'project-data');
-    pDue.textContent = projectDueDate;
     pDue.dataset.name = 'projectDueDate';
+    pDue.textContent = projectDueDate || 'Add a due date...';
 
     return [h2, pDesc, pDue];
   }
@@ -151,13 +151,13 @@ export default class UI {
 
     const pDesc = document.createElement('p');
     pDesc.classList.add('description', 'task-data');
-    pDesc.textContent = taskDescription;
     pDesc.dataset.name = 'taskDescription';
+    pDesc.textContent = taskDescription || 'add a description...';
 
     const pDue = document.createElement('p');
     pDue.classList.add('due-date', 'task-data');
-    pDue.textContent = taskDueDate;
     pDue.dataset.name = 'taskDueDate';
+    pDue.textContent = taskDueDate || 'add a due date...';
 
     li.append(checkbox, h3, pDesc, pDue);
 

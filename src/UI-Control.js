@@ -65,6 +65,7 @@ function handleEditProject(sourceEvent) {
 }
 
 function parseDateInput(dateInput) {
+  if (dateInput === '') return '';
   const parsedDate = chrono.parseDate(dateInput, Date.now(), { forwardDate: true });
   return new Date(parsedDate).toLocaleDateString('en', { month: 'numeric', day: 'numeric', year: '2-digit' });
 }
