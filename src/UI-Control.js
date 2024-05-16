@@ -7,54 +7,8 @@ import { DATA } from './TodoList';
 import Project from './Project';
 import Task from './Task';
 
-// [ ] Test Case - Use Chrono to parse natural language input in date input.
-// [ ] hide input box with css
-const parsedText = chrono.parseDate('This Sunday');
-console.log(parsedText);
-const dateParsed = new Date(parsedText).toLocaleDateString();
-console.log(dateParsed);
-
-export function handleEditOnDblClick(sourceEvent, container, editableElements) {
-  const enableEditable = () => {
-    container.classList.add('expanded');
-    // eslint-disable-next-line no-return-assign, no-param-reassign
-    editableElements.forEach((element) => element.contentEditable = true);
-  };
-
-  const disableEditable = () => {
-    container.classList.remove('expanded');
-    // eslint-disable-next-line no-return-assign, no-param-reassign
-    editableElements.forEach((element) => element.contentEditable = false);
-  };
-
-  const clickAwayCallback = () => {
-    disableEditable();
-    // call handler to save task
-    // eslint-disable-next-line no-use-before-define
-    handleEditTask(sourceEvent);
-  };
-
-  enableEditable();
-  // eslint-disable-next-line no-use-before-define
-
-  addSelfDestructingEventListener(document, container, 'click', clickAwayCallback);
-}
-
-// UTIL
-function addSelfDestructingEventListener(element, currentEl, eventType, callback) {
-  const handler = (e) => {
-    if (!currentEl.contains(e.target)) {
-      callback();
-      element.removeEventListener(eventType, handler);
-      currentEl.dataset.editingActivated = false;
-    }
-  };
-  currentEl.dataset.editingActivated = true;
-  element.addEventListener(eventType, handler);
-}
-
 // SAVE TASK
-export function handleEditTask(sourceEvent) {
+function handleEditTask(sourceEvent) {
   // get target task
 
   // get task data / parse task data
@@ -66,8 +20,6 @@ export function handleEditTask(sourceEvent) {
 
   // Get task data for edit
   const taskData = Array.from(sourceEvent.target.parentNode.getElementsByClassName('task-data'));
-  console.log(taskData);
-  // BUG Calendar Not updating date input - need to retreive data at separate time
   const taskDataParsed = taskData
     .reduce((obj, item) => {
       let value = item.textContent;
@@ -81,18 +33,43 @@ export function handleEditTask(sourceEvent) {
   Object.assign(targetTaskToEdit, taskDataParsed);
 
   console.log(targetTaskToEdit);
+}
 
-  // [ ] rerender task item
+function parseDateInput(dateInput) {
+  console.log(dateInput);
+  const parsedDate = chrono.parseDate(dateInput);
+  console.log(chrono.parseDate('tomorrow'));
+  return new Date(parsedDate).toLocaleDateString('en', { month: 'numeric', day: 'numeric', year: '2-digit' });
+}
+
+export function handleDblClickBeginEditing(e) {
+  e.target.contentEditable = true;
+}
+
+export function handleDblClickEndEditing(e) {
+  if (e.target.dataset.name === 'taskDueDate') {
+    e.target.textContent = parseDateInput(e.target.textContent);
+  }
+  e.target.contentEditable = false;
+  handleEditTask(e);
 }
 
 export function handleCompleteTaskCheckbox(e) {
   handleEditTask(e);
 }
 
-export function handleSetDueDateBtn() {
-  // [ ] Write handler
-  console.log('set due date button handler needed');
-}
+// UTIL
+// function addSelfDestructingEventListener(element, currentEl, eventType, callback) {
+//   const handler = (e) => {
+//     if (!currentEl.contains(e.target)) {
+//       callback();
+//       element.removeEventListener(eventType, handler);
+//       currentEl.dataset.editingActivated = false;
+//     }
+//   };
+//   currentEl.dataset.editingActivated = true;
+//   element.addEventListener(eventType, handler);
+// }
 
 export function handleAddProjectModal(e) {
   e.preventDefault();

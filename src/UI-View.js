@@ -7,9 +7,8 @@ import {
   handleAddProjectModal,
   handleAddTaskModal,
   handleCompleteTaskCheckbox,
-  handleEditOnDblClick,
-  handleEditTask,
-  handleSetDueDateBtn,
+  handleDblClickBeginEditing,
+  handleDblClickEndEditing,
 } from './UI-Control';
 
 const projectContainer = document.querySelector('.default-projects-container ul');
@@ -113,12 +112,9 @@ export default class UI {
     pDesc.textContent = taskDescription;
     pDesc.dataset.name = 'taskDescription';
 
-    // [ ] Rename variable for input
-    const pDue = document.createElement('input');
+    const pDue = document.createElement('p');
     pDue.classList.add('due-date', 'task-data');
     pDue.textContent = taskDueDate;
-    pDue.type = 'text';
-    pDue.value = taskDueDate;
     pDue.dataset.name = 'taskDueDate';
 
     li.append(checkbox, h3, pDesc, pDue);
@@ -172,6 +168,7 @@ export default class UI {
     UI.initCompleteTaskCheckbox();
     UI.initEditTask();
     // UI.initSetDueDateBtn();
+    // [ ] add logic for expanding / collapsing todo list items
   }
 
   static initCompleteTaskCheckbox() {
@@ -189,17 +186,31 @@ export default class UI {
     taskListItems.forEach((taskItem) => {
       const h3 = taskItem.querySelector("h3[data-name='taskName']");
       const pDesc = taskItem.querySelector("p[data-name='taskDescription']");
-      // const pDue = taskItem.querySelector("p[data-name='taskDueDate']");
-      UI.initEditOnDblClick(taskItem, [h3, pDesc]);
+      const pDue = taskItem.querySelector("p[data-name='taskDueDate']");
+      UI.initEditOnDblClick([h3, pDesc, pDue]);
     });
   }
 
-  static initEditOnDblClick(container, editableElements) {
-    container.addEventListener('click', (e) => {
-      if (container.dataset.editingActivated === 'true') return;
-      handleEditOnDblClick(e, container, editableElements);
+  // [ ] Replace current double click logic with individual element logic
+  // [ ] add logic to expand container on first double click
+  static initEditOnDblClick(editableElements) {
+    editableElements.forEach((element) => {
+      element.addEventListener('click', (e) => {
+        if (e.target.contentEditable === 'true') return;
+        handleDblClickBeginEditing(e);
+      });
+      element.addEventListener('blur', (e) => {
+        handleDblClickEndEditing(e);
+      });
     });
   }
+
+  // static initEditOnDblClick(container, editableElements) {
+  //   container.addEventListener('click', (e) => {
+  //     if (container.dataset.editingActivated === 'true') return;
+  //     handleEditOnDblClick(e, container, editableElements);
+  //   });
+  // }
 
   // static initSetDueDateBtn() {
   //   const buttons = document.querySelectorAll('.task-list-item .set-due-date');
