@@ -41,6 +41,10 @@ p, h1, h2, h3, h4, h5, h6 {
   background-color: lightblue;
 }
 
+.sidebar-container .project-list-item.active {
+  background-color: lightgreen;
+}
+
 /* Hide / show the full todo contents */
 /* .main-container .task-list-item.collapsed {
   .description, .due-date, button {

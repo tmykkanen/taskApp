@@ -11,6 +11,7 @@ export default class Project {
     this.projectActive = projectActive;
     this.projectTasks = [];
     this.projectTaskArchive = [];
+    this.projectUUID = crypto.randomUUID();
   }
 
   get name() {
@@ -43,6 +44,10 @@ export default class Project {
 
   set active(bol) {
     this.projectActive = bol;
+  }
+
+  get uuid() {
+    return this.projectUUID;
   }
 
   addTask(newTask) {

@@ -6,6 +6,7 @@ import { obsAddProjectBtn, obsAddTaskBtn } from './Observers';
 import { DATA } from './TodoList';
 import Project from './Project';
 import Task from './Task';
+import UI from './UI-View';
 
 // SAVE TASK
 function handleEditTask(sourceEvent) {
@@ -35,11 +36,46 @@ function handleEditTask(sourceEvent) {
   console.log(targetTaskToEdit);
 }
 
+function handleEditProject(sourceEvent) {
+  // get target task
+
+  // get task data / parse task data
+
+  // update task data
+
+  const targetProjectToEdit = DATA.getProjectByUUID(sourceEvent.target.parentNode.dataset.uuid);
+
+  // Get task data for edit
+  const projectData = Array.from(sourceEvent.target.parentNode.getElementsByClassName('project-data'));
+  const projectDataParsed = projectData
+    .reduce((obj, item) => {
+      let value = item.textContent;
+      // [!] Superfulous code
+      if (item.type === 'checkbox') value = item.checked;
+      if (item.type === 'input') value = item.value;
+      return ({ ...obj, [item.dataset.name]: value });
+    }, {});
+
+  // Assign edits
+  Object.assign(targetProjectToEdit, projectDataParsed);
+
+  console.log(targetProjectToEdit);
+
+  UI.loadProjectsSidebar();
+}
+
 function parseDateInput(dateInput) {
-  console.log(dateInput);
-  const parsedDate = chrono.parseDate(dateInput);
-  console.log(chrono.parseDate('tomorrow'));
+  const parsedDate = chrono.parseDate(dateInput, Date.now(), { forwardDate: true });
   return new Date(parsedDate).toLocaleDateString('en', { month: 'numeric', day: 'numeric', year: '2-digit' });
+}
+
+export function handleActiveProjectSelection(e) {
+  const newActiveProjectName = e.target.textContent;
+  DATA.getActiveProject().active = false;
+  DATA.getProject(newActiveProjectName).active = true;
+  UI.loadProjectsSidebar();
+  UI.loadActiveProject();
+  UI.loadTasks();
 }
 
 export function handleDblClickBeginEditing(e) {
@@ -47,11 +83,12 @@ export function handleDblClickBeginEditing(e) {
 }
 
 export function handleDblClickEndEditing(e) {
-  if (e.target.dataset.name === 'taskDueDate') {
+  if (e.target.dataset.name === 'taskDueDate' || e.target.dataset.name === 'projectDueDate') {
     e.target.textContent = parseDateInput(e.target.textContent);
   }
   e.target.contentEditable = false;
-  handleEditTask(e);
+  if (e.target.classList.contains('task-data')) handleEditTask(e);
+  if (e.target.classList.contains('project-data')) handleEditProject(e);
 }
 
 export function handleCompleteTaskCheckbox(e) {
@@ -71,12 +108,19 @@ export function handleCompleteTaskCheckbox(e) {
 //   element.addEventListener(eventType, handler);
 // }
 
+// [ ] Refactor to combine handlers for addProject and add Task?
 export function handleAddProjectModal(e) {
   e.preventDefault();
   const addProjectForm = document.querySelector('.add-project-modal form');
   const formData = Array.from(addProjectForm.getElementsByClassName('input'));
   const formDataParsed = formData
-    .reduce((obj, item) => ({ ...obj, [item.dataset.name]: item.value }), {});
+    .reduce((obj, item) => {
+      if (item.dataset.name === 'projectDueDate') {
+        // eslint-disable-next-line no-param-reassign
+        item.value = parseDateInput(item.value);
+      }
+      return ({ ...obj, [item.dataset.name]: item.value });
+    }, {});
 
   DATA.addProject(new Project(formDataParsed));
 
@@ -88,7 +132,13 @@ export function handleAddTaskModal(e) {
   const addTaskForm = document.querySelector('.add-task-modal form');
   const formData = Array.from(addTaskForm.getElementsByClassName('input'));
   const formDataParsed = formData
-    .reduce((obj, item) => ({ ...obj, [item.dataset.name]: item.value }), {});
+    .reduce((obj, item) => {
+      if (item.dataset.name === 'taskDueDate') {
+        // eslint-disable-next-line no-param-reassign
+        item.value = parseDateInput(item.value);
+      }
+      return ({ ...obj, [item.dataset.name]: item.value });
+    }, {});
 
   DATA.getActiveProject().addTask(new Task(formDataParsed));
 

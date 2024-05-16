@@ -9,16 +9,23 @@ import {
   handleCompleteTaskCheckbox,
   handleDblClickBeginEditing,
   handleDblClickEndEditing,
+  handleActiveProjectSelection,
 } from './UI-Control';
 
-// TODO LIST
-// [ ] Add ability to select active project
-// [ ] Add display of project description / due date
-// [ ] Add chronos nlp to project and task modals
+// [TODOS]
+// [x] Add ability to select active project
+// [x] Add display of project description / due date
+// [x] double click to edit project title in main container
+// [x] Add chronos nlp to project and task modals
 // [ ] Add error handling for modals
 // [ ] Add error handling for task editing
-// [ ] Add project editing
+// [x] Add project editing
 // [ ] Add finalize task edit on "enter" keypress
+// [ ] Add conditional rendering to project and task metadata (i.e. date: false, etc)
+// eslint-disable-next-line max-len
+// [ ] Consider refactoring to accomodate for double-click to edit code for both proj + task using conditionals
+// [ ] implement drag-and-drop to change task project
+// [?] implement task project picker
 
 const projectContainer = document.querySelector('.default-projects-container ul');
 const taskListHeaderContainer = document.querySelector('.task-list-header');
@@ -47,6 +54,7 @@ export default class UI {
     const projectHTML = allProjects.map((project) => UI.createProjectItem(project));
     const addProjectBtn = UI.initAddProjectButton();
     UI.renderElements([projectHTML, addProjectBtn], projectContainer);
+    UI.initActiveProjectSelection();
   }
 
   static loadActiveProject() {
@@ -54,6 +62,7 @@ export default class UI {
     const headerHTML = UI.createActiveProjectHeader(activeProject);
     const addTaskBtn = UI.initAddTaskBtn();
     UI.renderElements([headerHTML, addTaskBtn], taskListHeaderContainer);
+    UI.initEditActiveProject();
   }
 
   static loadTasks() {
@@ -78,18 +87,43 @@ export default class UI {
 
     const li = document.createElement('li');
     li.classList.add('project-list-item');
-    li.textContent = projectName;
+    if (project.active) li.classList.add('active');
+
+    const a = document.createElement('a');
+    a.href = '';
+    a.textContent = projectName;
+
+    li.append(a);
 
     return li;
   }
 
   static createActiveProjectHeader(activeProject) {
-    const { projectName } = activeProject;
+    const {
+      projectName,
+      projectDescription,
+      projectDueDate,
+    } = activeProject;
+
+    const div = document.querySelector('.task-list-header');
+    div.dataset.uuid = activeProject.uuid;
 
     const h2 = document.createElement('h2');
+    h2.classList.add('name', 'project-data');
     h2.textContent = projectName;
+    h2.dataset.name = 'projectName';
 
-    return h2;
+    const pDesc = document.createElement('p');
+    pDesc.classList.add('description', 'project-data');
+    pDesc.textContent = projectDescription;
+    pDesc.dataset.name = 'projectDescription';
+
+    const pDue = document.createElement('p');
+    pDue.classList.add('due-date', 'project-data');
+    pDue.textContent = projectDueDate;
+    pDue.dataset.name = 'projectDueDate';
+
+    return [h2, pDesc, pDue];
   }
 
   static createTaskItem(task) {
@@ -98,11 +132,10 @@ export default class UI {
       taskDescription,
       taskDueDate,
       taskComplete,
-      taskUUID,
     } = task;
     const li = document.createElement('li');
     li.classList.add('task-list-item', 'collapsed');
-    li.dataset.uuid = taskUUID;
+    li.dataset.uuid = task.uuid;
 
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
@@ -152,6 +185,21 @@ export default class UI {
       addProjectForm.reset();
       addProjectModal.close();
     });
+  }
+
+  static initActiveProjectSelection() {
+    const projectList = document.querySelectorAll('.project-list-item');
+    projectList.forEach((item) => {
+      item.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        handleActiveProjectSelection(e);
+      });
+    });
+  }
+
+  static initEditActiveProject() {
+    const projectListItems = document.querySelectorAll('.task-list-header .project-data');
+    UI.initEditOnDblClick(projectListItems);
   }
 
   static initAddTaskBtn() {
