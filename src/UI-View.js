@@ -18,6 +18,8 @@ import {
 // [?] implement task project picker
 // [ ] add logic for expanding / collapsing todo list items
 // [ ] add task sorting
+// [ ] add set date button hover
+// [ ] Fix sidebar container too many divs
 
 const projectContainer = document.querySelector('.default-projects-container ul');
 const taskListHeaderContainer = document.querySelector('.task-list-header');
@@ -254,6 +256,12 @@ export default class UI {
       checkbox.addEventListener('change', (e) => {
         e.target.parentNode.classList.toggle('completed');
         handleEdits(e);
+      });
+      checkbox.addEventListener('mousedown', (e) => {
+        e.target.parentNode.classList.add('mouse-down');
+      });
+      checkbox.addEventListener('mouseup', (e) => {
+        e.target.parentNode.classList.remove('mouse-down');
       });
     });
   }

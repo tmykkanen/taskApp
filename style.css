@@ -30,20 +30,157 @@ p, h1, h2, h3, h4, h5, h6 {
 #root, #__next {
   isolation: isolate;
 }
+
+/* Project Resets */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+li {
+  list-style: none;
+}
 /* END RESET */
+
+:root {
+  --page-bg: #2b2a28;
+  --sidebar-bg: #262623;
+  --card-bg: #333230;
+  --font-color: #ffffff;
+  --inbox-blue: #4e94f7;
+  --selected-task-blue: #244174;
+  --selected-project-gray: #42423f;
+  --gray-for-clicking-checkbox: var(--selected-project-gray);
+  --completed-task-name-gray: #959594;
+  
+  color: var(--font-color);
+  background-color: var(--page-bg);  
+  font-family: "Helvetica", "Arial", sans-serif;
+  font-size: 16px;
+  line-height: 1.3;
+
+  --large-gap: 24px;
+  --small-gap: 16px;
+  --border-raidus: 3px;
+}
+
 
 #app {
   display: grid;
   grid-template-columns: 30% 1fr;
 }
 
+/* ----- PROJECT SIDEBAR ----- */
 .sidebar-container {
-  background-color: lightblue;
+  background-color: var(--sidebar-bg);
+  height: 100vh;
+  padding: var(--large-gap);
+}
+
+.sidebar-container .default-projects-container ul {
+  display: flex;
+  flex-direction: column;
+  gap: var(--small-gap);
+}
+
+.sidebar-container .project-list-item {
+  padding: calc(var(--small-gap)*.5);
 }
 
 .sidebar-container .project-list-item.active {
-  background-color: lightgreen;
+  background-color: var(--selected-project-gray);
+  border-radius: var(--border-raidus);
 }
+
+/* ----- MAIN CONTAINER ----- */
+.main-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--large-gap);
+  padding: var(--large-gap);
+}
+
+
+
+/* ----- MAIN CONTAINER TASK LIST */
+
+
+.main-container ul {
+  display: flex;
+  flex-direction: column;
+  gap: var(--large-gap);
+}
+
+.task-list-item {
+  display: grid;
+  grid-template-columns: var(--large-gap) 1fr;
+  align-items: center;
+  column-gap: calc(var(--small-gap)*.5);
+  width: 300px;
+  background-color: var(--card-bg);
+  padding: var(--small-gap);
+  border-radius: var(--border-raidus);
+  /* border: 1px solid yellow; */
+}
+
+/* custom style checkbox tutorial - https://moderncss.dev/pure-css-custom-checkbox-style/ */
+.task-list-item input[type="checkbox"] {
+  /* Add if not using autoprefixer */
+  -webkit-appearance: none;
+  appearance: none;
+  /* For iOS < 15 to remove gradient background */
+  /* background-color: #fff; */
+  /* Not removed via appearance */
+  margin: 0;
+
+  font: inherit;
+  color: currentColor;
+  width: 1.15em;
+  height: 1.15em;
+  border: 0.15em solid currentColor;
+  border-radius: 0.15em;
+  transform: translateY(-0.075em);
+
+  display: grid;
+  place-content: center;
+}
+
+/* :checked */
+.task-list-item input[type="checkbox"]::before {
+  content: "";
+  width: 0.65em;
+  height: 0.65em;
+  transform: scale(0);
+  transition: 120ms transform ease-in-out;
+  box-shadow: inset 1em 1em #fff;
+  transform-origin: bottom left;
+  clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+}
+
+.task-list-item input[type="checkbox"]:checked:before {
+  transform: scale(1);
+}
+
+.task-list-item.mouse-down {
+  background-color: var(--gray-for-clicking-checkbox);
+}
+
+.task-list-item .description {
+  grid-column: span 2;
+}
+
+.task-list-item .due-date {
+  grid-column: span 2;
+}
+
+
+
+
+
+
+
+
+
 
 /* Hide / show the full todo contents */
 /* .main-container .task-list-item.collapsed {
@@ -57,7 +194,4 @@ p, h1, h2, h3, h4, h5, h6 {
     display: block;
   }  
 }
-
-.main-container .task-list-item.completed {
-  background-color: grey;
-} */
+*/
