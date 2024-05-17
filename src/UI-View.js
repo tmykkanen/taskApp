@@ -21,6 +21,7 @@ import {
 // [ ] add set date button hover
 // [ ] Fix sidebar container too many divs
 // [ ] Add controls to delete task
+// [-] Refactor sidebar
 
 const projectContainer = document.querySelector('.default-projects-container ul');
 const taskListHeaderContainer = document.querySelector('.task-list-header');
@@ -46,10 +47,15 @@ export default class UI {
 
   static loadProjectsSidebar() {
     const allProjects = DATA.getAllProjects();
+    // [-] refactor sidebar
     const projectHTML = allProjects.map((project) => UI.createProjectItem(project));
+    // [-] refactor sidebar
     const addProjectBtn = UI.initAddProjectButton();
+    // [-] refactor sidebar
     UI.renderElements([projectHTML, addProjectBtn], projectContainer);
+    // [-] refactor sidebar
     UI.initActiveProjectSelection();
+    // [-] refactor sidebar
     UI.initDragAndDropReceivers();
   }
 
@@ -79,6 +85,7 @@ export default class UI {
 
   // ===== CREATE ======== //
   // ===================== //
+  // [x] refactor sidebar - remove a links?
   static createProjectItem(project) {
     const { projectName } = project;
 
@@ -86,12 +93,13 @@ export default class UI {
     li.classList.add('project-list-item');
     li.dataset.uuid = project.uuid;
     if (project.active) li.classList.add('active');
+    li.textContent = projectName;
 
-    const a = document.createElement('a');
-    a.href = '';
-    a.textContent = projectName;
+    // const a = document.createElement('a');
+    // a.href = '';
+    // a.textContent = projectName;
 
-    li.append(a);
+    // li.append(a);
 
     return li;
   }
@@ -274,6 +282,10 @@ export default class UI {
     dragabbleElements.forEach((element) => {
       element.addEventListener('dragstart', (e) => {
         e.dataTransfer.setData('text', e.target.dataset.uuid);
+        e.target.classList.add('dragging');
+      });
+      element.addEventListener('dragend', (e) => {
+        e.target.classList.remove('dragging');
       });
     });
   }
@@ -283,18 +295,34 @@ export default class UI {
     dropElements.forEach((element) => {
       element.addEventListener('dragenter', (event) => {
         event.preventDefault();
+        event.target.classList.add('drop-target');
       });
 
       element.addEventListener('dragover', (event) => {
         event.preventDefault();
       });
 
-      element.addEventListener('drop', (event) => {
+      element.addEventListener('dragleave', (event) => {
         event.preventDefault();
+        event.target.classList.remove('drop-target');
+      });
+
+      // element.addEventListener('dragleave', (event) => {
+      //   event.preventDefault();
+      //   event.target.classList.remove('drop-target');
+      // });
+
+      element.addEventListener('drop', (event) => {
+        // [BUG] problem with drag and drop
+        event.preventDefault();
+        event.target.classList.remove('drop-target');
 
         const sourceUUID = event.dataTransfer.getData('text');
+        const targetUUID = event.target.dataset.uuid;
+        if (DATA.getActiveProject().uuid === targetUUID) return;
+
         const sourceTask = DATA.getItemByUUID(sourceUUID);
-        const targetProject = DATA.getItemByUUID(event.target.parentNode.dataset.uuid);
+        const targetProject = DATA.getItemByUUID(targetUUID);
 
         // remove sourceTask from DOM
         document.querySelector(`[data-uuid="${sourceUUID}"]`).remove();
@@ -303,6 +331,7 @@ export default class UI {
         targetProject.addTask(sourceTask);
         // remove source task from old project
         DATA.getActiveProject().deleteTask(sourceTask.name);
+        // console.log(event.target.parentNode.classList);
       });
     });
   }

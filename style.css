@@ -88,6 +88,11 @@ li {
 }
 
 .sidebar-container .project-list-item.active {
+  background-color: var(--inbox-blue);
+  border-radius: var(--border-raidus);
+}
+
+.sidebar-container .project-list-item.drop-target {
   background-color: var(--selected-project-gray);
   border-radius: var(--border-raidus);
 }
@@ -148,6 +153,10 @@ li {
   padding: var(--small-gap);
   border-radius: var(--border-raidus);
   /* border: 1px solid yellow; */
+}
+
+.task-list-item.dragging .description, .task-list-item.dragging .due-date {
+  display: none;
 }
 
 /* custom style checkbox tutorial - https://moderncss.dev/pure-css-custom-checkbox-style/ */

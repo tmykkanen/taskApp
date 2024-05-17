@@ -38,6 +38,7 @@ export class TodoList {
   }
 
   getItemByUUID(uuid) {
+    console.log(`uuid sent to method: ${uuid}`);
     // return project matching uuid if found
     const uuidInProject = this.getProjectByUUID(uuid);
     if (uuidInProject) return uuidInProject;
