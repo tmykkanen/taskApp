@@ -46,7 +46,7 @@ function pressEnterToFinish(targetElement) {
 
 export function handleDblClickBeginEditing(e) {
   e.target.contentEditable = true;
-  e.target.textContent = '';
+  // e.target.textContent = '';
   e.target.focus();
   pressEnterToFinish(e.target);
 }

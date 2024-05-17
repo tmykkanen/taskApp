@@ -20,6 +20,7 @@ import {
 // [ ] add task sorting
 // [ ] add set date button hover
 // [ ] Fix sidebar container too many divs
+// [ ] Add controls to delete task
 
 const projectContainer = document.querySelector('.default-projects-container ul');
 const taskListHeaderContainer = document.querySelector('.task-list-header');
@@ -176,7 +177,7 @@ export default class UI {
   // ===================== //
   // **** AddProject **** //
   static initAddProjectButton() {
-    const btn = UI.createBtn('add-project', '+ New Project');
+    const btn = UI.createBtn('add-project', '+ Add Project');
     btn.addEventListener('click', () => addProjectModal.showModal());
     return btn;
   }
@@ -207,7 +208,7 @@ export default class UI {
 
   // **** Add Task **** //
   static initAddTaskBtn() {
-    const btn = UI.createBtn('add-task', '+ New Task');
+    const btn = UI.createBtn('add-task', '+ Add Task');
     btn.addEventListener('click', () => addTaskModal.showModal());
     return btn;
   }

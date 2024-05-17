@@ -80,7 +80,7 @@ li {
 .sidebar-container .default-projects-container ul {
   display: flex;
   flex-direction: column;
-  gap: var(--small-gap);
+  gap: calc(var(--small-gap)*.5);
 }
 
 .sidebar-container .project-list-item {
@@ -92,6 +92,20 @@ li {
   border-radius: var(--border-raidus);
 }
 
+.sidebar-container button {
+  background-color: transparent;
+  border: none;
+  color: var(--font-color);
+  opacity: 0.4;
+  text-align: left;
+  font-size: 1.25em;
+}
+
+.sidebar-container button:hover {
+  opacity: 0.6;
+  transition: all .2s;
+}
+
 /* ----- MAIN CONTAINER ----- */
 .main-container {
   display: flex;
@@ -100,6 +114,19 @@ li {
   padding: var(--large-gap);
 }
 
+.main-container button {
+  background-color: transparent;
+  border: none;
+  color: var(--font-color);
+  opacity: 0.4;
+  text-align: left;
+  font-size: 1.25em;
+}
+
+.main-container button:hover {
+  opacity: 0.6;
+  transition: all .2s;
+}
 
 
 /* ----- MAIN CONTAINER TASK LIST */
@@ -137,8 +164,8 @@ li {
   color: currentColor;
   width: 1.15em;
   height: 1.15em;
-  border: 0.15em solid currentColor;
-  border-radius: 0.15em;
+  border: 0.1em solid currentColor;
+  border-radius: 0.2em;
   transform: translateY(-0.075em);
 
   display: grid;
@@ -151,14 +178,20 @@ li {
   width: 0.65em;
   height: 0.65em;
   transform: scale(0);
-  transition: 120ms transform ease-in-out;
+  transition: 40ms transform ease-in-out;
   box-shadow: inset 1em 1em #fff;
   transform-origin: bottom left;
   clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
 }
 
+.task-list-item input[type="checkbox"]:checked {
+  border: 0.1em solid var(--inbox-blue);
+}
+
+
 .task-list-item input[type="checkbox"]:checked:before {
   transform: scale(1);
+  box-shadow: inset 1em 1em var(--inbox-blue);
 }
 
 .task-list-item.mouse-down {
@@ -173,6 +206,10 @@ li {
   grid-column: span 2;
 }
 
+.task-list-item.completed {
+  /* text-decoration: line-through; */
+  opacity: 0.5;
+}
 
 
 
