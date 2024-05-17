@@ -14,9 +14,10 @@ import {
 // [TODOS]
 // [ ] Add error handling for modals
 // [ ] Add error handling for task editing
-// [ ] implement drag-and-drop to change task project
+// [x] implement drag-and-drop to change task project
 // [?] implement task project picker
 // [ ] add logic for expanding / collapsing todo list items
+// [ ] add task sorting
 
 const projectContainer = document.querySelector('.default-projects-container ul');
 const taskListHeaderContainer = document.querySelector('.task-list-header');
@@ -46,6 +47,7 @@ export default class UI {
     const addProjectBtn = UI.initAddProjectButton();
     UI.renderElements([projectHTML, addProjectBtn], projectContainer);
     UI.initActiveProjectSelection();
+    UI.initDragAndDropReceivers();
   }
 
   static loadActiveProject() {
@@ -63,6 +65,7 @@ export default class UI {
     UI.renderElements(taskHTML, tasksContainer);
     UI.initCompleteTaskCheckbox();
     UI.initEditTask();
+    UI.initDragAndDropDraggable();
   }
 
   static loadModals() {
@@ -78,6 +81,7 @@ export default class UI {
 
     const li = document.createElement('li');
     li.classList.add('project-list-item');
+    li.dataset.uuid = project.uuid;
     if (project.active) li.classList.add('active');
 
     const a = document.createElement('a');
@@ -127,6 +131,7 @@ export default class UI {
     const li = document.createElement('li');
     li.classList.add('task-list-item', 'collapsed');
     li.dataset.uuid = task.uuid;
+    li.draggable = true;
 
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
@@ -253,6 +258,45 @@ export default class UI {
     });
   }
 
+  // **** Drag and Drop **** //
+
+  static initDragAndDropDraggable() {
+    const dragabbleElements = Array.from(document.querySelectorAll('[draggable="true"]'));
+    dragabbleElements.forEach((element) => {
+      element.addEventListener('dragstart', (e) => {
+        e.dataTransfer.setData('text', e.target.dataset.uuid);
+      });
+    });
+  }
+
+  static initDragAndDropReceivers() {
+    const dropElements = document.querySelectorAll('.project-list-item');
+    dropElements.forEach((element) => {
+      element.addEventListener('dragenter', (event) => {
+        event.preventDefault();
+      });
+
+      element.addEventListener('dragover', (event) => {
+        event.preventDefault();
+      });
+
+      element.addEventListener('drop', (event) => {
+        event.preventDefault();
+
+        const sourceUUID = event.dataTransfer.getData('text');
+        const sourceTask = DATA.getItemByUUID(sourceUUID);
+        const targetProject = DATA.getItemByUUID(event.target.parentNode.dataset.uuid);
+
+        // remove sourceTask from DOM
+        document.querySelector(`[data-uuid="${sourceUUID}"]`).remove();
+
+        // add source task to target project
+        targetProject.addTask(sourceTask);
+        // remove source task from old project
+        DATA.getActiveProject().deleteTask(sourceTask.name);
+      });
+    });
+  }
   // ===== LISTENER END == //
 
   // ===== RENDER ======== //

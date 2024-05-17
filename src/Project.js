@@ -62,6 +62,7 @@ export default class Project {
     return this.projectTasks.find((task) => task.uuid === uuid);
   }
 
+  // [?] Move tasks and projects to use uuid rather than name
   deleteTask(name) {
     this.projectTasks = this.projectTasks.filter((task) => task.name !== name);
   }
