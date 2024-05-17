@@ -1,6 +1,5 @@
 /* eslint-disable import/no-named-as-default-member */
 /* eslint-disable import/no-named-as-default */
-import { obsAddProjectBtn } from './Observers';
 import Project from './Project';
 import Task from './Task';
 
@@ -38,14 +37,12 @@ export class TodoList {
     return this.projects.find((project) => project.active === true);
   }
 
-  // [x] Write getItemByUIID
   getItemByUUID(uuid) {
-    // check project for name
-    const inProject = this.projects.find((project) => project.uuid === uuid);
-    if (inProject) return inProject;
-    // check in each project for name
+    // return project matching uuid if found
+    const uuidInProject = this.getProjectByUUID(uuid);
+    if (uuidInProject) return uuidInProject;
 
-    // check each project for name
+    // return task matching uuid
     const parentProj = this.projects
       .filter((project) => project.getAllTasks()
         .some((task) => task.uuid === uuid));
@@ -97,4 +94,3 @@ proj1.addTask(new Task(taskParams2));
 proj1.addTask(new Task(taskParams3));
 
 // SUBSCRIPTIONS
-obsAddProjectBtn.subcribe(console.log);

@@ -1,33 +1,22 @@
 /* eslint-disable no-console */
 /* eslint-disable import/no-named-as-default-member */
 /* eslint-disable import/no-named-as-default */
-import { obsAddProjectBtn, obsAddTaskBtn } from './Observers';
 import { DATA } from './TodoList';
 import {
   handleAddProjectModal,
   handleAddTaskModal,
-  handleCompleteTaskCheckbox,
   handleDblClickBeginEditing,
   handleDblClickEndEditing,
   handleActiveProjectSelection,
-  handleEditTask,
   handleEdits,
 } from './UI-Control';
 
 // [TODOS]
-// [x] Add ability to select active project
-// [x] Add display of project description / due date
-// [x] double click to edit project title in main container
-// [x] Add chronos nlp to project and task modals
 // [ ] Add error handling for modals
 // [ ] Add error handling for task editing
-// [x] Add project editing
-// [ ] Add finalize task edit on "enter" keypress
-// [x] Add conditional rendering to project and task metadata (i.e. date: false, etc)
-// eslint-disable-next-line max-len
-// [-] Consider refactoring to accomodate for double-click to edit code for both proj + task using conditionals
 // [ ] implement drag-and-drop to change task project
 // [?] implement task project picker
+// [ ] add logic for expanding / collapsing todo list items
 
 const projectContainer = document.querySelector('.default-projects-container ul');
 const taskListHeaderContainer = document.querySelector('.task-list-header');
@@ -72,14 +61,14 @@ export default class UI {
     const activeProjectTasks = activeProject.getAllTasks();
     const taskHTML = activeProjectTasks.map((task) => UI.createTaskItem(task));
     UI.renderElements(taskHTML, tasksContainer);
-    UI.initTaskItemInteraction();
+    UI.initCompleteTaskCheckbox();
+    UI.initEditTask();
   }
 
   static loadModals() {
     UI.initAddProjectModal();
     UI.initAddTaskModal();
   }
-
   // ===== LOAD END ====== //
 
   // ===== CREATE ======== //
@@ -166,10 +155,19 @@ export default class UI {
     return li;
   }
 
+  static createBtn(className, textContent) {
+    const btn = document.createElement('button');
+    btn.classList.add(className);
+    btn.type = 'button';
+    btn.textContent = textContent;
+    return btn;
+  }
+
   // ===== CREATE END ==== //
 
   // ===== LISTENERS ===== //
   // ===================== //
+  // **** AddProject **** //
   static initAddProjectButton() {
     const btn = UI.createBtn('add-project', '+ New Project');
     btn.addEventListener('click', () => addProjectModal.showModal());
@@ -189,6 +187,7 @@ export default class UI {
     });
   }
 
+  // **** Select Active Project **** //
   static initActiveProjectSelection() {
     const projectList = document.querySelectorAll('.project-list-item');
     projectList.forEach((item) => {
@@ -199,11 +198,7 @@ export default class UI {
     });
   }
 
-  static initEditActiveProject() {
-    const projectListItems = document.querySelectorAll('.task-list-header .project-data');
-    UI.initEditOnDblClick(projectListItems);
-  }
-
+  // **** Add Task **** //
   static initAddTaskBtn() {
     const btn = UI.createBtn('add-task', '+ New Task');
     btn.addEventListener('click', () => addTaskModal.showModal());
@@ -223,38 +218,21 @@ export default class UI {
     });
   }
 
-  static initTaskItemInteraction() {
-    UI.initCompleteTaskCheckbox();
-    UI.initEditTask();
-    // [ ] add logic for expanding / collapsing todo list items
-  }
-
-  static initCompleteTaskCheckbox() {
-    const checkboxes = document.querySelectorAll('.task-list-item .checkbox');
-    checkboxes.forEach((checkbox) => {
-      checkbox.addEventListener('change', (e) => {
-        e.target.parentNode.classList.toggle('completed');
-        handleEditTask(e);
-        // handleEdits(e);
-        // [-] Almost ready
-      });
-    });
+  // **** Task/Project Editing **** //
+  static initEditActiveProject() {
+    const projectListItems = document.querySelectorAll('.task-list-header .project-data');
+    UI.initEditOnDblClick(projectListItems);
   }
 
   static initEditTask() {
-    const taskListItems = document.querySelectorAll('.task-list-item');
-    taskListItems.forEach((taskItem) => {
-      const h3 = taskItem.querySelector("h3[data-name='taskName']");
-      const pDesc = taskItem.querySelector("p[data-name='taskDescription']");
-      const pDue = taskItem.querySelector("p[data-name='taskDueDate']");
-      UI.initEditOnDblClick([h3, pDesc, pDue]);
-    });
+    const taskListItems = Array.from(document.querySelectorAll('.task-list-item .task-data'))
+      .filter((item) => item.type !== 'checkbox');
+    UI.initEditOnDblClick(taskListItems);
   }
 
-  // [-] handle prior content
   static initEditOnDblClick(editableElements) {
     editableElements.forEach((element) => {
-      element.addEventListener('click', (e) => {
+      element.addEventListener('dblclick', (e) => {
         if (e.target.contentEditable === 'true') return;
         const priorContent = e.target.textContent;
         handleDblClickBeginEditing(e);
@@ -262,9 +240,16 @@ export default class UI {
           handleDblClickEndEditing(e, priorContent);
         });
       });
-      // element.addEventListener('blur', (e) => {
-      //   handleDblClickEndEditing(e);
-      // });
+    });
+  }
+
+  static initCompleteTaskCheckbox() {
+    const checkboxes = document.querySelectorAll('.task-list-item .checkbox');
+    checkboxes.forEach((checkbox) => {
+      checkbox.addEventListener('change', (e) => {
+        e.target.parentNode.classList.toggle('completed');
+        handleEdits(e);
+      });
     });
   }
 
@@ -289,19 +274,4 @@ export default class UI {
       });
   }
   // ===== RENDER END ==== //
-
-  // ===== UTIL ========== //
-  // ===================== //
-  static createBtn(className, textContent) {
-    const btn = document.createElement('button');
-    btn.classList.add(className);
-    btn.type = 'button';
-    btn.textContent = textContent;
-    return btn;
-  }
-  // ===== UTIL END ====== //
 }
-
-// [ ] Edit subscribers
-obsAddProjectBtn.subcribe(UI.loadProjectsSidebar);
-obsAddTaskBtn.subcribe(UI.loadTasks);
