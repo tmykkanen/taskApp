@@ -6,35 +6,12 @@ import Project from './Project';
 import Task from './Task';
 import UI from './UI-View';
 
-export function handleEdits(sourceEvent) {
-  // get item to edit
-  const { uuid } = sourceEvent.target.parentNode.dataset;
-  const itemToEdit = DATA.getItemByUUID(uuid);
-
-  // get data from Dom
-  const editsData = Array.from(sourceEvent.target.parentNode.children)
-    .filter((item) => item.type !== 'button');
-
-  // parse data into object
-  const editsDataParsed = editsData
-    .reduce((obj, item) => {
-      let value = item.textContent;
-      if (item.type === 'checkbox') value = item.checked;
-      return ({ ...obj, [item.dataset.name]: value });
-    }, {});
-
-  // update task/project object
-  Object.assign(itemToEdit, editsDataParsed);
-
-  console.log(itemToEdit);
-  // [?] Relocate load proj sidebar - necessary to update names
-  //  when renaming projects
-  UI.loadProjectsSidebar();
-}
-
+// ===== UTIL ========== //
+// ===================== //
 function parseDateInput(dateInput) {
   const parsedDate = chrono.parseDate(dateInput, Date.now(), { forwardDate: true });
-  if (parsedDate === null) return 'Add a due date...';
+  // [-] disentangle add due date
+  if (parsedDate === null) return;
   return new Date(parsedDate).toLocaleDateString('en', { month: 'numeric', day: 'numeric', year: '2-digit' });
 }
 
@@ -44,26 +21,71 @@ function pressEnterToFinish(targetElement) {
   });
 }
 
+// ===== DRAG N DROP === //
+// ===================== //
+export function handleDragAndDropEnd(e) {
+  const sourceUUID = e.dataTransfer.getData('text');
+  const targetUUID = e.target.dataset.uuid;
+
+  // Cancel if dragged to current project
+  if (DATA.getActiveProject().uuid === targetUUID) return;
+
+  const sourceTask = DATA.getItemByUUID(sourceUUID);
+  const targetProject = DATA.getItemByUUID(targetUUID);
+
+  // remove sourceTask from DOM
+  document.querySelector(`[data-uuid="${sourceUUID}"]`).remove();
+
+  // add source task to target project
+  targetProject.addTask(sourceTask);
+  // remove source task from old project
+  DATA.getActiveProject().deleteTask(sourceTask.name);
+}
+
+// === DBL CLICK EDIT == //
+// ===================== //
+export function handleEdits(e) {
+  // get item to edit
+  const { uuid } = e.target.parentNode.dataset;
+  const itemToEdit = DATA.getItemByUUID(uuid);
+
+  // Get edits
+  let value = e.target.textContent;
+  if (e.target.type === 'checkbox') value = e.target.checked;
+
+  // update task/project object
+  Object.assign(itemToEdit, { [e.target.dataset.name]: value });
+
+  console.log(itemToEdit);
+  // [?] Relocate load proj sidebar - necessary to update names
+  //  when renaming projects
+  UI.loadProjectsSidebar();
+}
+
 export function handleDblClickBeginEditing(e) {
   e.target.contentEditable = true;
-  // e.target.textContent = '';
   e.target.focus();
   pressEnterToFinish(e.target);
 }
 
-export function handleDblClickEndEditing(e, priorContent) {
+export function handleDblClickEndEditing(e) {
   // [ ] Add "add description" ect to newly blank
-  if (e.target.textContent === '') {
-    e.target.textContent = priorContent;
-    return;
-  }
+  const { uuid } = e.target.parentNode.dataset;
+  const itemToEdit = DATA.getItemByUUID(uuid);
+
   if (e.target.dataset.name === 'taskDueDate' || e.target.dataset.name === 'projectDueDate') {
     e.target.textContent = parseDateInput(e.target.textContent);
+  }
+  if (e.target.textContent === '' || e.target.textContent === null) {
+    e.target.textContent = itemToEdit[e.target.dataset.name];
+    return;
   }
   e.target.contentEditable = false;
   handleEdits(e);
 }
 
+// ===== ACTIVE PROJ === //
+// ===================== //
 export function handleActiveProjectSelection(e) {
   const newActiveProjectName = e.target.textContent;
   DATA.getActiveProject().active = false;
@@ -73,6 +95,8 @@ export function handleActiveProjectSelection(e) {
   UI.loadTasks();
 }
 
+// ===== MODALS ======== //
+// ===================== //
 // [?] Refactor to combine handlers for addProject and add Task?
 export function handleAddProjectModal(e) {
   e.preventDefault();

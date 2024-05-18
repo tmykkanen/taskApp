@@ -9,6 +9,7 @@ import {
   handleDblClickEndEditing,
   handleActiveProjectSelection,
   handleEdits,
+  handleDragAndDropEnd,
 } from './UI-Control';
 
 // [TODOS]
@@ -21,8 +22,8 @@ import {
 // [ ] add set date button hover
 // [ ] Fix sidebar container too many divs
 // [ ] Add controls to delete task
+// [ ] Add rendering for filters for Today and Upcoming (this week?)
 
-const sidebarContainer = document.querySelector('.sidebar-container');
 const defaultProjectContainer = document.querySelector('.default-projects-container ul');
 const customProjectContainer = document.querySelector('.custom-projects-container ul');
 const taskListHeaderContainer = document.querySelector('.task-list-header');
@@ -36,6 +37,12 @@ const addTaskForm = document.querySelector('.add-task-modal form');
 const addTaskSubmit = document.querySelector('.add-task-modal .submit');
 const addTaskCancel = document.querySelector('.add-task-modal .cancel');
 
+// UTIL
+function getObjectKeyByValue(object, value) {
+  return Object.keys(object)
+    .find((key) => object[key] === value);
+}
+
 export default class UI {
   // ===== LOAD PAGE ===== //
   // ===================== //
@@ -47,36 +54,43 @@ export default class UI {
   }
 
   static loadProjectsSidebar() {
-    const allProjects = DATA.getAllProjects();
-    const defaultProjectHtml = allProjects
-      .filter((project) => project.default === true)
-      .map((project) => UI.createProjectItem(project));
-    const customProjectHTLM = allProjects
-      .filter((project) => project.default === false)
-      .map((project) => UI.createProjectItem(project));
-    // allProjects.map((project) => UI.createProjectItem(project));
+    function getProjectHTML(defaultBol) {
+      return DATA
+        .getAllProjects()
+        // Check if looking for default projects or custom projects using boolean
+        .filter((project) => project.default === defaultBol)
+        .map((project) => UI.createProjectItem(project));
+    }
 
+    // Render default projects
+    const defaultProjectHtml = getProjectHTML(true);
     UI.renderElements(defaultProjectHtml, defaultProjectContainer);
+
+    // Render custom projects
+    const customProjectHTLM = getProjectHTML(false);
     UI.renderElements(customProjectHTLM, customProjectContainer);
 
+    // Initiate interactivity
     UI.initAddProjectButton();
     UI.initActiveProjectSelection();
     UI.initDragAndDropReceivers();
   }
 
   static loadActiveProject() {
-    const activeProject = DATA.getActiveProject();
-    const headerHTML = UI.createActiveProjectHeader(activeProject);
+    const headerHTML = UI.createActiveProjectHeader();
     const addTaskBtn = UI.initAddTaskBtn();
     UI.renderElements([headerHTML, addTaskBtn], taskListHeaderContainer);
+
     UI.initEditActiveProject();
   }
 
   static loadTasks() {
-    const activeProject = DATA.getActiveProject();
-    const activeProjectTasks = activeProject.getAllTasks();
-    const taskHTML = activeProjectTasks.map((task) => UI.createTaskItem(task));
+    const taskHTML = DATA
+      .getActiveProject()
+      .getAllTasks()
+      .map((task) => UI.createTaskItem(task));
     UI.renderElements(taskHTML, tasksContainer);
+
     UI.initCompleteTaskCheckbox();
     UI.initEditTask();
     UI.initDragAndDropDraggable();
@@ -91,58 +105,40 @@ export default class UI {
   // ===== CREATE ======== //
   // ===================== //
   static createProjectItem(project) {
-    const { projectName } = project;
-
     const li = document.createElement('li');
     li.classList.add('project-list-item');
-    li.dataset.uuid = project.uuid;
     if (project.active) li.classList.add('active');
-    li.textContent = projectName;
-
-    // const a = document.createElement('a');
-    // a.href = '';
-    // a.textContent = projectName;
-
-    // li.append(a);
+    li.dataset.uuid = project.uuid;
+    li.textContent = project.name;
 
     return li;
   }
 
-  static createActiveProjectHeader(activeProject) {
-    const {
-      projectName,
-      projectDescription,
-      projectDueDate,
-    } = activeProject;
+  static createActiveProjectHeader() {
+    const project = DATA.getActiveProject();
 
     const div = document.querySelector('.task-list-header');
-    div.dataset.uuid = activeProject.uuid;
+    div.dataset.uuid = project.uuid;
 
     const h2 = document.createElement('h2');
     h2.classList.add('name', 'project-data');
-    h2.textContent = projectName;
-    h2.dataset.name = 'projectName';
+    h2.textContent = project.name;
+    h2.dataset.name = getObjectKeyByValue(project, project.name);
 
     const pDesc = document.createElement('p');
     pDesc.classList.add('description', 'project-data');
-    pDesc.dataset.name = 'projectDescription';
-    pDesc.textContent = projectDescription || 'Add a description...';
+    pDesc.textContent = project.description || 'Add a description...';
+    pDesc.dataset.name = getObjectKeyByValue(project, project.description);
 
     const pDue = document.createElement('p');
     pDue.classList.add('due-date', 'project-data');
-    pDue.dataset.name = 'projectDueDate';
-    pDue.textContent = projectDueDate || 'Add a due date...';
+    pDue.textContent = project.dueDate || 'Add a due date...';
+    pDue.dataset.name = getObjectKeyByValue(project, project.dueDate);
 
     return [h2, pDesc, pDue];
   }
 
   static createTaskItem(task) {
-    const {
-      taskName,
-      taskDescription,
-      taskDueDate,
-      taskComplete,
-    } = task;
     const li = document.createElement('li');
     li.classList.add('task-list-item', 'collapsed');
     li.dataset.uuid = task.uuid;
@@ -151,24 +147,24 @@ export default class UI {
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
     checkbox.classList.add('checkbox', 'task-data');
-    checkbox.id = taskName;
-    checkbox.checked = taskComplete;
-    checkbox.dataset.name = 'taskComplete';
+    checkbox.id = task.name;
+    checkbox.checked = task.status;
+    checkbox.dataset.name = getObjectKeyByValue(task, task.status);
 
     const h3 = document.createElement('h3');
     h3.classList.add('task-data');
-    h3.textContent = taskName;
-    h3.dataset.name = 'taskName';
+    h3.textContent = task.name;
+    h3.dataset.name = getObjectKeyByValue(task, task.name);
 
     const pDesc = document.createElement('p');
     pDesc.classList.add('description', 'task-data');
-    pDesc.dataset.name = 'taskDescription';
-    pDesc.textContent = taskDescription || 'add a description...';
+    pDesc.textContent = task.description || 'add a description...';
+    pDesc.dataset.name = getObjectKeyByValue(task, task.description);
 
     const pDue = document.createElement('p');
     pDue.classList.add('due-date', 'task-data');
-    pDue.dataset.name = 'taskDueDate';
-    pDue.textContent = taskDueDate || 'add a due date...';
+    pDue.textContent = task.dueDate || 'add a due date...';
+    pDue.dataset.name = getObjectKeyByValue(task, task.dueDate);
 
     li.append(checkbox, h3, pDesc, pDue);
 
@@ -253,10 +249,10 @@ export default class UI {
     editableElements.forEach((element) => {
       element.addEventListener('dblclick', (e) => {
         if (e.target.contentEditable === 'true') return;
-        const priorContent = e.target.textContent;
         handleDblClickBeginEditing(e);
+
         element.addEventListener('blur', () => {
-          handleDblClickEndEditing(e, priorContent);
+          handleDblClickEndEditing(e);
         });
       });
     });
@@ -296,44 +292,25 @@ export default class UI {
   static initDragAndDropReceivers() {
     const dropElements = document.querySelectorAll('.project-list-item');
     dropElements.forEach((element) => {
-      element.addEventListener('dragenter', (event) => {
-        event.preventDefault();
-        event.target.classList.add('drop-target');
+      element.addEventListener('dragenter', (e) => {
+        e.preventDefault();
+        e.target.classList.add('drop-target');
       });
 
-      element.addEventListener('dragover', (event) => {
-        event.preventDefault();
+      element.addEventListener('dragover', (e) => {
+        e.preventDefault();
       });
 
-      element.addEventListener('dragleave', (event) => {
-        event.preventDefault();
-        event.target.classList.remove('drop-target');
+      element.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        e.target.classList.remove('drop-target');
       });
 
-      // element.addEventListener('dragleave', (event) => {
-      //   event.preventDefault();
-      //   event.target.classList.remove('drop-target');
-      // });
+      element.addEventListener('drop', (e) => {
+        e.preventDefault();
+        e.target.classList.remove('drop-target');
 
-      element.addEventListener('drop', (event) => {
-        event.preventDefault();
-        event.target.classList.remove('drop-target');
-
-        const sourceUUID = event.dataTransfer.getData('text');
-        const targetUUID = event.target.dataset.uuid;
-        if (DATA.getActiveProject().uuid === targetUUID) return;
-
-        const sourceTask = DATA.getItemByUUID(sourceUUID);
-        const targetProject = DATA.getItemByUUID(targetUUID);
-
-        // remove sourceTask from DOM
-        document.querySelector(`[data-uuid="${sourceUUID}"]`).remove();
-
-        // add source task to target project
-        targetProject.addTask(sourceTask);
-        // remove source task from old project
-        DATA.getActiveProject().deleteTask(sourceTask.name);
-        // console.log(event.target.parentNode.classList);
+        handleDragAndDropEnd(e);
       });
     });
   }
