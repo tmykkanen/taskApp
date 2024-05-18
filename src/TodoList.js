@@ -81,9 +81,11 @@ export const DATA = new TodoList();
 const projParams1 = { projectName: 'Project 1', projectDescription: 'Project 1 Desc', projectDueDate: '5/12/24' };
 const projParams2 = { projectName: 'Project 2', projectDescription: 'Project 2 Desc', projectDueDate: '5/9/24' };
 const projParams3 = { projectName: 'Project 3' };
+const inboxParams = { projectName: 'Inbox', projectDefault: true };
 DATA.addProject(new Project(projParams1));
 DATA.addProject(new Project(projParams2));
 DATA.addProject(new Project(projParams3));
+DATA.addProject(new Project(inboxParams));
 const proj1 = DATA.getProject(projParams1.projectName);
 proj1.active = true;
 

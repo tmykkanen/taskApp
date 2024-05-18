@@ -4,11 +4,13 @@ export default class Project {
     projectDescription = false,
     projectDueDate = false,
     projectActive = false,
+    projectDefault = false,
   }) {
     this.projectName = projectName;
     this.projectDescription = projectDescription;
     this.projectDueDate = projectDueDate;
     this.projectActive = projectActive;
+    this.projectDefault = projectDefault;
     this.projectTasks = [];
     this.projectTaskArchive = [];
     this.projectUUID = crypto.randomUUID();
@@ -44,6 +46,10 @@ export default class Project {
 
   set active(bol) {
     this.projectActive = bol;
+  }
+
+  get default() {
+    return this.projectDefault;
   }
 
   get uuid() {

@@ -75,6 +75,9 @@ li {
   background-color: var(--sidebar-bg);
   height: 100vh;
   padding: var(--large-gap);
+  display: flex;
+  flex-direction: column;
+  gap: var(--large-gap);
 }
 
 .sidebar-container .default-projects-container ul {
@@ -97,7 +100,7 @@ li {
   border-radius: var(--border-raidus);
 }
 
-.sidebar-container button {
+.sidebar-container .add-project-btn {
   background-color: transparent;
   border: none;
   color: var(--font-color);
@@ -106,7 +109,7 @@ li {
   font-size: 1.25em;
 }
 
-.sidebar-container button:hover {
+.sidebar-container .add-project-btn:hover {
   opacity: 0.6;
   transition: all .2s;
 }
@@ -119,7 +122,7 @@ li {
   padding: var(--large-gap);
 }
 
-.main-container button {
+.main-container .add-task-btn {
   background-color: transparent;
   border: none;
   color: var(--font-color);
@@ -128,7 +131,7 @@ li {
   font-size: 1.25em;
 }
 
-.main-container button:hover {
+.main-container .add-task-btn:hover {
   opacity: 0.6;
   transition: all .2s;
 }

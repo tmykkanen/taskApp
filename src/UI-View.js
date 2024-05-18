@@ -21,9 +21,10 @@ import {
 // [ ] add set date button hover
 // [ ] Fix sidebar container too many divs
 // [ ] Add controls to delete task
-// [-] Refactor sidebar
 
-const projectContainer = document.querySelector('.default-projects-container ul');
+const sidebarContainer = document.querySelector('.sidebar-container');
+const defaultProjectContainer = document.querySelector('.default-projects-container ul');
+const customProjectContainer = document.querySelector('.custom-projects-container ul');
 const taskListHeaderContainer = document.querySelector('.task-list-header');
 const tasksContainer = document.querySelector('.main-container ul');
 const addProjectModal = document.querySelector('.add-project-modal');
@@ -47,15 +48,19 @@ export default class UI {
 
   static loadProjectsSidebar() {
     const allProjects = DATA.getAllProjects();
-    // [-] refactor sidebar
-    const projectHTML = allProjects.map((project) => UI.createProjectItem(project));
-    // [-] refactor sidebar
-    const addProjectBtn = UI.initAddProjectButton();
-    // [-] refactor sidebar
-    UI.renderElements([projectHTML, addProjectBtn], projectContainer);
-    // [-] refactor sidebar
+    const defaultProjectHtml = allProjects
+      .filter((project) => project.default === true)
+      .map((project) => UI.createProjectItem(project));
+    const customProjectHTLM = allProjects
+      .filter((project) => project.default === false)
+      .map((project) => UI.createProjectItem(project));
+    // allProjects.map((project) => UI.createProjectItem(project));
+
+    UI.renderElements(defaultProjectHtml, defaultProjectContainer);
+    UI.renderElements(customProjectHTLM, customProjectContainer);
+
+    UI.initAddProjectButton();
     UI.initActiveProjectSelection();
-    // [-] refactor sidebar
     UI.initDragAndDropReceivers();
   }
 
@@ -85,7 +90,6 @@ export default class UI {
 
   // ===== CREATE ======== //
   // ===================== //
-  // [x] refactor sidebar - remove a links?
   static createProjectItem(project) {
     const { projectName } = project;
 
@@ -185,9 +189,8 @@ export default class UI {
   // ===================== //
   // **** AddProject **** //
   static initAddProjectButton() {
-    const btn = UI.createBtn('add-project', '+ Add Project');
+    const btn = document.querySelector('.sidebar-container .add-project-btn');
     btn.addEventListener('click', () => addProjectModal.showModal());
-    return btn;
   }
 
   static initAddProjectModal() {
@@ -216,7 +219,7 @@ export default class UI {
 
   // **** Add Task **** //
   static initAddTaskBtn() {
-    const btn = UI.createBtn('add-task', '+ Add Task');
+    const btn = UI.createBtn('add-task-btn', '+ Add Task');
     btn.addEventListener('click', () => addTaskModal.showModal());
     return btn;
   }
@@ -313,7 +316,6 @@ export default class UI {
       // });
 
       element.addEventListener('drop', (event) => {
-        // [BUG] problem with drag and drop
         event.preventDefault();
         event.target.classList.remove('drop-target');
 
