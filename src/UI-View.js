@@ -15,7 +15,6 @@ import {
 // [TODOS]
 // [ ] Add error handling for modals
 // [ ] Add error handling for task editing
-// [x] implement drag-and-drop to change task project
 // [?] implement task project picker
 // [ ] add logic for expanding / collapsing todo list items
 // [ ] add task sorting
@@ -23,6 +22,7 @@ import {
 // [ ] Fix sidebar container too many divs
 // [ ] Add controls to delete task
 // [ ] Add rendering for filters for Today and Upcoming (this week?)
+// [-] Write handling for moving completed todos to archive
 
 const defaultProjectContainer = document.querySelector('.default-projects-container ul');
 const customProjectContainer = document.querySelector('.custom-projects-container ul');

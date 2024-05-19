@@ -37,18 +37,20 @@ export class TodoList {
     return this.projects.find((project) => project.active === true);
   }
 
-  getItemByUUID(uuid) {
-    console.log(`uuid sent to method: ${uuid}`);
-    // return project matching uuid if found
-    const uuidInProject = this.getProjectByUUID(uuid);
-    if (uuidInProject) return uuidInProject;
+  getItemByUUID(obj, uuid) {
+    // Get flattened object
+    const flatObj = Object.values(obj).flat();
 
-    // return task matching uuid
-    const parentProj = this.projects
-      .filter((project) => project.getAllTasks()
-        .some((task) => task.uuid === uuid));
-    return parentProj[0].getAllTasks()
-      .find((task) => task.uuid === uuid);
+    const checkforTarget = flatObj.filter((value) => value === uuid);
+
+    if (checkforTarget.length === 1) {
+      return obj;
+    }
+
+    return flatObj.reduce((acc, val) => {
+      if (acc !== undefined) return acc;
+      if (typeof val === 'object') return this.getItemByUUID(val, uuid);
+    }, undefined);
   }
 
   // [?] Do I need these functions, or should TodoList not interact with project tasks?

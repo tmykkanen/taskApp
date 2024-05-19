@@ -10,7 +10,6 @@ import UI from './UI-View';
 // ===================== //
 function parseDateInput(dateInput) {
   const parsedDate = chrono.parseDate(dateInput, Date.now(), { forwardDate: true });
-  // [-] disentangle add due date
   if (parsedDate === null) return;
   return new Date(parsedDate).toLocaleDateString('en', { month: 'numeric', day: 'numeric', year: '2-digit' });
 }
@@ -30,8 +29,8 @@ export function handleDragAndDropEnd(e) {
   // Cancel if dragged to current project
   if (DATA.getActiveProject().uuid === targetUUID) return;
 
-  const sourceTask = DATA.getItemByUUID(sourceUUID);
-  const targetProject = DATA.getItemByUUID(targetUUID);
+  const sourceTask = DATA.getItemByUUID(DATA, sourceUUID);
+  const targetProject = DATA.getItemByUUID(DATA, targetUUID);
 
   // remove sourceTask from DOM
   document.querySelector(`[data-uuid="${sourceUUID}"]`).remove();
@@ -47,11 +46,25 @@ export function handleDragAndDropEnd(e) {
 export function handleEdits(e) {
   // get item to edit
   const { uuid } = e.target.parentNode.dataset;
-  const itemToEdit = DATA.getItemByUUID(uuid);
+  const itemToEdit = DATA.getItemByUUID(DATA, uuid);
 
   // Get edits
   let value = e.target.textContent;
-  if (e.target.type === 'checkbox') value = e.target.checked;
+  if (e.target.type === 'checkbox') {
+    value = e.target.checked;
+    if (e.target.checked) {
+      DATA.getActiveProject().archiveTask(itemToEdit.name);
+      console.log(DATA.getActiveProject());
+    }
+    if (!e.target.checked) {
+      console.log(DATA.getActiveProject().getProjectTaskArchive());
+      const task = DATA.getItemByUUID(DATA, uuid);
+      DATA.getActiveProject().unarchiveTask(task.name);
+      console.log(DATA.getActiveProject().getProjectTaskArchive());
+      console.log(DATA.getActiveProject());
+      // [-] Write handling for moving completed todos to archive
+    }
+  }
 
   // update task/project object
   Object.assign(itemToEdit, { [e.target.dataset.name]: value });
@@ -71,7 +84,7 @@ export function handleDblClickBeginEditing(e) {
 export function handleDblClickEndEditing(e) {
   // [ ] Add "add description" ect to newly blank
   const { uuid } = e.target.parentNode.dataset;
-  const itemToEdit = DATA.getItemByUUID(uuid);
+  const itemToEdit = DATA.getItemByUUID(DATA, uuid);
 
   if (e.target.dataset.name === 'taskDueDate' || e.target.dataset.name === 'projectDueDate') {
     e.target.textContent = parseDateInput(e.target.textContent);

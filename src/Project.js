@@ -88,6 +88,19 @@ export default class Project {
     this.deleteTask(name);
   }
 
+  unarchiveTask(name) {
+    const taskArchive = this.getProjectTaskArchive();
+
+    const targetTask = taskArchive.filter((task) => task.name === name);
+
+    this.setProjectTaskArchive(
+      taskArchive.filter((task) => task.name !== name),
+    );
+
+    // index necessary becasue targetTask is an array of one
+    this.addTask(targetTask[0]);
+  }
+
   getProjectTaskArchive() {
     return this.projectTaskArchive;
   }
