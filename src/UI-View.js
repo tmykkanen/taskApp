@@ -60,66 +60,25 @@ export default class UI {
   }
 
   static loadProjectsSidebar() {
-    function getProjectHTML(defaultBol) {
-      return DATA
-        .getAllProjects()
+    function createProjectHTML({ defaultBol }) {
+      return DATA.getAllProjects()
         // Check if looking for default projects or custom projects using boolean
         .filter((project) => project.default === defaultBol)
         .map((project) => UI.createProjectItem(project));
     }
 
-    // Render default projects
-    const defaultProjectHTML = getProjectHTML(true);
-    // UI.renderElements(defaultProjectHtml, defaultProjectContainer);
+    const defaultProjectHTML = UI.createSidebarProjectListHTML({ defaultBol: true });
+    const customProjectHTML = UI.createSidebarProjectListHTML({ defaultBol: false });
+    const addProjectButtonHTML = UI.initAddProjectButton();
 
-    // // Render custom projects
-    const customProjectHTML = getProjectHTML(false);
-    // UI.renderElements(customProjectHTLM, customProjectContainer);
-    const addProjectButton = UI.initAddProjectButton();
-
-    UI.renderSidebar(defaultProjectHTML, customProjectHTML, addProjectButton);
+    UI.renderElements(
+      [defaultProjectHTML, customProjectHTML, addProjectButtonHTML],
+      sidebarContainer,
+    );
 
     // Initiate interactivity
-    sidebarContainer.append(addProjectButton);
     UI.initActiveProjectSelection();
     UI.initDragAndDropReceivers();
-  }
-
-  static renderSidebar(defaultProjectHTML, customProjectHTML, addProjectButton) {
-    // clear sidebar
-    let child = sidebarContainer.lastElementChild;
-    while (child) {
-      sidebarContainer.removeChild(child);
-      child = sidebarContainer.lastElementChild;
-    }
-
-    // default projects
-    const divDefault = document.createElement('div');
-    divDefault.classList.add('default-projects-container');
-
-    const defaultUL = document.createElement('ul');
-    defaultProjectHTML.forEach((element) => defaultUL.append(element));
-    // defaultUL.append(defaultProjectHTML);
-    divDefault.append(defaultUL);
-
-    // custom projects
-    const divCustom = document.createElement('div');
-    divCustom.classList.add('custom-projects-container');
-
-    const customUL = document.createElement('ul');
-    customProjectHTML.forEach((element) => customUL.append(element));
-    // customUL.append(customProjectHTML);
-    divCustom.append(customUL);
-
-    sidebarContainer.append(divDefault, divCustom, addProjectButton);
-
-    // Populate container
-    // if (!Array.isArray(elements)) return sidebarContainer.append(elements);
-    // elements
-    //   .flat()
-    //   .forEach((el) => {
-    //     sidebarContainer.append(el);
-    //   });
   }
 
   static loadActiveProject() {
@@ -131,9 +90,7 @@ export default class UI {
   }
 
   static loadTasks(activeTaskUUID) {
-    const taskHTML = DATA
-      .getActiveProject()
-      .getAllTasks()
+    const taskHTML = DATA.getActiveProject().getAllTasks()
       .map((task) => UI.createTaskItem(task));
     UI.renderElements(taskHTML, tasksContainer);
 
@@ -144,8 +101,8 @@ export default class UI {
   }
 
   static loadModals() {
-    UI.initAddProjectModal();
-    UI.initAddTaskModal();
+    // UI.initAddProjectModal();
+    // UI.initAddTaskModal();
   }
   // ===== LOAD END ====== //
 
@@ -162,6 +119,23 @@ export default class UI {
     return li;
   }
 
+  static createSidebarProjectListHTML({ defaultBol }) {
+    const projectItemHTML = DATA.getAllProjects()
+      .filter((project) => project.default === defaultBol)
+      .map((project) => UI.createProjectItem(project));
+
+    const div = document.createElement('div');
+    if (defaultBol) div.classList.add('default-projects-container');
+    if (!defaultBol) div.classList.add('custom-projects-container');
+
+    const ul = document.createElement('ul');
+
+    projectItemHTML.forEach((element) => ul.append(element));
+    div.append(ul);
+
+    return div;
+  }
+
   static createActiveProjectHeader() {
     const project = DATA.getActiveProject();
 
@@ -170,8 +144,8 @@ export default class UI {
 
     const h2 = document.createElement('h2');
     h2.classList.add('name', 'project-data');
-    h2.textContent = project.name || 'add title...';
     if (!project.name) h2.classList.add('undefined');
+    h2.textContent = project.name || 'add title...';
     h2.dataset.name = 'projectName';
 
     const pDesc = document.createElement('p');
@@ -189,7 +163,6 @@ export default class UI {
     return [h2, pDesc, pDue];
   }
 
-  // [x] Add handling for blank name - use css to style with box border for input
   static createTaskItem(task) {
     const li = document.createElement('li');
     li.classList.add('task-list-item', 'collapsed');
@@ -201,25 +174,24 @@ export default class UI {
     checkbox.classList.add('checkbox', 'task-data');
     checkbox.id = task.name;
     if (task.status !== undefined) checkbox.checked = true;
-    // checkbox.dataset.name = getObjectKeyByValue(task, task.status);
     checkbox.dataset.name = 'taskStatus';
 
     const h3 = document.createElement('h3');
     h3.classList.add('task-data');
-    h3.textContent = task.name || 'add title...';
     if (!task.name) h3.classList.add('undefined');
+    h3.textContent = task.name || 'add title...';
     h3.dataset.name = 'taskName';
 
     const pDesc = document.createElement('p');
     pDesc.classList.add('description', 'task-data');
-    pDesc.textContent = task.description || 'add description...';
     if (!task.description) pDesc.classList.add('undefined');
+    pDesc.textContent = task.description || 'add description...';
     pDesc.dataset.name = 'taskDescription';
 
     const pDue = document.createElement('p');
     pDue.classList.add('due-date', 'task-data');
-    pDue.textContent = task.dueDate || 'add due date...';
     if (!task.dueDate) pDue.classList.add('undefined');
+    pDue.textContent = task.dueDate || 'add due date...';
     pDue.dataset.name = 'taskDueDate';
 
     li.append(checkbox, h3, pDesc, pDue);
@@ -240,35 +212,33 @@ export default class UI {
   // ===== LISTENERS ===== //
   // ===================== //
   // **** AddProject **** //
-  // [x] modify to add project directly
   static initAddProjectButton() {
     const btn = UI.createBtn('add-project-btn', '+ Add Project');
-    // const btn = document.querySelector('.sidebar-container .add-project-btn');
-    // btn.addEventListener('click', () => addProjectModal.showModal());
     btn.addEventListener('click', () => {
       DATA.addProject(new Project());
+      // [?] Where should reloads go?
       UI.loadProjectsSidebar();
     });
     return btn;
   }
 
-  static initAddProjectModal() {
-    addProjectCancel.addEventListener('click', () => {
-      addProjectForm.reset();
-      addProjectModal.close();
-    });
+  // static initAddProjectModal() {
+  //   addProjectCancel.addEventListener('click', () => {
+  //     addProjectForm.reset();
+  //     addProjectModal.close();
+  //   });
 
-    addProjectSubmit.addEventListener('click', (e) => {
-      handleAddProjectModal(e);
-      addProjectForm.reset();
-      addProjectModal.close();
-    });
-  }
+  //   addProjectSubmit.addEventListener('click', (e) => {
+  //     handleAddProjectModal(e);
+  //     addProjectForm.reset();
+  //     addProjectModal.close();
+  //   });
+  // }
 
   // **** Select Active Project **** //
   static initActiveProjectSelection() {
-    const projectList = document.querySelectorAll('.project-list-item');
-    projectList.forEach((item) => {
+    const projectItemList = document.querySelectorAll('.project-list-item');
+    projectItemList.forEach((item) => {
       item.addEventListener('mousedown', (e) => {
         e.preventDefault();
         handleActiveProjectSelection(e);
@@ -277,10 +247,8 @@ export default class UI {
   }
 
   // **** Add Task **** //
-  // [x] Refactoring to add task directly
   static initAddTaskBtn() {
     const btn = UI.createBtn('add-task-btn', '+ Add Task');
-    // btn.addEventListener('click', () => addTaskModal.showModal());
     btn.addEventListener('click', () => {
       DATA.getActiveProject().addTask(new Task());
       // [?] Move to add task action or separate place for all re-renders?
@@ -289,18 +257,18 @@ export default class UI {
     return btn;
   }
 
-  static initAddTaskModal() {
-    addTaskCancel.addEventListener('click', () => {
-      addTaskForm.reset();
-      addTaskModal.close();
-    });
+  // static initAddTaskModal() {
+  //   addTaskCancel.addEventListener('click', () => {
+  //     addTaskForm.reset();
+  //     addTaskModal.close();
+  //   });
 
-    addTaskSubmit.addEventListener('click', (e) => {
-      handleAddTaskModal(e);
-      addTaskForm.reset();
-      addTaskModal.close();
-    });
-  }
+  //   addTaskSubmit.addEventListener('click', (e) => {
+  //     handleAddTaskModal(e);
+  //     addTaskForm.reset();
+  //     addTaskModal.close();
+  //   });
+  // }
 
   // **** Task/Project Editing **** //
   static initEditActiveProject() {
@@ -320,12 +288,7 @@ export default class UI {
         if (e.target.contentEditable === 'true') return;
         if (e.target.parentNode.classList.contains('deleted')) return;
         if (e.target.parentNode.classList.contains('completed')) return;
-        // handleDblClickBeginEditing(e);
         handleDblClickBeginEditingALT(e);
-
-        element.addEventListener('blur', () => {
-          handleDblClickEndEditing(e);
-        });
       });
     });
   }
@@ -344,8 +307,6 @@ export default class UI {
       checkbox.addEventListener('mouseup', (e) => {
         e.target.parentNode.classList.remove('mouse-down');
         handleCheckboxAfter(e);
-        // e.target.parentNode.classList.toggle('completed');
-        // if (e.altKey) e.target.parentNode.classList.toggle('deleted');
       });
     });
   }
@@ -411,7 +372,6 @@ export default class UI {
 
   // ===== RENDER ======== //
   // ===================== //
-  // eslint-disable-next-line consistent-return
   static renderElements(elements, container) {
     // Empty container
     let child = container.lastElementChild;
@@ -420,12 +380,14 @@ export default class UI {
       child = container.lastElementChild;
     }
     // Populate container
-    if (!Array.isArray(elements)) return container.append(elements);
-    elements
-      .flat()
-      .forEach((el) => {
-        container.append(el);
-      });
+    // if (!Array.isArray(elements)) {
+    //   container.append(elements);
+    //   return;
+    // }
+
+    Array.from(elements).flat().forEach((el) => {
+      container.append(el);
+    });
   }
   // ===== RENDER END ==== //
 }

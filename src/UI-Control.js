@@ -122,6 +122,8 @@ function handleDblClickEndEditingALT(event) {
   console.log(event.target.value);
   console.log(event.target.dataset.name);
 
+  // [BUG] add check and handler for parsing date input
+
   const { uuid } = event.target.parentNode.dataset;
   const itemToEdit = DATA.getItemByUUID(DATA, uuid);
 
