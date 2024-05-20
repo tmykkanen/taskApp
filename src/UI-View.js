@@ -15,6 +15,7 @@ import {
   handleCheckbox,
   handleCheckboxAlt,
   handleCheckboxAfter,
+  handleDblClickBeginEditingALT,
 } from './UI-Control';
 
 // [TODOS]
@@ -177,6 +178,8 @@ export default class UI {
     if (!project.name) h2.classList.add('undefined');
     h2.dataset.name = 'projectName';
 
+    // [-] Refactor task inputs to use input when editing,
+    //  then replace with other element when cleared
     const pDesc = document.createElement('p');
     pDesc.classList.add('description', 'project-data');
     if (!project.description) pDesc.classList.add('undefined');
@@ -193,8 +196,6 @@ export default class UI {
   }
 
   // [x] Add handling for blank name - use css to style with box border for input
-  // [-] Refactor task inputs to use input when editing,
-  //  then replace with other element when cleared
   static createTaskItem(task) {
     const li = document.createElement('li');
     li.classList.add('task-list-item', 'collapsed');
@@ -323,7 +324,10 @@ export default class UI {
     editableElements.forEach((element) => {
       element.addEventListener('dblclick', (e) => {
         if (e.target.contentEditable === 'true') return;
-        handleDblClickBeginEditing(e);
+        if (e.target.parentNode.classList.contains('deleted')) return;
+        if (e.target.parentNode.classList.contains('completed')) return;
+        // handleDblClickBeginEditing(e);
+        handleDblClickBeginEditingALT(e);
 
         element.addEventListener('blur', () => {
           handleDblClickEndEditing(e);

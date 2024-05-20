@@ -283,6 +283,35 @@ li {
   color: #4d4d4d;
 }
 
+.task-list-item input.text-input {
+  grid-column: span 1;
+  border: 1px solid var(--card-bg);
+  background-color: var(--card-input-bg);
+  border-radius: var(--border-raidus);
+  min-height: 28px;
+  padding: calc(var(--small-gap)*.35);
+  color: var(--font-color);
+  font-size: 1.17em;
+  font-weight: 700;
+}
+.task-list-item input.text-input::placeholder {
+  color: #4d4d4d;
+}
+
+/* [ ] Implement auto resize https://css-tricks.com/the-cleanest-trick-for-autogrowing-textareas/ */
+.task-list-item textarea.text-input {
+  grid-column: span 2;
+  border: 1px solid var(--card-bg);
+  background-color: var(--card-input-bg);
+  border-radius: var(--border-raidus);
+  min-height: 28px;
+  padding: calc(var(--small-gap)*.35);
+  color: var(--font-color);
+}
+.task-list-item textarea.text-input::placeholder {
+  color: #4d4d4d;
+}
+
 
 
 /* Hide / show the full todo contents */

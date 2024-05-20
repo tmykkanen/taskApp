@@ -116,6 +116,49 @@ export function handleEdits(e) {
   UI.loadTasks(uuid);
 }
 
+function handleDblClickEndEditingALT(event) {
+  console.log('handleDblClickEndEditingALT');
+  console.log(event.target.value);
+  console.log(event.target.dataset.name);
+
+  const { uuid } = event.target.parentNode.dataset;
+  const itemToEdit = DATA.getItemByUUID(DATA, uuid);
+
+  console.log(itemToEdit);
+
+  Object.assign(itemToEdit, { [event.target.dataset.name]: event.target.value });
+
+  UI.loadProjectsSidebar();
+  UI.loadTasks(uuid);
+}
+
+// [-] Refactor task inputs to use input when editing,
+    //  then replace with other element when cleared
+export function handleDblClickBeginEditingALT(e) {
+  const { target } = e;
+
+  let type = 'input';
+  if (target.nodeName === 'P') type = 'textarea';
+
+  const input = document.createElement(type);
+  input.classList.add('text-input');
+  // input.type = 'text';
+  input.dataset.name = target.dataset.name;
+  input.placeholder = target.textContent;
+
+  console.log(input);
+
+  target.replaceWith(input);
+  input.focus();
+
+  input.addEventListener('keydown', (event) => {
+    if (event.code === 'Enter') input.blur();
+  });
+  input.addEventListener('blur', (event) => {
+    handleDblClickEndEditingALT(event);
+  });
+}
+
 export function handleDblClickBeginEditing(e) {
   const { target } = e;
   target.contentEditable = true;
