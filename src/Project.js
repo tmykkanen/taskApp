@@ -59,9 +59,7 @@ export default class Project {
   }
 
   addTask(newTask) {
-    console.log(newTask);
     this.projectTasks.unshift(newTask);
-    console.log(this.projectTasks);
   }
 
   getTask(name) {
@@ -79,7 +77,7 @@ export default class Project {
   }
 
   deleteTask(name) {
-    let targetTask = this.getTask(name);
+    const targetTask = this.getTask(name);
 
     this.projectTasks = this.projectTasks.filter((task) => task.name !== name);
     this.projectTaskArchive = this.projectTaskArchive.filter((task) => task.name !== name);

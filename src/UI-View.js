@@ -5,15 +5,12 @@ import { DATA } from './TodoList';
 import Task from './Task';
 import Project from './Project';
 import {
-  handleAddProjectModal,
-  handleAddTaskModal,
-  handleDblClickEndEditing,
   handleActiveProjectSelection,
   handleDragAndDropEnd,
   handleCheckbox,
   handleCheckboxAlt,
   handleCheckboxAfter,
-  handleDblClickBeginEditingALT,
+  handleDblClickBeginEditing,
 } from './UI-Control';
 
 // [TODOS]
@@ -30,24 +27,8 @@ import {
 // [x] Write handling for moving completed todos to archive
 
 const sidebarContainer = document.querySelector('.sidebar-container');
-// const defaultProjectContainer = document.querySelector('.default-projects-container ul');
-// const customProjectContainer = document.querySelector('.custom-projects-container ul');
 const taskListHeaderContainer = document.querySelector('.task-list-header');
 const tasksContainer = document.querySelector('.main-container ul');
-const addProjectModal = document.querySelector('.add-project-modal');
-const addProjectForm = document.querySelector('.add-project-modal form');
-const addProjectSubmit = document.querySelector('.add-project-modal .submit');
-const addProjectCancel = document.querySelector('.add-project-modal .cancel');
-const addTaskModal = document.querySelector('.add-task-modal');
-const addTaskForm = document.querySelector('.add-task-modal form');
-const addTaskSubmit = document.querySelector('.add-task-modal .submit');
-const addTaskCancel = document.querySelector('.add-task-modal .cancel');
-
-// UTIL
-// function getObjectKeyByValue(object, value) {
-//   return Object.keys(object)
-//     .find((key) => object[key] === value);
-// }
 
 export default class UI {
   // ===== LOAD PAGE ===== //
@@ -60,13 +41,6 @@ export default class UI {
   }
 
   static loadProjectsSidebar() {
-    function createProjectHTML({ defaultBol }) {
-      return DATA.getAllProjects()
-        // Check if looking for default projects or custom projects using boolean
-        .filter((project) => project.default === defaultBol)
-        .map((project) => UI.createProjectItem(project));
-    }
-
     const defaultProjectHTML = UI.createSidebarProjectListHTML({ defaultBol: true });
     const customProjectHTML = UI.createSidebarProjectListHTML({ defaultBol: false });
     const addProjectButtonHTML = UI.initAddProjectButton();
@@ -288,7 +262,7 @@ export default class UI {
         if (e.target.contentEditable === 'true') return;
         if (e.target.parentNode.classList.contains('deleted')) return;
         if (e.target.parentNode.classList.contains('completed')) return;
-        handleDblClickBeginEditingALT(e);
+        handleDblClickBeginEditing(e);
       });
     });
   }

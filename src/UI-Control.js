@@ -2,7 +2,6 @@
 /* eslint-disable import/no-named-as-default */
 import * as chrono from 'chrono-node';
 import { DATA } from './TodoList';
-import Project from './Project';
 import Task from './Task';
 import UI from './UI-View';
 
@@ -37,22 +36,24 @@ export function handleDragAndDropEnd(e) {
   DATA.getActiveProject().deleteTask(sourceTask.name);
 }
 
-// === DBL CLICK EDIT == //
+// === CHECKBOX == //
 // ===================== //
 export function handleCheckboxAlt(e) {
   const { uuid } = e.target.parentNode.dataset;
   const itemToEdit = DATA.getItemByUUID(DATA, uuid);
 
+  // alt-click a task marked deleted => uncheck and undelete
   if (itemToEdit.status === 'deleted') {
     DATA.getActiveProject().undeleteTask(itemToEdit.name);
     return;
   }
 
+  // alt-click a task checked completed => recheck it, then delete
   if (itemToEdit.status === 'completed') {
     e.target.checked = !e.target.checked;
-    // e.target.parentNode.classList.toggle('completed');
   }
 
+  // alt-click an unmarked task => check and delete
   DATA.getActiveProject().deleteTask(itemToEdit.name);
 }
 
@@ -63,7 +64,6 @@ export function handleCheckbox(e) {
 
   // undelete
   if (itemToEdit.status === 'deleted') {
-    // e.target.parentNode.classList.toggle('deleted');
     DATA.getActiveProject().undeleteTask(itemToEdit.name);
     return;
   }
@@ -81,7 +81,7 @@ export function handleCheckbox(e) {
 }
 
 export function handleCheckboxAfter(e) {
-  // get item to edit
+  // needs to fire after checkbox regular behavior registers
   const { dataset, classList } = e.target.parentNode;
   const { status } = DATA.getItemByUUID(DATA, dataset.uuid);
 
@@ -98,47 +98,25 @@ export function handleCheckboxAfter(e) {
   classList.add('completed');
 }
 
-export function handleEdits(e) {
-  // get item to edit
+// === DBL CLICK EDIT == //
+// ===================== //
+function handleDblClickEndEditing(e) {
+  // [BUG] add check and handler for parsing date input
+  // [BUG] Fix keep previous value when no input in input box
+
   const { uuid } = e.target.parentNode.dataset;
   const itemToEdit = DATA.getItemByUUID(DATA, uuid);
 
-  // Get edits
-  const value = e.target.textContent;
-
-  // update task/project object
-  Object.assign(itemToEdit, { [e.target.dataset.name]: value });
-
-  console.log(itemToEdit);
-  // [?] Relocate load proj sidebar - necessary to update names
-  //  when renaming projects
-  UI.loadProjectsSidebar();
-  // arg to preserve active task
-  UI.loadTasks(uuid);
-}
-
-function handleDblClickEndEditingALT(event) {
-  console.log('handleDblClickEndEditingALT');
-  console.log(event.target.value);
-  console.log(event.target.dataset.name);
-
-  // [BUG] add check and handler for parsing date input
-
-  const { uuid } = event.target.parentNode.dataset;
-  const itemToEdit = DATA.getItemByUUID(DATA, uuid);
-
-  console.log(itemToEdit);
-
-  Object.assign(itemToEdit, { [event.target.dataset.name]: event.target.value });
+  Object.assign(itemToEdit, { [e.target.dataset.name]: e.target.value });
 
   UI.loadProjectsSidebar();
   UI.loadTasks(uuid);
 }
 
-// [-] Refactor task inputs to use input when editing,
+// [x] Refactor task inputs to use input when editing,
 //  then replace with other element when cleared
-// [-] working - replace regular functions with ALT functions and implement
-export function handleDblClickBeginEditingALT(e) {
+// [x] working - replace regular functions with ALT functions and implement
+export function handleDblClickBeginEditing(e) {
   const { target } = e;
 
   let type = 'input';
@@ -150,8 +128,6 @@ export function handleDblClickBeginEditingALT(e) {
   input.dataset.name = target.dataset.name;
   input.placeholder = target.textContent;
 
-  console.log(input);
-
   target.replaceWith(input);
   input.focus();
 
@@ -159,42 +135,8 @@ export function handleDblClickBeginEditingALT(e) {
     if (event.code === 'Enter') input.blur();
   });
   input.addEventListener('blur', (event) => {
-    handleDblClickEndEditingALT(event);
+    handleDblClickEndEditing(event);
   });
-}
-
-export function handleDblClickBeginEditing(e) {
-  const { target } = e;
-  target.contentEditable = true;
-
-  target.addEventListener('keydown', () => {
-    target.textContent = '';
-    if (target.classList.contains('undefined')) {
-      target.classList.remove('undefined');
-    }
-  }, { once: true });
-
-  target.addEventListener('keydown', (event) => {
-    if (event.code === 'Enter') target.blur();
-  });
-
-  target.focus();
-}
-
-export function handleDblClickEndEditing(e) {
-  // [ ] Add "add description" ect to newly blank
-  const { uuid } = e.target.parentNode.dataset;
-  const itemToEdit = DATA.getItemByUUID(DATA, uuid);
-
-  if (e.target.dataset.name === 'taskDueDate' || e.target.dataset.name === 'projectDueDate') {
-    e.target.textContent = parseDateInput(e.target.textContent);
-  }
-  if (e.target.textContent === '' || e.target.textContent === null) {
-    e.target.textContent = itemToEdit[e.target.dataset.name];
-    return;
-  }
-  e.target.contentEditable = false;
-  handleEdits(e);
 }
 
 // ===== ACTIVE PROJ === //
@@ -205,44 +147,5 @@ export function handleActiveProjectSelection(e) {
   DATA.getProjectByUUID(newActiveProjectUUID).active = true;
   UI.loadProjectsSidebar();
   UI.loadActiveProject();
-  UI.loadTasks();
-}
-
-// ===== MODALS ======== //
-// ===================== //
-// [?] Refactor to combine handlers for addProject and add Task?
-export function handleAddProjectModal(e) {
-  e.preventDefault();
-  const addProjectForm = document.querySelector('.add-project-modal form');
-  const formData = Array.from(addProjectForm.getElementsByClassName('input'));
-  const formDataParsed = formData
-    .reduce((obj, item) => {
-      if (item.dataset.name === 'projectDueDate') {
-        // eslint-disable-next-line no-param-reassign
-        item.value = parseDateInput(item.value);
-      }
-      return ({ ...obj, [item.dataset.name]: item.value });
-    }, {});
-
-  DATA.addProject(new Project(formDataParsed));
-
-  UI.loadProjectsSidebar();
-}
-
-export function handleAddTaskModal(e) {
-  e.preventDefault();
-  const addTaskForm = document.querySelector('.add-task-modal form');
-  const formData = Array.from(addTaskForm.getElementsByClassName('input'));
-  const formDataParsed = formData
-    .reduce((obj, item) => {
-      if (item.dataset.name === 'taskDueDate') {
-        // eslint-disable-next-line no-param-reassign
-        item.value = parseDateInput(item.value);
-      }
-      return ({ ...obj, [item.dataset.name]: item.value });
-    }, {});
-
-  DATA.getActiveProject().addTask(new Task(formDataParsed));
-
   UI.loadTasks();
 }

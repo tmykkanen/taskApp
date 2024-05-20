@@ -148,6 +148,7 @@ li {
   padding: var(--large-gap);
 }
 
+/* [ ] add styling for header inputs */
 .main-container .task-list-header .undefined {
   border: 1px solid var(--sidebar-bg);
   background-color: #282725;
