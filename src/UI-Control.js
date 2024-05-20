@@ -111,6 +111,11 @@ export function handleEdits(e) {
   // Get edits
   let value = e.target.textContent;
 
+  console.log('value');
+  console.log(value);
+  console.log('target');
+  console.log(e.target.dataset.name);
+
   // update task/project object
   Object.assign(itemToEdit, { [e.target.dataset.name]: value });
 
@@ -118,6 +123,8 @@ export function handleEdits(e) {
   // [?] Relocate load proj sidebar - necessary to update names
   //  when renaming projects
   UI.loadProjectsSidebar();
+  // arg to preserve active task
+  UI.loadTasks(uuid);
 }
 
 export function handleDblClickBeginEditing(e) {

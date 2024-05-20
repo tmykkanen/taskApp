@@ -46,6 +46,10 @@ li {
   --page-bg: #2b2a28;
   --sidebar-bg: #262623;
   --card-bg: #333230;
+  --card-input-bg: #2d2c2a;
+
+  --modal-bg: #fff;
+  --modal-font-color: var(--sidebar-bg);
   --font-color: #ffffff;
   --inbox-blue: #4e94f7;
   --selected-task-blue: #244174;
@@ -114,6 +118,19 @@ li {
   transition: all .2s;
 }
 
+/* ----- MODALS ----- */
+/* .modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: var(--modal-bg);
+  color: var(--modal-font-color);
+  border: 1px solid (--page-bg);
+  border-radius: 3px;
+  padding: var(--large-gap);
+} */
+
 /* ----- MAIN CONTAINER ----- */
 .main-container {
   display: flex;
@@ -150,7 +167,7 @@ li {
   display: grid;
   grid-template-columns: var(--large-gap) 1fr;
   align-items: center;
-  column-gap: calc(var(--small-gap)*.5);
+  gap: calc(var(--small-gap)*.5);
   width: 300px;
   background-color: var(--card-bg);
   padding: var(--small-gap);
@@ -231,8 +248,14 @@ li {
   opacity: 0.5;
 }
 
-
-
+.task-data-undefined {
+  border: 1px solid var(--card-bg);
+  background-color: var(--card-input-bg);
+  /* opacity: 0.1; */
+  border-radius: var(--border-raidus);
+  min-height: 28px;
+  padding: 3px;
+}
 
 
 
@@ -240,15 +263,14 @@ li {
 
 
 /* Hide / show the full todo contents */
-/* .main-container .task-list-item.collapsed {
-  .description, .due-date, button {
+.main-container .task-list-item.collapsed {
+  .description, .due-date {
     display: none;
   }  
 }
 
 .main-container .task-list-item.expanded {
-  .description, .due-date, button {
+  .description, .due-date {
     display: block;
   }  
-}
-*/
+} 

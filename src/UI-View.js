@@ -2,6 +2,7 @@
 /* eslint-disable import/no-named-as-default-member */
 /* eslint-disable import/no-named-as-default */
 import { DATA } from './TodoList';
+import Task from './Task';
 import {
   handleAddProjectModal,
   handleAddTaskModal,
@@ -87,13 +88,14 @@ export default class UI {
     UI.initEditActiveProject();
   }
 
-  static loadTasks() {
+  static loadTasks(activeTaskUUID) {
     const taskHTML = DATA
       .getActiveProject()
       .getAllTasks()
       .map((task) => UI.createTaskItem(task));
     UI.renderElements(taskHTML, tasksContainer);
 
+    UI.initCollapsingTodos(taskHTML, activeTaskUUID);
     UI.initCompleteTaskCheckbox();
     UI.initEditTask();
     UI.initDragAndDropDraggable();
@@ -126,21 +128,22 @@ export default class UI {
     const h2 = document.createElement('h2');
     h2.classList.add('name', 'project-data');
     h2.textContent = project.name;
-    h2.dataset.name = getObjectKeyByValue(project, project.name);
+    h2.dataset.name = 'projectName';
 
     const pDesc = document.createElement('p');
     pDesc.classList.add('description', 'project-data');
     pDesc.textContent = project.description || 'Add a description...';
-    pDesc.dataset.name = getObjectKeyByValue(project, project.description);
+    pDesc.dataset.name = 'projectDescription';
 
     const pDue = document.createElement('p');
     pDue.classList.add('due-date', 'project-data');
     pDue.textContent = project.dueDate || 'Add a due date...';
-    pDue.dataset.name = getObjectKeyByValue(project, project.dueDate);
+    pDue.dataset.name = 'projectDueDate';
 
     return [h2, pDesc, pDue];
   }
 
+  // [-] Add handling for blank name - use css to style with box border for input
   static createTaskItem(task) {
     const li = document.createElement('li');
     li.classList.add('task-list-item', 'collapsed');
@@ -152,22 +155,26 @@ export default class UI {
     checkbox.classList.add('checkbox', 'task-data');
     checkbox.id = task.name;
     if (task.status !== undefined) checkbox.checked = true;
-    checkbox.dataset.name = getObjectKeyByValue(task, task.status);
+    // checkbox.dataset.name = getObjectKeyByValue(task, task.status);
+    checkbox.dataset.name = 'taskStatus';
 
     const h3 = document.createElement('h3');
     h3.classList.add('task-data');
     h3.textContent = task.name;
-    h3.dataset.name = getObjectKeyByValue(task, task.name);
+    if (!task.name) h3.classList.add('task-data-undefined');
+    h3.dataset.name = 'taskName';
 
     const pDesc = document.createElement('p');
     pDesc.classList.add('description', 'task-data');
-    pDesc.textContent = task.description || 'add a description...';
-    pDesc.dataset.name = getObjectKeyByValue(task, task.description);
+    pDesc.textContent = task.description;
+    if (!task.description) pDesc.classList.add('task-data-undefined');
+    pDesc.dataset.name = 'taskDescription';
 
     const pDue = document.createElement('p');
     pDue.classList.add('due-date', 'task-data');
-    pDue.textContent = task.dueDate || 'add a due date...';
-    pDue.dataset.name = getObjectKeyByValue(task, task.dueDate);
+    pDue.textContent = task.dueDate;
+    if (!task.dueDate) pDue.classList.add('task-data-undefined');
+    pDue.dataset.name = 'taskDueDate';
 
     li.append(checkbox, h3, pDesc, pDue);
 
@@ -217,9 +224,15 @@ export default class UI {
   }
 
   // **** Add Task **** //
+  // [-] Refactoring to add task directly
   static initAddTaskBtn() {
     const btn = UI.createBtn('add-task-btn', '+ Add Task');
-    btn.addEventListener('click', () => addTaskModal.showModal());
+    // btn.addEventListener('click', () => addTaskModal.showModal());
+    btn.addEventListener('click', () => {
+      DATA.getActiveProject().addTask(new Task());
+      // [?] Move to add task action or separate place for all re-renders?
+      UI.loadTasks();
+    });
     return btn;
   }
 
@@ -274,6 +287,23 @@ export default class UI {
         handleCheckboxAfter(e);
         // e.target.parentNode.classList.toggle('completed');
         // if (e.altKey) e.target.parentNode.classList.toggle('deleted');
+      });
+    });
+  }
+
+  static initCollapsingTodos(taskHTML, activeTaskUUID) {
+    if (activeTaskUUID) {
+      const activeTask = document.querySelector(`[data-uuid="${activeTaskUUID}"]`);
+      activeTask.classList.add('expanded');
+    }
+    taskHTML.forEach((element) => {
+      element.addEventListener('click', () => {
+        if (element.classList.contains('expanded')) return;
+
+        const taskItems = document.querySelectorAll('.task-list-item');
+        taskItems.forEach((item) => item.classList.remove('expanded'));
+
+        element.classList.add('expanded');
       });
     });
   }

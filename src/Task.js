@@ -1,6 +1,6 @@
 // [ ] Update class constructors to use undefined rather than false
 export default class Task {
-  constructor({ taskName = false, taskDescription = false, taskDueDate = false }) {
+  constructor({ taskName, taskDescription, taskDueDate } = {}) {
     this.taskName = taskName;
     this.taskDescription = taskDescription;
     this.taskDueDate = taskDueDate;
