@@ -8,7 +8,7 @@ import UI from './UI-View';
 
 // ===== UTIL ========== //
 // ===================== //
-function parseDateInput(dateInput) {
+export function parseDateInput(dateInput) {
   const parsedDate = chrono.parseDate(dateInput, Date.now(), { forwardDate: true });
   if (parsedDate === null) return;
   return new Date(parsedDate).toLocaleDateString('en', { month: 'numeric', day: 'numeric', year: '2-digit' });
@@ -36,13 +36,73 @@ export function handleDragAndDropEnd(e) {
   document.querySelector(`[data-uuid="${sourceUUID}"]`).remove();
 
   // add source task to target project
-  targetProject.addTask(sourceTask);
+  targetProject.addTask(new Task({ ...sourceTask }));
+
   // remove source task from old project
   DATA.getActiveProject().deleteTask(sourceTask.name);
 }
 
 // === DBL CLICK EDIT == //
 // ===================== //
+export function handleCheckboxAlt(e) {
+  const { uuid } = e.target.parentNode.dataset;
+  const itemToEdit = DATA.getItemByUUID(DATA, uuid);
+
+  if (itemToEdit.status === 'deleted') {
+    DATA.getActiveProject().undeleteTask(itemToEdit.name);
+    return;
+  }
+
+  if (itemToEdit.status === 'completed') {
+    e.target.checked = !e.target.checked;
+    // e.target.parentNode.classList.toggle('completed');
+  }
+
+  DATA.getActiveProject().deleteTask(itemToEdit.name);
+}
+
+export function handleCheckbox(e) {
+  // get item to edit
+  const { uuid } = e.target.parentNode.dataset;
+  const itemToEdit = DATA.getItemByUUID(DATA, uuid);
+
+  // undelete
+  if (itemToEdit.status === 'deleted') {
+    // e.target.parentNode.classList.toggle('deleted');
+    DATA.getActiveProject().undeleteTask(itemToEdit.name);
+    return;
+  }
+
+  // uncomplete task
+  if (itemToEdit.status === 'completed') {
+    itemToEdit.status = undefined;
+    DATA.getActiveProject().unarchiveTask(itemToEdit.name);
+    return;
+  }
+
+  // complete task
+  itemToEdit.status = 'completed';
+  DATA.getActiveProject().archiveTask(itemToEdit.name);
+}
+
+export function handleCheckboxAfter(e) {
+  // get item to edit
+  const { dataset, classList } = e.target.parentNode;
+  const { status } = DATA.getItemByUUID(DATA, dataset.uuid);
+
+  if (status === 'deleted') {
+    classList.add('deleted', 'completed');
+    return;
+  }
+
+  if (status === undefined) {
+    classList.remove('deleted', 'completed');
+    return;
+  }
+
+  classList.add('completed');
+}
+
 export function handleEdits(e) {
   // get item to edit
   const { uuid } = e.target.parentNode.dataset;
@@ -50,21 +110,6 @@ export function handleEdits(e) {
 
   // Get edits
   let value = e.target.textContent;
-  if (e.target.type === 'checkbox') {
-    value = e.target.checked;
-    if (e.target.checked) {
-      DATA.getActiveProject().archiveTask(itemToEdit.name);
-      console.log(DATA.getActiveProject());
-    }
-    if (!e.target.checked) {
-      console.log(DATA.getActiveProject().getProjectTaskArchive());
-      const task = DATA.getItemByUUID(DATA, uuid);
-      DATA.getActiveProject().unarchiveTask(task.name);
-      console.log(DATA.getActiveProject().getProjectTaskArchive());
-      console.log(DATA.getActiveProject());
-      // [-] Write handling for moving completed todos to archive
-    }
-  }
 
   // update task/project object
   Object.assign(itemToEdit, { [e.target.dataset.name]: value });

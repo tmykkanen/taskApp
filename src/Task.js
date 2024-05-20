@@ -1,9 +1,10 @@
+// [ ] Update class constructors to use undefined rather than false
 export default class Task {
   constructor({ taskName = false, taskDescription = false, taskDueDate = false }) {
     this.taskName = taskName;
     this.taskDescription = taskDescription;
     this.taskDueDate = taskDueDate;
-    this.taskComplete = false;
+    this.taskStatus = undefined;
     this.taskUUID = crypto.randomUUID();
   }
 
@@ -32,11 +33,11 @@ export default class Task {
   }
 
   get status() {
-    return this.taskComplete;
+    return this.taskStatus;
   }
 
   set status(status) {
-    this.taskComplete = status;
+    this.taskStatus = status;
   }
 
   get uuid() {

@@ -10,6 +10,9 @@ import {
   handleActiveProjectSelection,
   handleEdits,
   handleDragAndDropEnd,
+  handleCheckbox,
+  handleCheckboxAlt,
+  handleCheckboxAfter,
 } from './UI-Control';
 
 // [TODOS]
@@ -22,7 +25,7 @@ import {
 // [ ] Fix sidebar container too many divs
 // [ ] Add controls to delete task
 // [ ] Add rendering for filters for Today and Upcoming (this week?)
-// [-] Write handling for moving completed todos to archive
+// [x] Write handling for moving completed todos to archive
 
 const defaultProjectContainer = document.querySelector('.default-projects-container ul');
 const customProjectContainer = document.querySelector('.custom-projects-container ul');
@@ -148,7 +151,7 @@ export default class UI {
     checkbox.type = 'checkbox';
     checkbox.classList.add('checkbox', 'task-data');
     checkbox.id = task.name;
-    checkbox.checked = task.status;
+    if (task.status !== undefined) checkbox.checked = true;
     checkbox.dataset.name = getObjectKeyByValue(task, task.status);
 
     const h3 = document.createElement('h3');
@@ -261,15 +264,16 @@ export default class UI {
   static initCompleteTaskCheckbox() {
     const checkboxes = document.querySelectorAll('.task-list-item .checkbox');
     checkboxes.forEach((checkbox) => {
-      checkbox.addEventListener('change', (e) => {
-        e.target.parentNode.classList.toggle('completed');
-        handleEdits(e);
-      });
       checkbox.addEventListener('mousedown', (e) => {
         e.target.parentNode.classList.add('mouse-down');
+        if (e.altKey) return handleCheckboxAlt(e);
+        handleCheckbox(e);
       });
       checkbox.addEventListener('mouseup', (e) => {
         e.target.parentNode.classList.remove('mouse-down');
+        handleCheckboxAfter(e);
+        // e.target.parentNode.classList.toggle('completed');
+        // if (e.altKey) e.target.parentNode.classList.toggle('deleted');
       });
     });
   }

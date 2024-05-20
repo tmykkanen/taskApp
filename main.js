@@ -3,26 +3,17 @@
 import './style.css';
 import UI from './src/UI-View';
 import { DATA } from './src/TodoList';
+import Task from './src/Task';
 
 document.addEventListener('DOMContentLoaded', () => {
   UI.loadHomepage();
 });
 
-// // use name as temp id for testing
-// function getItemByUUIDRecursive(obj, name) {
-//   // Get flattened object
-//   const flatObj = Object.values(obj).flat();
+// const proj = DATA.getActiveProject();
 
-//   const checkforTarget = flatObj.filter((value) => value === name);
+// console.log(proj);
 
-//   if (checkforTarget.length === 1) {
-//     return obj;
-//   }
+// proj.deleteTask('Task 1');
+// console.log(proj);
 
-//   return flatObj.reduce((acc, val) => {
-//     if (acc !== undefined) return acc;
-//     if (typeof val === 'object') return objectNesting(val, name);
-//   }, undefined);
-// }
-
-// console.log(getItemByUUIDRecursive(DATA, 'Project 1'));
+// proj.undeleteTask('Task 1');

@@ -1,3 +1,4 @@
+// [ ] create task trash bin
 export default class Project {
   constructor({
     projectName,
@@ -13,6 +14,7 @@ export default class Project {
     this.projectDefault = projectDefault;
     this.projectTasks = [];
     this.projectTaskArchive = [];
+    this.projectTaskTrash = [];
     this.projectUUID = crypto.randomUUID();
   }
 
@@ -61,16 +63,35 @@ export default class Project {
   }
 
   getTask(name) {
-    return this.projectTasks.find((task) => task.name === name);
+    if (this.projectTasks.some((x) => x.name === name)) {
+      return this.projectTasks.find((task) => task.name === name);
+    }
+    if (this.projectTaskArchive.some((x) => x.name === name)) {
+      return this.projectTaskArchive.find((task) => task.name === name);
+    }
+    return this.projectTaskTrash.find((task) => task.name === name);
   }
 
   getTaskByUUID(uuid) {
     return this.projectTasks.find((task) => task.uuid === uuid);
   }
 
-  // [?] Move tasks and projects to use uuid rather than name
   deleteTask(name) {
+    let targetTask = this.getTask(name);
+
     this.projectTasks = this.projectTasks.filter((task) => task.name !== name);
+    this.projectTaskArchive = this.projectTaskArchive.filter((task) => task.name !== name);
+
+    this.projectTaskTrash.push(targetTask);
+    targetTask.status = 'deleted';
+  }
+
+  undeleteTask(name) {
+    const targetTask = this.projectTaskTrash.find((task) => task.name === name);
+    this.projectTaskTrash = this.projectTaskTrash.filter((task) => task.name !== name);
+
+    targetTask.status = undefined;
+    this.addTask(targetTask);
   }
 
   getAllTasks() {
@@ -85,20 +106,15 @@ export default class Project {
     this.projectTaskArchive.push(
       this.getTask(name),
     );
-    this.deleteTask(name);
+    this.projectTasks = this.projectTasks.filter((task) => task.name !== name);
   }
 
   unarchiveTask(name) {
-    const taskArchive = this.getProjectTaskArchive();
+    const targetTask = this.projectTaskArchive.find((task) => task.name === name);
 
-    const targetTask = taskArchive.filter((task) => task.name === name);
+    this.projectTaskArchive = this.projectTaskArchive.filter((task) => task.name !== name);
 
-    this.setProjectTaskArchive(
-      taskArchive.filter((task) => task.name !== name),
-    );
-
-    // index necessary becasue targetTask is an array of one
-    this.addTask(targetTask[0]);
+    this.addTask(targetTask);
   }
 
   getProjectTaskArchive() {
