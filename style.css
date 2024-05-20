@@ -84,6 +84,15 @@ li {
   gap: var(--large-gap);
 }
 
+.sidebar-container .undefined {
+  border: 1px solid var(--sidebar-bg);
+  background-color: var(--page-bg);
+  border-radius: var(--border-raidus);
+  min-height: 1em;
+  padding: calc(var(--small-gap)*.35);
+  color: #4d4d4d;
+}
+
 .sidebar-container .default-projects-container ul {
   display: flex;
   flex-direction: column;
@@ -139,7 +148,23 @@ li {
   padding: var(--large-gap);
 }
 
+.main-container .task-list-header .undefined {
+  border: 1px solid var(--sidebar-bg);
+  background-color: #282725;
+  border-radius: var(--border-raidus);
+  min-height: 1.5em;
+  padding: calc(var(--small-gap)*.35);
+  color: #4d4d4d;
+}
+
+.main-container .task-list-header {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--small-gap)*.5);
+}
+
 .main-container .add-task-btn {
+  margin-top: var(--small-gap);
   background-color: transparent;
   border: none;
   color: var(--font-color);
@@ -152,6 +177,7 @@ li {
   opacity: 0.6;
   transition: all .2s;
 }
+
 
 
 /* ----- MAIN CONTAINER TASK LIST */
@@ -248,17 +274,14 @@ li {
   opacity: 0.5;
 }
 
-.task-data-undefined {
+.task-list-item .undefined {
   border: 1px solid var(--card-bg);
   background-color: var(--card-input-bg);
-  /* opacity: 0.1; */
   border-radius: var(--border-raidus);
   min-height: 28px;
-  padding: 3px;
+  padding: calc(var(--small-gap)*.35);
+  color: #4d4d4d;
 }
-
-
-
 
 
 

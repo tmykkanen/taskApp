@@ -14,12 +14,6 @@ export function parseDateInput(dateInput) {
   return new Date(parsedDate).toLocaleDateString('en', { month: 'numeric', day: 'numeric', year: '2-digit' });
 }
 
-function pressEnterToFinish(targetElement) {
-  targetElement.addEventListener('keydown', (e) => {
-    if (e.code === 'Enter') targetElement.blur();
-  });
-}
-
 // ===== DRAG N DROP === //
 // ===================== //
 export function handleDragAndDropEnd(e) {
@@ -111,11 +105,6 @@ export function handleEdits(e) {
   // Get edits
   let value = e.target.textContent;
 
-  console.log('value');
-  console.log(value);
-  console.log('target');
-  console.log(e.target.dataset.name);
-
   // update task/project object
   Object.assign(itemToEdit, { [e.target.dataset.name]: value });
 
@@ -128,9 +117,21 @@ export function handleEdits(e) {
 }
 
 export function handleDblClickBeginEditing(e) {
-  e.target.contentEditable = true;
-  e.target.focus();
-  pressEnterToFinish(e.target);
+  const { target } = e;
+  target.contentEditable = true;
+
+  target.addEventListener('keydown', () => {
+    target.textContent = '';
+    if (target.classList.contains('undefined')) {
+      target.classList.remove('undefined');
+    }
+  }, { once: true });
+
+  target.addEventListener('keydown', (event) => {
+    if (event.code === 'Enter') target.blur();
+  });
+
+  target.focus();
 }
 
 export function handleDblClickEndEditing(e) {
@@ -152,9 +153,9 @@ export function handleDblClickEndEditing(e) {
 // ===== ACTIVE PROJ === //
 // ===================== //
 export function handleActiveProjectSelection(e) {
-  const newActiveProjectName = e.target.textContent;
+  const newActiveProjectUUID = e.target.dataset.uuid;
   DATA.getActiveProject().active = false;
-  DATA.getProject(newActiveProjectName).active = true;
+  DATA.getProjectByUUID(newActiveProjectUUID).active = true;
   UI.loadProjectsSidebar();
   UI.loadActiveProject();
   UI.loadTasks();

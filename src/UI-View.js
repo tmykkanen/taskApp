@@ -3,6 +3,7 @@
 /* eslint-disable import/no-named-as-default */
 import { DATA } from './TodoList';
 import Task from './Task';
+import Project from './Project';
 import {
   handleAddProjectModal,
   handleAddTaskModal,
@@ -17,6 +18,7 @@ import {
 } from './UI-Control';
 
 // [TODOS]
+// [-] Comment out modals
 // [ ] Add error handling for modals
 // [ ] Add error handling for task editing
 // [?] implement task project picker
@@ -28,6 +30,7 @@ import {
 // [ ] Add rendering for filters for Today and Upcoming (this week?)
 // [x] Write handling for moving completed todos to archive
 
+const sidebarContainer = document.querySelector('.sidebar-container');
 const defaultProjectContainer = document.querySelector('.default-projects-container ul');
 const customProjectContainer = document.querySelector('.custom-projects-container ul');
 const taskListHeaderContainer = document.querySelector('.task-list-header');
@@ -42,6 +45,7 @@ const addTaskSubmit = document.querySelector('.add-task-modal .submit');
 const addTaskCancel = document.querySelector('.add-task-modal .cancel');
 
 // UTIL
+// [ ] unused function
 function getObjectKeyByValue(object, value) {
   return Object.keys(object)
     .find((key) => object[key] === value);
@@ -67,17 +71,57 @@ export default class UI {
     }
 
     // Render default projects
-    const defaultProjectHtml = getProjectHTML(true);
-    UI.renderElements(defaultProjectHtml, defaultProjectContainer);
+    const defaultProjectHTML = getProjectHTML(true);
+    // UI.renderElements(defaultProjectHtml, defaultProjectContainer);
 
-    // Render custom projects
-    const customProjectHTLM = getProjectHTML(false);
-    UI.renderElements(customProjectHTLM, customProjectContainer);
+    // // Render custom projects
+    const customProjectHTML = getProjectHTML(false);
+    // UI.renderElements(customProjectHTLM, customProjectContainer);
+    const addProjectButton = UI.initAddProjectButton();
+
+    UI.renderSidebar(defaultProjectHTML, customProjectHTML, addProjectButton);
 
     // Initiate interactivity
-    UI.initAddProjectButton();
+    sidebarContainer.append(addProjectButton);
     UI.initActiveProjectSelection();
     UI.initDragAndDropReceivers();
+  }
+
+  static renderSidebar(defaultProjectHTML, customProjectHTML, addProjectButton) {
+    // clear sidebar
+    let child = sidebarContainer.lastElementChild;
+    while (child) {
+      sidebarContainer.removeChild(child);
+      child = sidebarContainer.lastElementChild;
+    }
+
+    // default projects
+    const divDefault = document.createElement('div');
+    divDefault.classList.add('default-projects-container');
+
+    const defaultUL = document.createElement('ul');
+    defaultProjectHTML.forEach((element) => defaultUL.append(element));
+    // defaultUL.append(defaultProjectHTML);
+    divDefault.append(defaultUL);
+
+    // custom projects
+    const divCustom = document.createElement('div');
+    divCustom.classList.add('custom-projects-container');
+
+    const customUL = document.createElement('ul');
+    customProjectHTML.forEach((element) => customUL.append(element));
+    // customUL.append(customProjectHTML);
+    divCustom.append(customUL);
+
+    sidebarContainer.append(divDefault, divCustom, addProjectButton);
+
+    // Populate container
+    // if (!Array.isArray(elements)) return sidebarContainer.append(elements);
+    // elements
+    //   .flat()
+    //   .forEach((el) => {
+    //     sidebarContainer.append(el);
+    //   });
   }
 
   static loadActiveProject() {
@@ -113,8 +157,9 @@ export default class UI {
     const li = document.createElement('li');
     li.classList.add('project-list-item');
     if (project.active) li.classList.add('active');
+    if (!project.name) li.classList.add('undefined');
     li.dataset.uuid = project.uuid;
-    li.textContent = project.name;
+    li.textContent = project.name || 'add title...';
 
     return li;
   }
@@ -127,23 +172,29 @@ export default class UI {
 
     const h2 = document.createElement('h2');
     h2.classList.add('name', 'project-data');
-    h2.textContent = project.name;
+    // [BUG] Add handling for dbl click edit - clear contents and corretly keep undefined
+    h2.textContent = project.name || 'add title...';
+    if (!project.name) h2.classList.add('undefined');
     h2.dataset.name = 'projectName';
 
     const pDesc = document.createElement('p');
     pDesc.classList.add('description', 'project-data');
-    pDesc.textContent = project.description || 'Add a description...';
+    if (!project.description) pDesc.classList.add('undefined');
+    pDesc.textContent = project.description || 'add description...';
     pDesc.dataset.name = 'projectDescription';
 
     const pDue = document.createElement('p');
     pDue.classList.add('due-date', 'project-data');
-    pDue.textContent = project.dueDate || 'Add a due date...';
+    if (!project.dueDate) pDue.classList.add('undefined');
+    pDue.textContent = project.dueDate || 'add due date...';
     pDue.dataset.name = 'projectDueDate';
 
     return [h2, pDesc, pDue];
   }
 
-  // [-] Add handling for blank name - use css to style with box border for input
+  // [x] Add handling for blank name - use css to style with box border for input
+  // [-] Refactor task inputs to use input when editing,
+  //  then replace with other element when cleared
   static createTaskItem(task) {
     const li = document.createElement('li');
     li.classList.add('task-list-item', 'collapsed');
@@ -160,20 +211,20 @@ export default class UI {
 
     const h3 = document.createElement('h3');
     h3.classList.add('task-data');
-    h3.textContent = task.name;
-    if (!task.name) h3.classList.add('task-data-undefined');
+    h3.textContent = task.name || 'add title...';
+    if (!task.name) h3.classList.add('undefined');
     h3.dataset.name = 'taskName';
 
     const pDesc = document.createElement('p');
     pDesc.classList.add('description', 'task-data');
-    pDesc.textContent = task.description;
-    if (!task.description) pDesc.classList.add('task-data-undefined');
+    pDesc.textContent = task.description || 'add description...';
+    if (!task.description) pDesc.classList.add('undefined');
     pDesc.dataset.name = 'taskDescription';
 
     const pDue = document.createElement('p');
     pDue.classList.add('due-date', 'task-data');
-    pDue.textContent = task.dueDate;
-    if (!task.dueDate) pDue.classList.add('task-data-undefined');
+    pDue.textContent = task.dueDate || 'add due date...';
+    if (!task.dueDate) pDue.classList.add('undefined');
     pDue.dataset.name = 'taskDueDate';
 
     li.append(checkbox, h3, pDesc, pDue);
@@ -194,9 +245,16 @@ export default class UI {
   // ===== LISTENERS ===== //
   // ===================== //
   // **** AddProject **** //
+  // [-] modify to add project directly
   static initAddProjectButton() {
-    const btn = document.querySelector('.sidebar-container .add-project-btn');
-    btn.addEventListener('click', () => addProjectModal.showModal());
+    const btn = UI.createBtn('add-project-btn', '+ Add Project');
+    // const btn = document.querySelector('.sidebar-container .add-project-btn');
+    // btn.addEventListener('click', () => addProjectModal.showModal());
+    btn.addEventListener('click', () => {
+      DATA.addProject(new Project());
+      UI.loadProjectsSidebar();
+    });
+    return btn;
   }
 
   static initAddProjectModal() {
@@ -224,7 +282,7 @@ export default class UI {
   }
 
   // **** Add Task **** //
-  // [-] Refactoring to add task directly
+  // [x] Refactoring to add task directly
   static initAddTaskBtn() {
     const btn = UI.createBtn('add-task-btn', '+ Add Task');
     // btn.addEventListener('click', () => addTaskModal.showModal());
