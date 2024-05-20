@@ -1,5 +1,6 @@
 /* eslint-disable import/no-named-as-default-member */
 /* eslint-disable import/no-named-as-default */
+import Storage from './Storage';
 import Project from './Project';
 import Task from './Task';
 
@@ -50,6 +51,7 @@ export class TodoList {
     return flatObj.reduce((acc, val) => {
       if (acc !== undefined) return acc;
       if (typeof val === 'object') return this.getItemByUUID(val, uuid);
+      return undefined;
     }, undefined);
   }
 
@@ -79,6 +81,7 @@ export class TodoList {
 }
 
 // DATA
+export const DATA = Storage.getTodoList();
 // export const DATA = new TodoList();
 // const projParams1 = { projectName: 'Project 1', projectDescription: 'Project 1 Desc', projectDueDate: '5/12/24' };
 // const projParams2 = { projectName: 'Project 2', projectDescription: 'Project 2 Desc', projectDueDate: '5/9/24' };

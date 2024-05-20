@@ -1,8 +1,7 @@
 /* eslint-disable import/no-named-as-default-member */
 /* eslint-disable import/no-named-as-default */
 import * as chrono from 'chrono-node';
-// import { DATA } from './TodoList';
-import { DATA } from '../main';
+import { DATA } from './TodoList';
 import Task from './Task';
 import { obsUpdateDATA, obsUpdateUI } from './Observers';
 
@@ -10,8 +9,7 @@ import { obsUpdateDATA, obsUpdateUI } from './Observers';
 // ===================== //
 export function parseDateInput(dateInput) {
   const parsedDate = chrono.parseDate(dateInput, Date.now(), { forwardDate: true });
-  if (parsedDate === null) return;
-  // eslint-disable-next-line consistent-return
+  if (parsedDate === null) return '';
   return new Date(parsedDate).toLocaleDateString('en', { month: 'numeric', day: 'numeric', year: '2-digit' });
 }
 
@@ -107,7 +105,6 @@ export function handleCheckboxAfter(e) {
 
 // === DBL CLICK EDIT == //
 // ===================== //
-// [BUG] Error when clicking sidebar task while editing task
 function handleDblClickEndEditing(e) {
   const { uuid } = e.target.parentNode.dataset;
   const { name } = e.target.dataset;
@@ -134,7 +131,6 @@ export function handleDblClickBeginEditing(e) {
 
   const input = document.createElement(type);
   input.classList.add('text-input');
-  // input.type = 'text';
   input.dataset.name = target.dataset.name;
   input.placeholder = target.textContent;
 

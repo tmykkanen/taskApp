@@ -1,8 +1,6 @@
-/* eslint-disable no-console */
 /* eslint-disable import/no-named-as-default-member */
 /* eslint-disable import/no-named-as-default */
-// import { DATA } from './TodoList';
-import { DATA } from '../main';
+import { DATA } from './TodoList';
 import Task from './Task';
 import Project from './Project';
 import {
@@ -16,16 +14,14 @@ import {
 import { obsUpdateDATA, obsUpdateUI } from './Observers';
 
 // [TODOS]
-// [x] Comment out modals
 // [ ] Add error handling for modals
 // [ ] Add error handling for task editing
-// [x] add logic for expanding / collapsing todo list items
 // [ ] add task sorting
 // [ ] add set date button hover
-// [x] Add controls to delete task
 // [ ] Add rendering for filters for Today and Upcoming (this week?)
-// [x] Write handling for moving completed todos to archive
 // [ ] Add ability to delete projects - alt-click on list?
+// [ ] Create defaults for project data / initialization
+// [ ] Create project reset button
 
 const sidebarContainer = document.querySelector('.sidebar-container');
 const taskListHeaderContainer = document.querySelector('.task-list-header');
@@ -258,7 +254,7 @@ export default class UI {
   static initCollapsingTodos(taskHTML, activeTaskUUID) {
     if (activeTaskUUID) {
       const activeTask = document.querySelector(`[data-uuid="${activeTaskUUID}"]`);
-      activeTask.classList.add('expanded');
+      if (activeTask) activeTask.classList.add('expanded');
     }
     taskHTML.forEach((element) => {
       element.addEventListener('click', () => {
@@ -317,17 +313,8 @@ export default class UI {
   // ===== RENDER ======== //
   // ===================== //
   static renderElements(elements, container) {
-    // Empty container
-    let child = container.lastElementChild;
-    while (child) {
-      container.removeChild(child);
-      child = container.lastElementChild;
-    }
-    // Populate container
-    // if (!Array.isArray(elements)) {
-    //   container.append(elements);
-    //   return;
-    // }
+    // eslint-disable-next-line no-param-reassign
+    container.innerHTML = '';
 
     Array.from(elements).flat().forEach((el) => {
       container.append(el);

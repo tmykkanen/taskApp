@@ -3,12 +3,11 @@
 import { obsUpdateDATA } from './Observers';
 import Project from './Project';
 import Task from './Task';
-import { TodoList } from './TodoList';
-import { DATA } from '../main';
+import { TodoList, DATA } from './TodoList';
+// import { DATA } from '../main';
 
 export default class Storage {
   static saveTodoList() {
-    console.log('savetodolist called');
     localStorage.setItem('todoList', JSON.stringify(DATA));
   }
 

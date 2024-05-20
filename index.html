@@ -8,70 +8,12 @@
   <body>
     <div id="app">
       <div class="sidebar-container">
-        <div class="default-projects-container">
-          <ul>
-            <!--
-            <li class="project-list-item">Inbox</li>
-            <li class="project-list-item">Today</li>
-            <li class="project-list-item">Upcoming</li>
-            <button class="add-project" type="button">+ New Project</button>
-            -->
-          </ul>
-        </div>
-        <div class="custom-projects-container">
-          <ul>
-          </ul>
-        </div>
-        <!--
-        <button class="add-project-btn">+ Add Project</button>
-        -->
-        <dialog class="add-project-modal modal">
-          <form action="" method="get">
-            <h3>Add Project</h3>
-            <input type="text" class="input" data-name="projectName" placeholder="Project Name">
-            <input type="text" class="input" data-name="projectDescription" placeholder="Description">
-            <input type="text" class="input" data-name="projectDueDate" placeholder="Due Date">
-            <button type="submit" class="submit button">Submit</button>
-            <button type="button" autofocus class="cancel button">Cancel</button>
-          </form>
-        </dialog>
       </div>
       <div class="main-container">
         <div class="task-list-header">
         </div>
         <ul>
-           <!--
-          <li class="task-list-item collapsed">
-              <input type="checkbox" name="" id="Task 1">
-              <h3>Task 1</h3>
-          </li>
-          <li class="task-list-item collapsed">
-            <input type="checkbox" name="" id="Task 2">
-            <h3>Task 2</h3>
-          </li>   
-          <li class="task-list-item expanded">
-            <input type="checkbox" name="" id="Task3">
-            <h3>Task 3</h3>
-            <p class="description" contenteditable="true">Excepteur minim nulla ad adipisicing et Lorem quis adipisicing anim.</p>
-            <p class="due-date">5/9/24</p>
-            <button type="button">Set Due Date</button>
-          </li>
-          <li class="task-list-item collapsed">
-            <input type="checkbox" name="" id="Task 4">
-            <h3>Task 4</h3>
-          </li>   
-          -->
         </ul>
-        <dialog class="add-task-modal modal">
-          <form action="" method="get">
-            <h3>Add Task</h3>
-            <input type="text" class="input" data-name="taskName" placeholder="Task Name">
-            <input type="text" class="input" data-name="taskDescription" placeholder="Description">
-            <input type="text" class="input" data-name="taskDueDate" placeholder="Due Date">
-            <button type="submit" class="submit button">Submit</button>
-            <button type="button" autofocus class="cancel button">Cancel</button>
-          </form>
-        </dialog>
       </div>
     </div>
     <script type="module" src="/main.js"></script>

@@ -3,9 +3,6 @@
 import './style.css';
 import UI from './src/UI-View';
 import { obsUpdateDATA } from './src/Observers';
-import Storage from './src/Storage';
-
-export const DATA = Storage.getTodoList();
 
 document.addEventListener('DOMContentLoaded', () => {
   UI.loadHomepage();
