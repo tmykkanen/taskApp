@@ -11,6 +11,7 @@ import UI from './UI-View';
 export function parseDateInput(dateInput) {
   const parsedDate = chrono.parseDate(dateInput, Date.now(), { forwardDate: true });
   if (parsedDate === null) return;
+  // eslint-disable-next-line consistent-return
   return new Date(parsedDate).toLocaleDateString('en', { month: 'numeric', day: 'numeric', year: '2-digit' });
 }
 
@@ -103,7 +104,7 @@ export function handleEdits(e) {
   const itemToEdit = DATA.getItemByUUID(DATA, uuid);
 
   // Get edits
-  let value = e.target.textContent;
+  const value = e.target.textContent;
 
   // update task/project object
   Object.assign(itemToEdit, { [e.target.dataset.name]: value });
@@ -133,7 +134,8 @@ function handleDblClickEndEditingALT(event) {
 }
 
 // [-] Refactor task inputs to use input when editing,
-    //  then replace with other element when cleared
+//  then replace with other element when cleared
+// [-] working - replace regular functions with ALT functions and implement
 export function handleDblClickBeginEditingALT(e) {
   const { target } = e;
 

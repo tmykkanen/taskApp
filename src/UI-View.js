@@ -7,10 +7,8 @@ import Project from './Project';
 import {
   handleAddProjectModal,
   handleAddTaskModal,
-  handleDblClickBeginEditing,
   handleDblClickEndEditing,
   handleActiveProjectSelection,
-  handleEdits,
   handleDragAndDropEnd,
   handleCheckbox,
   handleCheckboxAlt,
@@ -19,7 +17,7 @@ import {
 } from './UI-Control';
 
 // [TODOS]
-// [-] Comment out modals
+// [ ] Comment out modals
 // [ ] Add error handling for modals
 // [ ] Add error handling for task editing
 // [?] implement task project picker
@@ -32,8 +30,8 @@ import {
 // [x] Write handling for moving completed todos to archive
 
 const sidebarContainer = document.querySelector('.sidebar-container');
-const defaultProjectContainer = document.querySelector('.default-projects-container ul');
-const customProjectContainer = document.querySelector('.custom-projects-container ul');
+// const defaultProjectContainer = document.querySelector('.default-projects-container ul');
+// const customProjectContainer = document.querySelector('.custom-projects-container ul');
 const taskListHeaderContainer = document.querySelector('.task-list-header');
 const tasksContainer = document.querySelector('.main-container ul');
 const addProjectModal = document.querySelector('.add-project-modal');
@@ -46,11 +44,10 @@ const addTaskSubmit = document.querySelector('.add-task-modal .submit');
 const addTaskCancel = document.querySelector('.add-task-modal .cancel');
 
 // UTIL
-// [ ] unused function
-function getObjectKeyByValue(object, value) {
-  return Object.keys(object)
-    .find((key) => object[key] === value);
-}
+// function getObjectKeyByValue(object, value) {
+//   return Object.keys(object)
+//     .find((key) => object[key] === value);
+// }
 
 export default class UI {
   // ===== LOAD PAGE ===== //
@@ -173,13 +170,10 @@ export default class UI {
 
     const h2 = document.createElement('h2');
     h2.classList.add('name', 'project-data');
-    // [BUG] Add handling for dbl click edit - clear contents and corretly keep undefined
     h2.textContent = project.name || 'add title...';
     if (!project.name) h2.classList.add('undefined');
     h2.dataset.name = 'projectName';
 
-    // [-] Refactor task inputs to use input when editing,
-    //  then replace with other element when cleared
     const pDesc = document.createElement('p');
     pDesc.classList.add('description', 'project-data');
     if (!project.description) pDesc.classList.add('undefined');
@@ -246,7 +240,7 @@ export default class UI {
   // ===== LISTENERS ===== //
   // ===================== //
   // **** AddProject **** //
-  // [-] modify to add project directly
+  // [x] modify to add project directly
   static initAddProjectButton() {
     const btn = UI.createBtn('add-project-btn', '+ Add Project');
     // const btn = document.querySelector('.sidebar-container .add-project-btn');
@@ -341,7 +335,10 @@ export default class UI {
     checkboxes.forEach((checkbox) => {
       checkbox.addEventListener('mousedown', (e) => {
         e.target.parentNode.classList.add('mouse-down');
-        if (e.altKey) return handleCheckboxAlt(e);
+        if (e.altKey) {
+          handleCheckboxAlt(e);
+          return;
+        }
         handleCheckbox(e);
       });
       checkbox.addEventListener('mouseup', (e) => {
