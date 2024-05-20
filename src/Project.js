@@ -124,4 +124,12 @@ export default class Project {
   setProjectTaskArchive(archive) {
     this.projectTaskArchive = archive;
   }
+
+  getProjectTaskTrash() {
+    return this.projectTaskTrash;
+  }
+
+  setProjectTaskTrash(trash) {
+    this.projectTaskTrash = trash;
+  }
 }

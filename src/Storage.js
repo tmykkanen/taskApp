@@ -1,12 +1,15 @@
 /* eslint-disable import/no-named-as-default-member */
 /* eslint-disable import/no-named-as-default */
+import { obsUpdateDATA } from './Observers';
 import Project from './Project';
 import Task from './Task';
 import { TodoList } from './TodoList';
+import { DATA } from '../main';
 
 export default class Storage {
-  static saveTodoList(data) {
-    localStorage.setItem('todoList', JSON.stringify(data));
+  static saveTodoList() {
+    console.log('savetodolist called');
+    localStorage.setItem('todoList', JSON.stringify(DATA));
   }
 
   // Repopulate TodoList Object
@@ -33,8 +36,11 @@ export default class Storage {
           proj.getProjectTaskArchive()
             .map((task) => Object.assign(new Task({}), task)),
         );
+        proj.setProjectTaskTrash([]);
       });
 
     return todoList;
   }
 }
+
+obsUpdateDATA.subcribe(Storage.saveTodoList);

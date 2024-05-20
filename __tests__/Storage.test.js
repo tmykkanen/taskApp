@@ -16,6 +16,7 @@ import { TodoList } from '../src/TodoList';
 import Storage from '../src/Storage';
 
 // SETUP
+localStorage.clear();
 const todoList = new TodoList();
 
 const projParams1 = {

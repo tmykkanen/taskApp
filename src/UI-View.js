@@ -1,7 +1,8 @@
 /* eslint-disable no-console */
 /* eslint-disable import/no-named-as-default-member */
 /* eslint-disable import/no-named-as-default */
-import { DATA } from './TodoList';
+// import { DATA } from './TodoList';
+import { DATA } from '../main';
 import Task from './Task';
 import Project from './Project';
 import {
@@ -12,19 +13,19 @@ import {
   handleCheckboxAfter,
   handleDblClickBeginEditing,
 } from './UI-Control';
+import { obsUpdateDATA, obsUpdateUI } from './Observers';
 
 // [TODOS]
-// [ ] Comment out modals
+// [x] Comment out modals
 // [ ] Add error handling for modals
 // [ ] Add error handling for task editing
-// [?] implement task project picker
-// [ ] add logic for expanding / collapsing todo list items
+// [x] add logic for expanding / collapsing todo list items
 // [ ] add task sorting
 // [ ] add set date button hover
-// [ ] Fix sidebar container too many divs
-// [ ] Add controls to delete task
+// [x] Add controls to delete task
 // [ ] Add rendering for filters for Today and Upcoming (this week?)
 // [x] Write handling for moving completed todos to archive
+// [ ] Add ability to delete projects - alt-click on list?
 
 const sidebarContainer = document.querySelector('.sidebar-container');
 const taskListHeaderContainer = document.querySelector('.task-list-header');
@@ -33,11 +34,10 @@ const tasksContainer = document.querySelector('.main-container ul');
 export default class UI {
   // ===== LOAD PAGE ===== //
   // ===================== //
-  static loadHomepage() {
+  static loadHomepage(data) {
     UI.loadProjectsSidebar();
     UI.loadActiveProject();
-    UI.loadTasks();
-    UI.loadModals();
+    UI.loadTasks(data);
   }
 
   static loadProjectsSidebar() {
@@ -72,11 +72,6 @@ export default class UI {
     UI.initCompleteTaskCheckbox();
     UI.initEditTask();
     UI.initDragAndDropDraggable();
-  }
-
-  static loadModals() {
-    // UI.initAddProjectModal();
-    // UI.initAddTaskModal();
   }
   // ===== LOAD END ====== //
 
@@ -191,23 +186,11 @@ export default class UI {
     btn.addEventListener('click', () => {
       DATA.addProject(new Project());
       // [?] Where should reloads go?
-      UI.loadProjectsSidebar();
+      obsUpdateDATA.notify();
+      obsUpdateUI.notify();
     });
     return btn;
   }
-
-  // static initAddProjectModal() {
-  //   addProjectCancel.addEventListener('click', () => {
-  //     addProjectForm.reset();
-  //     addProjectModal.close();
-  //   });
-
-  //   addProjectSubmit.addEventListener('click', (e) => {
-  //     handleAddProjectModal(e);
-  //     addProjectForm.reset();
-  //     addProjectModal.close();
-  //   });
-  // }
 
   // **** Select Active Project **** //
   static initActiveProjectSelection() {
@@ -225,24 +208,11 @@ export default class UI {
     const btn = UI.createBtn('add-task-btn', '+ Add Task');
     btn.addEventListener('click', () => {
       DATA.getActiveProject().addTask(new Task());
-      // [?] Move to add task action or separate place for all re-renders?
-      UI.loadTasks();
+      obsUpdateDATA.notify();
+      obsUpdateUI.notify();
     });
     return btn;
   }
-
-  // static initAddTaskModal() {
-  //   addTaskCancel.addEventListener('click', () => {
-  //     addTaskForm.reset();
-  //     addTaskModal.close();
-  //   });
-
-  //   addTaskSubmit.addEventListener('click', (e) => {
-  //     handleAddTaskModal(e);
-  //     addTaskForm.reset();
-  //     addTaskModal.close();
-  //   });
-  // }
 
   // **** Task/Project Editing **** //
   static initEditActiveProject() {
@@ -365,3 +335,5 @@ export default class UI {
   }
   // ===== RENDER END ==== //
 }
+
+obsUpdateUI.subcribe(UI.loadHomepage);

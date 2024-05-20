@@ -1,9 +1,10 @@
 /* eslint-disable import/no-named-as-default-member */
 /* eslint-disable import/no-named-as-default */
 import * as chrono from 'chrono-node';
-import { DATA } from './TodoList';
+// import { DATA } from './TodoList';
+import { DATA } from '../main';
 import Task from './Task';
-import UI from './UI-View';
+import { obsUpdateDATA, obsUpdateUI } from './Observers';
 
 // ===== UTIL ========== //
 // ===================== //
@@ -34,6 +35,7 @@ export function handleDragAndDropEnd(e) {
 
   // remove source task from old project
   DATA.getActiveProject().deleteTask(sourceTask.name);
+  obsUpdateDATA.notify();
 }
 
 // === CHECKBOX == //
@@ -45,6 +47,7 @@ export function handleCheckboxAlt(e) {
   // alt-click a task marked deleted => uncheck and undelete
   if (itemToEdit.status === 'deleted') {
     DATA.getActiveProject().undeleteTask(itemToEdit.name);
+    obsUpdateDATA.notify();
     return;
   }
 
@@ -55,6 +58,7 @@ export function handleCheckboxAlt(e) {
 
   // alt-click an unmarked task => check and delete
   DATA.getActiveProject().deleteTask(itemToEdit.name);
+  obsUpdateDATA.notify();
 }
 
 export function handleCheckbox(e) {
@@ -65,6 +69,7 @@ export function handleCheckbox(e) {
   // undelete
   if (itemToEdit.status === 'deleted') {
     DATA.getActiveProject().undeleteTask(itemToEdit.name);
+    obsUpdateDATA.notify();
     return;
   }
 
@@ -72,12 +77,14 @@ export function handleCheckbox(e) {
   if (itemToEdit.status === 'completed') {
     itemToEdit.status = undefined;
     DATA.getActiveProject().unarchiveTask(itemToEdit.name);
+    obsUpdateDATA.notify();
     return;
   }
 
   // complete task
   itemToEdit.status = 'completed';
   DATA.getActiveProject().archiveTask(itemToEdit.name);
+  obsUpdateDATA.notify();
 }
 
 export function handleCheckboxAfter(e) {
@@ -100,22 +107,25 @@ export function handleCheckboxAfter(e) {
 
 // === DBL CLICK EDIT == //
 // ===================== //
+// [BUG] Error when clicking sidebar task while editing task
 function handleDblClickEndEditing(e) {
-  // [BUG] add check and handler for parsing date input
-  // [BUG] Fix keep previous value when no input in input box
-
   const { uuid } = e.target.parentNode.dataset;
+  const { name } = e.target.dataset;
+  let { value } = e.target;
   const itemToEdit = DATA.getItemByUUID(DATA, uuid);
 
-  Object.assign(itemToEdit, { [e.target.dataset.name]: e.target.value });
+  // guards against just spaces triggering value reassignment
+  value = value.trim();
 
-  UI.loadProjectsSidebar();
-  UI.loadTasks(uuid);
+  if (name === 'taskDueDate' || name === 'projectDueDate') {
+    value = parseDateInput(value);
+  }
+
+  if (value !== '') Object.assign(itemToEdit, { [e.target.dataset.name]: value });
+  obsUpdateDATA.notify();
+  obsUpdateUI.notify(uuid);
 }
 
-// [x] Refactor task inputs to use input when editing,
-//  then replace with other element when cleared
-// [x] working - replace regular functions with ALT functions and implement
 export function handleDblClickBeginEditing(e) {
   const { target } = e;
 
@@ -145,7 +155,6 @@ export function handleActiveProjectSelection(e) {
   const newActiveProjectUUID = e.target.dataset.uuid;
   DATA.getActiveProject().active = false;
   DATA.getProjectByUUID(newActiveProjectUUID).active = true;
-  UI.loadProjectsSidebar();
-  UI.loadActiveProject();
-  UI.loadTasks();
+  obsUpdateDATA.notify();
+  obsUpdateUI.notify();
 }

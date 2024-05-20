@@ -12,7 +12,6 @@ export class Observable {
   }
 
   notify(data = undefined) {
-    console.log('obs fired');
     this.observers.forEach((observer) => {
       if (data) return observer(data);
       return observer();
@@ -20,10 +19,5 @@ export class Observable {
   }
 }
 
-export const obsAddProjectBtn = new Observable();
-export const obsAddTaskBtn = new Observable();
-
-
-export const observeNewTodos = new Observable();
-export const observeTodoListUpdate = new Observable();
-
+export const obsUpdateDATA = new Observable();
+export const obsUpdateUI = new Observable();
