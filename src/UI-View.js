@@ -15,14 +15,10 @@ import {
 import { obsUpdateDATA, obsUpdateUI } from './Observers';
 
 // [TODOS]
-// [ ] Add error handling for modals
-// [ ] Add error handling for task editing
 // [ ] add task sorting
-// [ ] add set date button hover
 // [ ] Add rendering for filters for Today and Upcoming (this week?)
-// [ ] Add ability to delete projects - alt-click on list?
 // [ ] Create defaults for project data / initialization
-// [ ] Create project reset button
+// [ ] Create Todo List reset button
 
 const sidebarContainer = document.querySelector('.sidebar-container');
 const taskListHeaderContainer = document.querySelector('.task-list-header');
