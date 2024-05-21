@@ -145,12 +145,23 @@ export function handleDblClickBeginEditing(e) {
   });
 }
 
-// ===== ACTIVE PROJ === //
+// ===== SIDEBAR === //
 // ===================== //
 export function handleActiveProjectSelection(e) {
   const newActiveProjectUUID = e.target.dataset.uuid;
   DATA.getActiveProject().active = false;
   DATA.getProjectByUUID(newActiveProjectUUID).active = true;
+  obsUpdateDATA.notify();
+  obsUpdateUI.notify();
+}
+
+export function handleProjectDelete(e) {
+  const { uuid } = e.target.dataset;
+  const itemToEdit = DATA.getItemByUUID(DATA, uuid);
+
+  if (DATA.getActiveProject() === itemToEdit) return;
+
+  DATA.deleteProject(uuid);
   obsUpdateDATA.notify();
   obsUpdateUI.notify();
 }

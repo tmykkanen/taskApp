@@ -10,6 +10,7 @@ import {
   handleCheckboxAlt,
   handleCheckboxAfter,
   handleDblClickBeginEditing,
+  handleProjectDelete,
 } from './UI-Control';
 import { obsUpdateDATA, obsUpdateUI } from './Observers';
 
@@ -47,7 +48,7 @@ export default class UI {
     );
 
     // Initiate interactivity
-    UI.initActiveProjectSelection();
+    UI.initProjectSidebar();
     UI.initDragAndDropReceivers();
   }
 
@@ -181,7 +182,6 @@ export default class UI {
     const btn = UI.createBtn('add-project-btn', '+ Add Project');
     btn.addEventListener('click', () => {
       DATA.addProject(new Project());
-      // [?] Where should reloads go?
       obsUpdateDATA.notify();
       obsUpdateUI.notify();
     });
@@ -189,11 +189,15 @@ export default class UI {
   }
 
   // **** Select Active Project **** //
-  static initActiveProjectSelection() {
+  static initProjectSidebar() {
     const projectItemList = document.querySelectorAll('.project-list-item');
     projectItemList.forEach((item) => {
       item.addEventListener('mousedown', (e) => {
         e.preventDefault();
+        if (e.altKey) {
+          handleProjectDelete(e);
+          return;
+        }
         handleActiveProjectSelection(e);
       });
     });
